@@ -1,6 +1,6 @@
-package com.deokarkaustubh.logtime.repo;
+package com.deokarkaustubh.database.repo;
 
-import com.deokarkaustubh.logtime.model.User;
+import com.deokarkaustubh.database.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

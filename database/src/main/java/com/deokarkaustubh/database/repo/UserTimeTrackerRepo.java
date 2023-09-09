@@ -1,12 +1,11 @@
-package com.deokarkaustubh.logtime.repo;
+package com.deokarkaustubh.database.repo;
 
-import com.deokarkaustubh.logtime.model.User;
-import com.deokarkaustubh.logtime.model.UserTimeTracker;
+import com.deokarkaustubh.database.model.User;
+import com.deokarkaustubh.database.model.UserTimeTracker;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
