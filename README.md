@@ -30,4 +30,5 @@ Features:
 	- export GOPATH="/home/vagrant/go"
 	- export GOPROXY="https://proxy.golang.org"
 4. source ~/.profile
-5. go mod init github.com/Lkishor123/Gnbsim_5G
+5. go mod init `project_name`
+6. go mod tidy
