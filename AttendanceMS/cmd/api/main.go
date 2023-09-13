@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-const port = 8080
+const port = 8082
 
 func main() {
 	// set UserAttendance config

@@ -59,7 +59,7 @@ func init() {
 	u1.UserdateTimeEnd = time.Now()
 }
 
-const port = 8003
+const port = 8004
 
 func SignInHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintln(w, "Welcome to UserAttendance SignIn Handler")
@@ -134,19 +134,6 @@ func GetUserHandler(w http.ResponseWriter, r *http.Request) {
 func main() {
 
 	var DB DBMSServer
-	// set UserAttendance config
-	// Create a new instance of the default ServeMux
-	// mux := http.NewServeMux()
-	// //MicroserviceDBurl := "/microservice/db/UserAttendance"
-
-	// //TestDBURLSignIn := MicroserviceDBurl + "/signin"
-	// // Define your routes
-	// mux.HandleFunc("/microservice/db/UserAttendance/user:{user_id}", GetUserHandler)
-
-	// mux.HandleFunc("/", HomeHandler)
-	// mux.HandleFunc("/microservice/db/UserAttendance/signin", SignInHandler)
-	// //mux.HandleFunc("/user", userHandler)
-
 	// Print a message that the server is starting
 	log.Println("Starting UserAttendance on port", port)
 

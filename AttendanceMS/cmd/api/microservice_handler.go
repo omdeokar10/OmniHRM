@@ -64,6 +64,7 @@ func (app *ApplicationAttendance) getUserFromDB(w http.ResponseWriter, r *http.R
 	getRequestURL := fmt.Sprintf("%s/%d", url+"/user", userID)
 	fmt.Printf("GET Request URL: %s\n", getRequestURL)
 	resp, err := http.Get(getRequestURL)
+	fmt.Printf("**%+v", resp)
 	if err != nil {
 		fmt.Println("GET Request Error:", err)
 		return nil, err
@@ -78,7 +79,7 @@ func (app *ApplicationAttendance) getUserFromDB(w http.ResponseWriter, r *http.R
 		return nil, err
 	}
 
-	fmt.Printf("GET Response: %+v", userAtten)
+	fmt.Printf("GET Response:_______ %+v", userAtten)
 	return userAtten, nil
 }
 
