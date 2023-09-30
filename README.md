@@ -2,23 +2,51 @@
 
 Provides a HRM framework.
 
-Components :
+> Components :
 
-1. A common request handler providing user authentication and authorization. 
+>> A common request handler providing user authentication and authorization. 
 
-Features: 
+> Features: 
 
- A. Time logging for users -> (8000)
+>> A. Time logging for users -> (8000)
 	marking their start and end time for day with updates mentioning the work done during the day.
  
- B. Attendance. ([port])
+>> B. Attendance. ([port])
 	<> 
  
- C. DB handler.[8081]
+>> C. DB handler.[8081]
 	A microservice handling all database calls made by all other microservices.
 	
 
 ## Installing Go
+```
+curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz
+```
+```
+sudo tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
+```
+```
+sudo vim ~/.profile
+```
+```
+export PATH=$PATH:/usr/local/go/bin
+export GO111MODULE="auto"
+export GOBIN="/home/kaustubh/go/bin"
+export GOMODCACHE="/home/kaustubh/go/pkg/mod"
+export GOPATH="/home/kaustubh/go"
+export GOPROXY="https://proxy.golang.org"
+```
+```
+source ~/.profile
+```
+```
+go mod init github.com/Lkishor123/Gnbsim_5G
+```
+Downloading packages
+> go mod tidy
+Running project.
+> go run ./cmd/api
+
 
 1. curl -OL https://golang.org/dl/go1.16.7.linux-amd64.tar.gz
 2. sudo tar -C /usr/local -xvf go1.16.7.linux-amd64.tar.gz
@@ -30,4 +58,5 @@ Features:
 	- export GOPATH="/home/vagrant/go"
 	- export GOPROXY="https://proxy.golang.org"
 4. source ~/.profile
-5. go mod init github.com/Lkishor123/Gnbsim_5G
+5. go mod init `project_name`
+6. go mod tidy

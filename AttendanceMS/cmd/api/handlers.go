@@ -45,11 +45,11 @@ func (app *ApplicationAttendance) SignIn(w http.ResponseWriter, r *http.Request)
 
 	// TO DO: verify is Present.
 	var UserAttdnc UserAttendance
-	UserAttdnc.User = user
+	UserAttdnc.UserId = user.UserId
 	UserAttdnc.UserPresent = true
-	UserAttdnc.UserdateTimeStart = time.Now()
-	UserAttdnc.UserdateTimeEnd = time.Now()
-	UserAttdnc.Day = time.Now()
+	UserAttdnc.UserdateTimeStart = time.Now().Format("2006-01-02 15:04:05")
+	UserAttdnc.UserdateTimeEnd = time.Now().Format("2006-01-02 15:04:05")
+	UserAttdnc.Day = time.Now().Format("2006-01-02 15:04:05")
 	//else: send error: already Signed In
 
 	// Send to DB MS
@@ -82,10 +82,12 @@ func (app *ApplicationAttendance) SignOut(w http.ResponseWriter, r *http.Request
 	// if StartTime != Endtime: Send Error: Already SignedOut.
 	//
 	//outputTimeStr := parsedTime.Format("2006-01-02 15:04")
-	startTime := UserAttdnc.UserdateTimeStart.Format("2006-01-02 15:04")
-	endTime := UserAttdnc.UserdateTimeEnd.Format("2006-01-02 15:04")
 
-	if startTime != endTime {
+	startime := UserAttdnc.UserdateTimeStart
+	endTime := UserAttdnc.UserdateTimeEnd
+
+	if startime != endTime {
+
 		resp := map[string]string{
 			"message": "Not SignIn",
 		}
@@ -94,9 +96,9 @@ func (app *ApplicationAttendance) SignOut(w http.ResponseWriter, r *http.Request
 		return
 	}
 	// Else:
-	UserAttdnc.User = user
+	UserAttdnc.UserId = user.UserId
 	UserAttdnc.UserPresent = true
-	UserAttdnc.UserdateTimeEnd = time.Now()
+	UserAttdnc.UserdateTimeEnd = time.Now().Format("2006-01-02 15:04")
 	// Send to DB MS
 	// func putToDB(url string, data interface{})
 
