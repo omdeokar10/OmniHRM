@@ -3,3 +3,5 @@ pkg
 deploy
 AttendanceMS/go.sum
 DBMS_TestServer/go.sum
+node_modules
+HandlerMS
