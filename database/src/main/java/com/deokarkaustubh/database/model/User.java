@@ -1,9 +1,6 @@
 package com.deokarkaustubh.database.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,10 +9,12 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name = "users")
 public class User {
 
     @Id
     @GeneratedValue
+    @Column(name = "userid")
     private Long userId;
 
     @Column(unique = true)

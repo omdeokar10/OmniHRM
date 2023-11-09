@@ -42,7 +42,7 @@ public class DatabaseEndpoint {
         System.out.println("User received:" + string);
         User user = objectMapper.objectMapper().readValue(string, User.class);
         userRepo.save(user);
-        return "User created" + user.toString();
+        return "User created" + user;
     }
 
     @GetMapping("/user/{username}")
@@ -53,43 +53,6 @@ public class DatabaseEndpoint {
             throw new CustomException("User not present");
         }
         return optionalUser.get();
-    }
-
-
-    @PostMapping("/tracktime/startime")
-    public String saveStartTrackingTime(@RequestBody String string) throws JsonProcessingException {
-        System.out.println("Start tracking time");
-        UserTimeTracker userTimeTracker = saveTimeTracking(string);
-        return "start time tracked" + userTimeTracker.toString();
-    }
-
-    private UserTimeTracker saveTimeTracking(String string) throws JsonProcessingException {
-        UserTimeTracker userTimeTracker = objectMapper.objectMapper().readValue(string, UserTimeTracker.class);
-        userTimeTrackerRepo.save(userTimeTracker);
-        return userTimeTracker;
-    }
-
-    @PostMapping("/tracktime/endtime")
-    public String saveEndTrackingTime(@RequestBody String string) throws JsonProcessingException {
-        System.out.println("Tracking time for today completion started.");
-        UserTimeTracker userTimeTracker = saveTimeTracking(string);
-        return "start time tracked" + userTimeTracker.toString();
-    }
-
-    @GetMapping("/tracktime/fetchbydate/{date}/anduserid/{userid}")
-    public UserTimeTracker getTrackTime(@PathVariable String date, @PathVariable String userid) throws CustomException {
-        System.out.println("fetch tracked time.");
-        Optional<User> userId = userRepo.findById(Long.parseLong(userid));
-        if (userId.isEmpty()) {
-            throw new CustomException("user not present");
-        }
-        LocalDate localDate = LocalDate.parse(date);
-
-        Optional<UserTimeTracker> optionalUserTimeTracker = userTimeTrackerRepo.findByUserIdAndLocalDate(userId.get(), localDate);
-        if (optionalUserTimeTracker.isEmpty()) {
-            throw new CustomException("time tracker not present");
-        }
-        return optionalUserTimeTracker.get();
     }
 
     @PostMapping("/UserAttendance/signin")

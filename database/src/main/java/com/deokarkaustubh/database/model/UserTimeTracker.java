@@ -12,22 +12,29 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @Entity
+@Table(name="usertimetracker")
 public class UserTimeTracker {
 
     @Id
     @GeneratedValue
+    @Column(name = "trackerid")
     private Long trackerId;
 
+    @Column(name = "starttime")
     public Instant startTime;
 
+    @Column(name = "endtime")
     public Instant endTime;
 
+
+    @Column(name = "localdate")
     public LocalDate localDate;
 
+    @Column(name = "workdescription")
     public String workDescription;
 
     @ManyToOne
-    @JoinColumn(name = "userId", referencedColumnName = "userId")
+    @JoinColumn(name = "userid", referencedColumnName = "userid")
     private User userId;
 
     public UserTimeTracker(Instant startTime, Instant endTime, LocalDate localDate, String workDescription, User userId) {
