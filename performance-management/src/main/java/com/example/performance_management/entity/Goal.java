@@ -1,21 +1,20 @@
 package com.example.performance_management.entity;
 
-
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
-@Entity
-@Table(name = "goal")
+@Document(collection = "goal")
 @Data
 @NoArgsConstructor
 @Getter
 @Setter
 public class Goal {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     private Long id;
 
     private String username;
