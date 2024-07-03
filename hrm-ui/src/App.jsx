@@ -7,6 +7,8 @@ import HeaderComponent from './components/HeaderComponent'
 import FooterComponent from './components/FooterComponent'
 import PerformanceComponent from './components/PerformanceComponent'
 import LoginComponent from './components/LoginComponent'
+import CreateFormComponent from './components/CreateFormComponent'
+import ShowFormComponent from './components/ShowFormComponent'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -19,6 +21,8 @@ function App() {
         <Routes>
           <Route path='/' element={<LoginComponent />}></Route>
           <Route path='/performance' element={< PerformanceComponent />}></Route>
+          <Route path='/addform' element={< CreateFormComponent />}></Route>
+          <Route path='/showform' element={< ShowFormComponent />}></Route>
         </Routes>
 
 
