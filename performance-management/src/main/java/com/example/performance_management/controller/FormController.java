@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/form/submit")
+@RequestMapping("/api/form")
 @CrossOrigin("*")
 public class FormController {
 
@@ -19,14 +19,18 @@ public class FormController {
     }
 
     @PostMapping
-    public void submitForm(@RequestBody Map<String,String> requestDto){
+    public void submitForm(@RequestBody Map<String, String> requestDto) {
         formService.createForm(requestDto);
     }
 
     @GetMapping
-    public List<Form> getAllForm(){
+    public List<Form> getAllForm() {
         return formService.getForm();
     }
 
+    @DeleteMapping("/{id}")
+    public void deleteForm(@PathVariable Long id) {
+        formService.deleteFormById(id);
+    }
 
 }

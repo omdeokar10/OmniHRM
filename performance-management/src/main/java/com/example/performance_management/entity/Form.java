@@ -25,8 +25,11 @@ public class Form {
     public static final String GENERATED_ID = "formId"; //IdSequence.formId
     @Transient
     public static final String ID_KEY = "id"; //IdSequence.formId
+    @Transient
+    public static final String FORM_NAME_VARIABLE = "formName"; //IdSequence.formId
     @Id
     private Long id;
+    private String formName;
     @SuppressWarnings("JpaAttributeTypeInspection") @Field("formdata")
     private Map<String,String> keyValuePairs;
 
@@ -36,6 +39,7 @@ public class Form {
 
     public Form(long id, Map<String, String> requestDto) {
         this.id = id;
+        this.formName = requestDto.get(FORM_NAME_VARIABLE);
         this.keyValuePairs = requestDto;
     }
 }

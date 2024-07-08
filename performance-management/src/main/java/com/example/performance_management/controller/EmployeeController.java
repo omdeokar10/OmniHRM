@@ -1,6 +1,7 @@
 package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.EmployeeDto;
+import com.example.performance_management.service.AuthService;
 import com.example.performance_management.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +13,11 @@ import java.util.List;
 public class EmployeeController {
 
     private final EmployeeService employeeService;
+    private final AuthService authService;
 
-    public EmployeeController(EmployeeService employeeService) {
+    public EmployeeController(EmployeeService employeeService, AuthService authService) {
         this.employeeService = employeeService;
+        this.authService = authService;
     }
 
     @GetMapping
@@ -31,7 +34,7 @@ public class EmployeeController {
 
     @PostMapping
     public EmployeeDto createEmployee(@RequestBody EmployeeDto employeeDto) {
-        return employeeService.createEmployee(employeeDto);
+        return authService.signup(employeeDto);
     }
 
     @PutMapping("/{id}")

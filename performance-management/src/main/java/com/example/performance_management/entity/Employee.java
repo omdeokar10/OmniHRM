@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import java.util.Date;
+import java.util.List;
 
 @Document(collection = "employee")
 @Data
@@ -24,8 +24,14 @@ public class Employee {
     public static final String ID_KEY = "employeeid"; //IdSequence.formId
     @Id
     private Long id;
-    private String fullName;
+    private String companyName;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String userName;
+    private String password;
     private String dateOfBirth;
-    private String role;
+    private List<String> roles; // For referencing roles
     private String team;
+    public boolean isEnabled = true;
 }

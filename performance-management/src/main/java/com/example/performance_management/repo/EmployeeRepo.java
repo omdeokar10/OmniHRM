@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface EmployeeRepo extends MongoRepository<Employee, Long> {
 
-    Optional<Employee> findByFullNameStartsWith(String name);
+    Optional<Employee> findByUserNameStartsWith(String name);
+    Optional<Employee> findByEmailStartsWith(String name);
 }
