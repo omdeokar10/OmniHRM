@@ -30,7 +30,11 @@ function CreateFormComponent() {
             const parsedConfig = JSON.parse(jsonInput);
             setFormConfig(parsedConfig);
             setFormData(parsedConfig.reduce((acc, field) => {
-                acc[field.name] = '';
+                if (field.type === 'checkbox') {
+                    acc[field.name] = []; // Initialize checkbox fields with an empty array
+                } else {
+                    acc[field.name] = '';
+                }
                 return acc;
             }, {}));
             console.log(formData);
@@ -40,16 +44,23 @@ function CreateFormComponent() {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value,
-        });
+        const { name, value, type, checked } = e.target;
+        if (type === 'checkbox') {
+            setFormData((prevFormData) => {
+                const newValue = prevFormData[name] + ','+value
+                return { ...prevFormData, [name]: newValue };
+            });
+        } else {
+            setFormData({
+                ...formData,
+                [name]: value,
+            });
+        }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        
+
         submitForm(formData);
     };
 
@@ -65,7 +76,8 @@ function CreateFormComponent() {
         setSampleJsonInput(JSON.stringify([
             { "name": "fullName", "label": "Full Name", "type": "text" },
             { "name": "dateOfBirth", "label": "Date of Birth", "type": "date" },
-            { "name": "department", "label": "Department", "type": "select", "options": [{ "value": "", "label": "" }, { "value": "HR", "label": "HR" }, { "value": "Eng", "label": "Eng" }] }
+            { "name": "department", "label": "Department", "type": "select", "options": [{ "value": "", "label": "" }, { "value": "HR", "label": "HR" }, { "value": "Eng", "label": "Eng" }] },
+            { "name":"audience","label":"To be filled by","type":"checkbox", "options": [{ "value": "HR", "label": "HR" },{ "value": "Eng", "label": "Eng" }]}
         ]));
         return;
     }
@@ -78,6 +90,10 @@ function CreateFormComponent() {
             [name]: value,
         });
     }
+
+    useEffect(() => {
+        console.log('Form data updated:', formData);
+    }, [formData]);
 
     return (
 
@@ -92,7 +108,7 @@ function CreateFormComponent() {
                         rows="10"
                         onChange={handleJsonChange}
                         placeholder="Please check sample configuration below"
-                    required />
+                        required />
                 </div>
                 <button type="submit" className="btn btn-primary">Generate Form</button>
                 <button type="button" className="btn btn-secondary m-4" onClick={handleShowJson}>
@@ -149,6 +165,25 @@ function CreateFormComponent() {
                                         </option>
                                     ))}
                                 </select>
+                            )}
+                            {field.type === 'checkbox' && (
+                                <div className="form-check">
+                                    {field.options.map((option) => (
+                                        <div key={option.value} className="mb-2">
+                                            <input
+                                                className="form-check-input"
+                                                type="checkbox"
+                                                name={field.name}
+                                                value={option.value}
+                                                checked={formData[field.name].includes(option.value)}
+                                                onChange={handleInputChange}
+                                            />
+                                            <label className="form-check-label">
+                                                {option.label}
+                                            </label>
+                                        </div>
+                                    ))}
+                                </div>
                             )}
                         </div>
                     ))}

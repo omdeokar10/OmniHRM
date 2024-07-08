@@ -44,20 +44,48 @@ function ShowFormComponent() {
                 <fieldset>
                     <legend>{formData['formName']}</legend>
                     {Object.entries(formData)
-                        .filter(([key]) => key != 'formName')
+                        .filter(([key]) => key !== 'formName')
                         .map(([key, value]) => (
-
                             <Form.Group as={Row} controlId={key} key={key} className="mb-3">
                                 <Form.Label column sm="2">
                                     {key}
                                 </Form.Label>
                                 <Col sm="10">
-                                    <Form.Control
-                                        type={key === 'dateOfBirth' ? 'date' : 'text'}
-                                        name={key}
-                                        value={formData[key]}
-                                        onChange={handleChange}
-                                    />
+                                    {Array.isArray(value) ? (
+                                        <div>
+                                            {value.map(option => (
+                                                <Form.Check
+                                                    type="checkbox"
+                                                    label={option.label}
+                                                    name={key}
+                                                    value={option.value}
+                                                    checked={formData[key].includes(option.value)}
+                                                    onChange={handleChange}
+                                                    key={option.value}
+                                                />
+                                            ))}
+                                        </div>
+                                    ) : typeof value === 'object' && value.options c? (
+                                        <Form.Control
+                                            as="select"
+                                            name={key}
+                                            value={formData[key]}
+                                            onChange={handleChange}
+                                        >
+                                            {value.options.map(option => (
+                                                <option key={option.value} value={option.value}>
+                                                    {option.label}
+                                                </option>
+                                            ))}
+                                        </Form.Control>
+                                    ) : (
+                                        <Form.Control
+                                            type={key === 'dateOfBirth' ? 'date' : 'text'}
+                                            name={key}
+                                            value={formData[key]}
+                                            onChange={handleChange}
+                                        />
+                                    )}
                                 </Col>
                             </Form.Group>
                         ))}
