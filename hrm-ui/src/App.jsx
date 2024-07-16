@@ -5,10 +5,15 @@ import {Toaster} from 'sonner'
 
 import HeaderComponent from './components/HeaderComponent'
 import FooterComponent from './components/FooterComponent'
-import PerformanceComponent from './components/PerformanceComponent'
-import LoginComponent from './components/LoginComponent'
-import CreateFormComponent from './components/CreateFormComponent'
-import ShowFormComponent from './components/ShowFormComponent'
+import PerformanceComponent from './components/performance/PerformanceComponent'
+import LoginComponent from './components/auth/LoginComponent'
+import CreateFormComponent from './components/performance/CreateFormComponent'
+import ShowFormComponent from './components/performance/ShowFormComponent'
+import AreasOfImprovement from './components/performance/AreasOfImprovement'
+import CreateGoalComponent from './components/performance/CreateGoalComponent'
+import ListGoals from './components/performance/ListGoals'
+import ListAllPendingFormComponent from './components/performance/ListAllPendingFormComponent'
+import SummaryComponent from './components/performance/SummaryComponent'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -21,8 +26,20 @@ function App() {
         <Routes>
           <Route path='/' element={<LoginComponent />}></Route>
           <Route path='/performance' element={< PerformanceComponent />}></Route>
-          <Route path='/addform' element={< CreateFormComponent />}></Route>
-          <Route path='/showform' element={< ShowFormComponent />}></Route>
+
+          
+          <Route path='/performance/creategoal' element={< CreateGoalComponent />}></Route>
+          <Route path='/performance/updategoal/:id' element={< CreateGoalComponent />}></Route>
+          <Route path='/performance/listgoal' element={< ListGoals />}></Route>
+
+          <Route path='/performance/createform' element={< CreateFormComponent />}></Route>
+          <Route path='/performance/listforms' element={< ListAllPendingFormComponent />}></Route>
+          <Route path='/performance/showforms/:id' element={< ShowFormComponent />}></Route>
+
+          <Route path='/performance/areasofimprovement' element={< AreasOfImprovement />}></Route>
+          <Route path='/performance/summary' element={< SummaryComponent />}></Route>
+          
+          
         </Routes>
 
 
