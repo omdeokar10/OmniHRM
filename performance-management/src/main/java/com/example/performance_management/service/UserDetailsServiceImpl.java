@@ -1,13 +1,15 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.entity.Employee;
+import com.example.performance_management.entity.Permission;
+import com.example.performance_management.entity.Role;
 import com.example.performance_management.repo.EmployeeRepo;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,13 +30,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("User not present!");
         }
         Employee verifiedUser = user.get();
-        List<String> roles = verifiedUser.getRoles();
-        List<SimpleGrantedAuthority> collect = roles.stream().map(role -> new SimpleGrantedAuthority(role)).toList();
+        List<Role> roles = verifiedUser.getRoles();
+
+        List<Permission> permissions = new ArrayList<>();
+        roles.forEach(role -> permissions.addAll(role.getPermissions()));
 
         return new org.springframework.security.core.userdetails.User(
                 verifiedUser.getUserName(),
                 verifiedUser.getPassword(),
                 verifiedUser.isEnabled(), true, true, true,
-                collect);
+                permissions);
     }
 }

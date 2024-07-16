@@ -21,20 +21,21 @@ public class EmployeeController {
     }
 
     @GetMapping
-    public List<EmployeeDto> getAllEmployees() {
-        return employeeService.getAllEmployees();
+    public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
+        List<EmployeeDto> employees = employeeService.getAllViewableEmployees();
+        return ResponseEntity.ok(employees);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
-        EmployeeDto employeeDto = employeeService.getEmployeeById(id)
-                .orElseThrow(() -> new RuntimeException("Employee not found"));
+        employeeService.getEmployeeById(id);
+        EmployeeDto employeeDto = employeeService.getViewableEmployeeById(id);
         return ResponseEntity.ok(employeeDto);
     }
 
     @PostMapping
     public EmployeeDto createEmployee(@RequestBody EmployeeDto employeeDto) {
-        return authService.signup(employeeDto);
+        return authService.employeeSignup(employeeDto);
     }
 
     @PutMapping("/{id}")

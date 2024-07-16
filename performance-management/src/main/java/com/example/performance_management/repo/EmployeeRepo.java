@@ -9,4 +9,7 @@ public interface EmployeeRepo extends MongoRepository<Employee, Long> {
 
     Optional<Employee> findByUserNameStartsWith(String name);
     Optional<Employee> findByEmailStartsWith(String name);
+
+    Optional<Employee> findByFullNameStartsWith(String fullName);
+
 }

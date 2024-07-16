@@ -27,11 +27,12 @@ public class Employee {
     private String companyName;
     private String firstName;
     private String lastName;
+    private String fullName;
     private String email;
     private String userName;
     private String password;
     private String dateOfBirth;
-    private List<String> roles; // For referencing roles
+    private List<Role> roles; // For referencing roles
     private String team;
     public boolean isEnabled = true;
 }

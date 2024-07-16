@@ -1,5 +1,6 @@
 package com.example.performance_management.dto;
 
+import com.example.performance_management.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,11 +17,12 @@ public class EmployeeDto {
     private String companyName;
     private String firstName;
     private String lastName;
+    private String fullName;
     private String email;
     private String userName;
     private String password;
     private String dateOfBirth;
-    private List<String> roles;
+    private List<Role> roles;
     private String team;
 
 

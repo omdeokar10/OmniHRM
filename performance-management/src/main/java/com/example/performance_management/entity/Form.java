@@ -1,10 +1,7 @@
 package com.example.performance_management.entity;
 
 
-import lombok.Data;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -15,6 +12,7 @@ import java.util.Map;
 @Document(collection = "form")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class Form {
@@ -33,7 +31,8 @@ public class Form {
     @SuppressWarnings("JpaAttributeTypeInspection") @Field("formdata")
     private Map<String,String> keyValuePairs;
 
-    public Form(Map<String, String> requestDto) {
+    public Form(String formName, Map<String, String> requestDto) {
+        this.formName = formName;
         keyValuePairs = requestDto;
     }
 

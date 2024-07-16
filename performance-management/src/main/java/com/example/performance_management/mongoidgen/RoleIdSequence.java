@@ -8,11 +8,10 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document(collection = "employee_id_sequence")
 @Getter
 @Setter
-public class EmployeeIdSequence {
+public class RoleIdSequence {
 
     @Id
     private String id;
-    private Long employeeId;
     private Long roleId;
 
 }

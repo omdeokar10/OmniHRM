@@ -1,11 +1,11 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.dto.EmployeeDto;
-import com.example.performance_management.dto.LoginResponseDto;
+import com.example.performance_management.dto.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Employee;
+import com.example.performance_management.entity.Role;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.repo.EmployeeRepo;
-import com.example.performance_management.repo.RoleRepo;
 import com.example.performance_management.security.JwtTokenProvider;
 import lombok.Getter;
 import org.slf4j.Logger;
@@ -16,11 +16,13 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -31,54 +33,28 @@ public class AuthService {
     private JwtTokenProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
-    private final RoleService roleService;
     private final EmployeeService employeeService;
+    private final PermissionService permissionService;
+    private final EmployeeRepo employeeRepo;
 
-    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, RoleService roleService, EmployeeService employeeService) {
+
+    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, PermissionService permissionService, EmployeeRepo employeeRepo) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
-        this.roleService = roleService;
         this.employeeService = employeeService;
+        this.permissionService = permissionService;
+        this.employeeRepo = employeeRepo;
     }
-
-    @Autowired
-    private EmployeeRepo employeeRepo;
-    @Autowired
-    private RoleRepo roleRepo;
     Logger logger = LoggerFactory.getLogger(this.getClass());
-
-//    private static int attempts = 0;
-//    private boolean bPasswordResetDone = true;
 
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
-    public EmployeeDto signup(EmployeeDto employeeDto) throws DataIntegrityViolationException {
-        return employeeService.createEmployee(employeeDto, passwordEncoder);
+    public EmployeeDto employeeSignup(EmployeeDto employeeDto) throws DataIntegrityViolationException {
+        return employeeService.createViewableEmployee(employeeDto, passwordEncoder);
     }
 
-    private boolean ifUserExists(EmployeeDto employeeDto) {
-        Optional<Employee> userByName = employeeRepo.findByUserNameStartsWith(employeeDto.getUserName());
-        if (userByName.isEmpty()) {
-            Optional<Employee> userByEmail = employeeRepo.findByEmailStartsWith(employeeDto.getEmail());
-            return !userByEmail.isEmpty();
-        }
-        return true;
-    }
-
-    private String formMailBody(String token) {
-        return "Thank you for signing up, please click on the url to activate your account:\n" +
-                "http://localhost:8080/api/auth/accountVerification/" + token;
-    }
-
-    private String formResetPasswordBody(String token) {
-        return "Use following link to reset the password:\n" +
-                "http://localhost:8080/api/auth/completeresetpassword/" + token;
-    }
-
-
-
-    public LoginResponseDto loginUser(String username, String password) {
+    public EmployeeLoginResponseDto employeeLogin(String username, String password) {
 
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("Invalid username"));
         if (employee.isEnabled()) {
@@ -86,52 +62,67 @@ public class AuthService {
                     username, password));
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             String jwtToken = jwtProvider.generateToken(authenticate);
-            return new LoginResponseDto(username, jwtToken);
+            List<String> roles = employee.getRoles().stream().map(Role::getRoleName).toList();
+            return new EmployeeLoginResponseDto(username, jwtToken, roles.toArray(new String[0]));
         }
         throw new CustomException("User is disabled");
     }
 
-    private void handleIncorrectCredentials(String username, Employee principalUser) {
-//        attempts += 1;
-//        if (attempts > 2) {
-//            bPasswordResetDone = false;
-//            principalUser.setEnabled(false);
-//            throw new CustomException(HttpStatus.BAD_REQUEST, "Account is locked, please reset the password for user : " + username);
-//        }
-//        throw new CustomException(HttpStatus.BAD_REQUEST,
-//                "Incorrect credentials for username: " + username + ". You have " + (3 - attempts) + " attempts remaining.");
+    public UserDetails getCurrentUserDetails(String username) {
+        return userDetailsService.loadUserByUsername(username);
     }
 
-//    public LoginResponseDto refreshToken(RefreshTokenRequestDto refreshTokenRequestDto) {
-//        refreshTokenService.validateRefreshToken(refreshTokenRequestDto.getRefreshToken());
-//        String token = "jwtProvider.generateToken(refreshTokenRequest.getUsername())";
-//        String refreshToken = refreshTokenRequestDto.getRefreshToken();
-//        Instant expiry = Instant.now().plusMillis(JwtTokenProvider.JWT_EXPIRATION);
-//        return new LoginResponseDto(refreshTokenRequestDto.getUsername(), token, refreshToken, expiry);
-//    }
-
-    public Employee getUserByUserName(String username) {
-        return employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("User not found with id -" + username));
+    public String getNameForCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User) authentication.getPrincipal();
+        return principal.getUsername();
     }
 
-    public Employee getUserByEmail(String email) {
+
+
+    public Employee getEmployeeByEmail(String email) {
         return employeeRepo.findByUserNameStartsWith(email).orElseThrow(() -> new CustomException("User not found with id -" + email));
     }
 
-
-    public void resetPasswordForEmail(String email) {
-//        Optional<User> byEmail = userRepo.findByEmail(email);
-//        if (byEmail.isPresent()) {
-//            User user = byEmail.get();
-//            VerificationToken verificationToken = tokenRepo.findByUser(user).orElseThrow(() -> new CustomException("Not token found for user"));
-//            mailService.sendEmail(new NotificationEmail("Account activation", user.getEmail(), formResetPasswordBody(verificationToken.getToken())));
-//        }
-        //todo: to implement.
+    public Employee getEmployeeByUserName(String username) {
+        return employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("User not found with id -" + username));
     }
 
-//    public void setPasswordForUser(User userByToken, String newpassword) {
-//        userByToken.setPassword(passwordEncoder.encode(newpassword));
-//        userByToken.setEnabled(true);
-//        employeeRepo.save(userByToken);
-//    }
+        /*
+
+    public void setPasswordForUser(User userByToken, String newpassword) {
+        userByToken.setPassword(passwordEncoder.encode(newpassword));
+        userByToken.setEnabled(true);
+        employeeRepo.save(userByToken);
+    }
+    private void handleIncorrectCredentials(String username, Employee principalUser) {
+        attempts += 1;
+        if (attempts > 2) {
+            bPasswordResetDone = false;
+            principalUser.setEnabled(false);
+            throw new CustomException(HttpStatus.BAD_REQUEST, "Account is locked, please reset the password for user : " + username);
+        }
+        throw new CustomException(HttpStatus.BAD_REQUEST,
+
+                "Incorrect credentials for username: " + username + ". You have " + (3 - attempts) + " attempts remaining.");
+
+
+        public LoginResponseDto refreshToken(RefreshTokenRequestDto refreshTokenRequestDto) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequestDto.getRefreshToken());
+        String token = "jwtProvider.generateToken(refreshTokenRequest.getUsername())";
+        String refreshToken = refreshTokenRequestDto.getRefreshToken();
+        Instant expiry = Instant.now().plusMillis(JwtTokenProvider.JWT_EXPIRATION);
+        return new LoginResponseDto(refreshTokenRequestDto.getUsername(), token, refreshToken, expiry);
+    }
+
+    public void resetPasswordForEmail(String email) {
+        Optional<User> byEmail = userRepo.findByEmail(email);
+        if (byEmail.isPresent()) {
+            User user = byEmail.get();
+            VerificationToken verificationToken = tokenRepo.findByUser(user).orElseThrow(() -> new CustomException("Not token found for user"));
+            mailService.sendEmail(new NotificationEmail("Account activation", user.getEmail(), formResetPasswordBody(verificationToken.getToken())));
+        }
+        todo: to implement.
+    }
+*/
 }
