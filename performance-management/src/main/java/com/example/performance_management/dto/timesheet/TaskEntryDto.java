@@ -15,6 +15,7 @@ public class TaskEntryDto {
     private String description;
     private String username;
     private String durationLogged;
-    private String date;
+    private String createdDate;
+    private String lastUpdatedAt;
 
 }

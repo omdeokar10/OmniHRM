@@ -1,8 +1,12 @@
 package com.example.performance_management.controller.timesheet;
 
+import java.time.LocalDate;
+
 public class AttendanceController {
 
-    public void markAttendance(){ // user, date
+
+
+    public void markAttendance(String username, LocalDate localDate){ // user, date
 
     }
 

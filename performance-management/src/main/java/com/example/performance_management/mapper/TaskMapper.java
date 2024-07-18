@@ -10,26 +10,41 @@ public class TaskMapper {
     public TaskMapper() {
     }
 
-    public Task convertToTask(TaskEntryDto taskEntryDto){
+    public Task convertToTask(TaskEntryDto taskEntryDto, boolean bCreating) {
         Task task = new Task();
         task.setDescription(taskEntryDto.getDescription());
         task.setUsername(taskEntryDto.getUsername());
         task.setDurationLogged(taskEntryDto.getDurationLogged());
 
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String formattedDateTime = now.format(formatter);
-        task.setDate(formattedDateTime);
+        if(!taskEntryDto.getCreatedDate().isBlank()){
+            task.setCreatedDate(taskEntryDto.getCreatedDate());
+            task.setLastUpdatedAt(taskEntryDto.getLastUpdatedAt());
+        }
+        else{
+            LocalDateTime now = LocalDateTime.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+            String formattedDateTime = now.format(formatter);
+
+            if (bCreating) {
+                task.setCreatedDate(formattedDateTime);
+                task.setLastUpdatedAt(formattedDateTime);
+            }
+            else{
+                task.setLastUpdatedAt(formattedDateTime);
+            }
+
+        }
+
 
         return task;
     }
 
-    public TaskEntryDto convertToDto(Task task){
+    public TaskEntryDto convertToDto(Task task) {
         TaskEntryDto taskEntryDto = new TaskEntryDto();
         taskEntryDto.setDescription(task.getDescription());
         taskEntryDto.setUsername(task.getUsername());
         taskEntryDto.setDurationLogged(task.getDurationLogged());
-        taskEntryDto.setDate(task.getDate());
+        taskEntryDto.setCreatedDate(task.getCreatedDate());
         return taskEntryDto;
     }
 
