@@ -1,6 +1,6 @@
 package com.example.performance_management.controller.performance;
 
-import com.example.performance_management.dto.GoalDto;
+import com.example.performance_management.dto.performance.GoalDto;
 import com.example.performance_management.service.GoalService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -14,5 +14,6 @@ public class EmployeeIdSequence {
     private String id;
     private Long employeeId;
     private Long roleId;
-
+    private Long goalId;
+    private Long taskId;
 }

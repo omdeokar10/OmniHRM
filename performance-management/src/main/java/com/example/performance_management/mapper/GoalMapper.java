@@ -1,15 +1,7 @@
 package com.example.performance_management.mapper;
 
-import com.example.performance_management.dto.GoalDto;
-import com.example.performance_management.entity.Goal;
-import ma.glasnost.orika.Converter;
-import ma.glasnost.orika.MapperFacade;
-import ma.glasnost.orika.MapperFactory;
-import ma.glasnost.orika.MappingContext;
-import ma.glasnost.orika.impl.DefaultMapperFactory;
-import ma.glasnost.orika.metadata.Type;
-
-import javax.print.attribute.standard.Destination;
+import com.example.performance_management.dto.performance.GoalDto;
+import com.example.performance_management.entity.performance.Goal;
 
 public class GoalMapper {
 

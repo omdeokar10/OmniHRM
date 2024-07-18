@@ -1,9 +1,8 @@
 package com.example.performance_management.service;
 
-import com.example.performance_management.dto.GoalDto;
+import com.example.performance_management.dto.performance.GoalDto;
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.Goal;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.performance.Goal;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.GoalMapper;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
@@ -19,12 +18,10 @@ public class GoalService {
 
     private final GoalRepo goalRepo;
     public GoalMapper goalMapper = new GoalMapper();
-    private final EmployeeService employeeService;
     final private EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
 
-    public GoalService(GoalRepo goalRepo, EmployeeService employeeService, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
+    public GoalService(GoalRepo goalRepo, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
         this.goalRepo = goalRepo;
-        this.employeeService = employeeService;
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
     }
 
@@ -35,8 +32,8 @@ public class GoalService {
     }
 
     private Long generateGoalId() {
-        return employeeSequenceGeneratorService.getRoleSequenceNumber
-                (Employee.ID_KEY, Employee.ID_VAL, Role.GENERATED_ID);
+        return employeeSequenceGeneratorService.getGoalSequenceNumber
+                (Employee.ID_KEY, Employee.ID_VAL, Goal.GENERATED_ID);
     }
 
     public List<GoalDto> getAllGoals() {

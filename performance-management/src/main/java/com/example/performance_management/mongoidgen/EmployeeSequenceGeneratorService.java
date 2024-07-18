@@ -58,7 +58,20 @@ public class EmployeeSequenceGeneratorService {
                         update, options().returnNew(true).upsert(true),
                         EmployeeIdSequence.class);
 
-        return Objects.isNull(counter) ? 1 : counter.getRoleId();
+        return Objects.isNull(counter) ? 20 : counter.getGoalId();
     }
 
+    public Long getTaskSequenceNumber(String collectionId, String collectionIdVal, String generatedIdValue) {
+        Query query = new Query(Criteria.where(collectionId).is(collectionIdVal));
+        //update the sequence no
+        Update update = new Update().inc(generatedIdValue, 1);
+        //modify in document
+
+        EmployeeIdSequence counter = mongoOperations
+                .findAndModify(query,
+                        update, options().returnNew(true).upsert(true),
+                        EmployeeIdSequence.class);
+
+        return Objects.isNull(counter) ? 1 : counter.getTaskId();
+    }
 }

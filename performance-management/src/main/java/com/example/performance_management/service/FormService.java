@@ -1,7 +1,7 @@
 package com.example.performance_management.service;
 
-import com.example.performance_management.dto.FormDto;
-import com.example.performance_management.entity.Form;
+import com.example.performance_management.dto.performance.FormDto;
+import com.example.performance_management.entity.performance.Form;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mongoidgen.FormSequenceGeneratorService;
 import com.example.performance_management.repo.FormRepo;

@@ -1,9 +1,9 @@
 package com.example.performance_management.service;
 
-import com.example.performance_management.dto.PendingFormDto;
+import com.example.performance_management.dto.performance.PendingFormDto;
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.EmployeeForms;
-import com.example.performance_management.entity.Form;
+import com.example.performance_management.entity.performance.EmployeeForms;
+import com.example.performance_management.entity.performance.Form;
 import com.example.performance_management.entity.Role;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.repo.EmployeeFormRepo;

@@ -1,7 +1,7 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.dto.EmployeeDto;
-import com.example.performance_management.dto.EmployeeLoginResponseDto;
+import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.Role;
 import com.example.performance_management.exception.CustomException;
@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional

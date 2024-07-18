@@ -1,6 +1,6 @@
 package com.example.performance_management.repo;
 
-import com.example.performance_management.entity.Goal;
+import com.example.performance_management.entity.performance.Goal;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
