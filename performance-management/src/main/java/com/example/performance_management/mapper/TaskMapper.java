@@ -41,10 +41,12 @@ public class TaskMapper {
 
     public TaskEntryDto convertToDto(Task task) {
         TaskEntryDto taskEntryDto = new TaskEntryDto();
+        taskEntryDto.setId(task.getId());
         taskEntryDto.setDescription(task.getDescription());
         taskEntryDto.setUsername(task.getUsername());
         taskEntryDto.setDurationLogged(task.getDurationLogged());
         taskEntryDto.setCreatedDate(task.getCreatedDate());
+        taskEntryDto.setLastUpdatedAt(task.getLastUpdatedAt());
         return taskEntryDto;
     }
 

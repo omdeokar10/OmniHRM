@@ -2,6 +2,7 @@ package com.example.performance_management.entity.timesheet;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "attendance")
@@ -12,13 +13,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 public class Attendance {
 
+    @Transient
+    public static final String GENERATED_ID = "attendanceId"; //IdSequence.taskId
     @Id
     public Long id;
-
-    //userid.
-
-    //date.
-
-    //ispresent = true.
-
+    public String username;
+    public String date;
+    public boolean isPresent = true;
+    public String punchInTime;
+    public String punchOutTime;
 }

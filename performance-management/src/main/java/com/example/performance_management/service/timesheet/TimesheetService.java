@@ -49,8 +49,7 @@ public class TimesheetService {
 
     public List<TaskEntryDto> getAllTaskForUserForDate(String username, String dateString) {
         List<Task> task = getTask(taskRepo.getTaskByUsernameAndCreatedDate(username, dateString));
-        List<TaskEntryDto> taskEntryDtos = task.stream().map(taskMapper::convertToDto).toList();
-        return taskEntryDtos;
+        return task.stream().map(taskMapper::convertToDto).toList();
     }
 
     public List<TaskEntryDto> getAllTaskForUserForDate(String username, String startDateStr, String endDateStr)

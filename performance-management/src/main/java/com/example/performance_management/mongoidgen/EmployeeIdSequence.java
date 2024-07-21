@@ -16,4 +16,5 @@ public class EmployeeIdSequence {
     private Long roleId;
     private Long goalId;
     private Long taskId;
+    private Long attendanceId;
 }

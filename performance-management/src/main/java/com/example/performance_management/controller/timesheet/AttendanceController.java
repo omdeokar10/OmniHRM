@@ -1,25 +1,39 @@
 package com.example.performance_management.controller.timesheet;
 
-import java.time.LocalDate;
+import com.example.performance_management.dto.timesheet.AttendanceDto;
+import com.example.performance_management.dto.timesheet.AttendanceFetchUserDateRange;
+import com.example.performance_management.service.timesheet.AttendanceService;
+import org.springframework.web.bind.annotation.*;
 
+@RestController
+@RequestMapping("/api/attendance")
+@CrossOrigin("*")
 public class AttendanceController {
 
+    private final AttendanceService attendanceService;
 
-
-    public void markAttendance(String username, LocalDate localDate){ // user, date
-
+    public AttendanceController(AttendanceService attendanceService) {
+        this.attendanceService = attendanceService;
     }
 
-    public void logPunchInTime(){ // user , time, date
-            // mark attendance also.
+    @PostMapping("/")
+    public void markAttendance(@RequestBody AttendanceDto attendanceDto){ // user, date
+        attendanceService.markAttendanceForUser(attendanceDto);
     }
 
-    public void logPunchOutTime(){ // user, time, date
-
+    @PostMapping("/login")
+    public void logPunchInTime(@RequestBody AttendanceDto attendanceDto){ // user , date
+        attendanceService.logPunchInTime(attendanceDto);
     }
 
-    public void getAttendanceForTimePeriod(){ // get attendance list for time period.
+    @PostMapping("/logout")
+    public void logPunchOutTime(@RequestBody AttendanceDto attendanceDto){
+        attendanceService.logPunchOutTime(attendanceDto);
+    }
 
+    @GetMapping("/")
+    public void getAttendanceForTimePeriod(@RequestBody AttendanceFetchUserDateRange dto){ // get attendance list for time period.
+        attendanceService.getAttendanceBetweenTime(dto.getUsername(), dto.getStartDate(), dto.getEndDate());
     }
 
     //no update/delete.

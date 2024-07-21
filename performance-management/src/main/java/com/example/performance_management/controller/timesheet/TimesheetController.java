@@ -7,6 +7,9 @@ import com.example.performance_management.dto.timesheet.TaskFetchUserDateRange;
 import com.example.performance_management.service.timesheet.TimesheetService;
 import com.example.performance_management.utils.TimesheetUtils;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -43,9 +46,10 @@ public class TimesheetController {
         return ResponseEntity.ok("Task updated.");
     }
 
-    @GetMapping("/user/date")
-    public ResponseEntity<List<TaskEntryDto>> getTaskForUserAndCreatedDate(@RequestBody TaskFetchUserDate taskFetchUserDate){
-        List<TaskEntryDto> tasks = timesheetService.getAllTaskForUserForDate(taskFetchUserDate.getUsername(), taskFetchUserDate.getCreatedDate());
+    @GetMapping("/user/date/{username}/{dateStr}")
+    public ResponseEntity<List<TaskEntryDto>> getTaskForUserAndCreatedDate(@PathVariable String username, @PathVariable String dateStr){
+//        String username = SecurityContextHolder.getContext().getAuthentication().getName(); //todo: jwt.. remove username from request url.
+        List<TaskEntryDto> tasks = timesheetService.getAllTaskForUserForDate(username, dateStr);
         return ResponseEntity.ok(tasks);
     }
 

@@ -10,8 +10,7 @@ public class Scratch {
 
     public static void main(String[] args) {
 
-        String dateStr = "2024-07-17";
-        LocalDate parse = LocalDate.parse(dateStr);
+        LocalDate parse = LocalDate.now();
         System.out.println(parse);
 
         String s = parse.toString();
