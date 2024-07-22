@@ -98,3 +98,19 @@ body {
   padding: 1rem;
   width: 100%;
 }
+
+.custom-dropdown-item {
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.custom-dropdown-item .nav-link {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.custom-dropdown-item .nav-link:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}

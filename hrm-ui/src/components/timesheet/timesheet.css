@@ -1,0 +1,73 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 1.2em;
+  }
+  
+  .nav-button {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 1.2em;
+  }
+  
+  .week-container {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .day-column {
+    flex: 1;
+    margin: 0 10px;
+    background-color: #fafafa;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    overflow: hidden;
+  }
+  
+  .day-header {
+    background-color: #e0e0e0;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .tasks {
+    padding: 10px;
+  }
+  
+  .task {
+    background-color: #fff;
+    margin-bottom: 10px;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .task-description {
+    flex: 1;
+  }
+  
+  .task-duration {
+    margin-left: 10px;
+    font-weight: bold;
+  }
+  
+  .no-tasks {
+    text-align: center;
+    color: #999;
+    padding: 10px;
+  }
+  
