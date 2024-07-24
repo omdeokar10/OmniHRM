@@ -10,7 +10,14 @@ public class AttendanceMapper {
         attendanceDto.setUsername(attendance.getUsername());
         attendanceDto.setDate(attendanceDto.getDate());
         return attendanceDto;
+    }
 
+    public AttendanceDto emptyDto(String username, String date){
+        AttendanceDto attendanceDto = new AttendanceDto();
+        attendanceDto.setUsername(username);
+        attendanceDto.setDate(date);
+        attendanceDto.setPresent(false);
+        return attendanceDto;
     }
 
     public Attendance convertToEntity(AttendanceDto attendanceDto){

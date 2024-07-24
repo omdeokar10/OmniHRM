@@ -5,6 +5,8 @@ import com.example.performance_management.dto.timesheet.AttendanceFetchUserDateR
 import com.example.performance_management.service.timesheet.AttendanceService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/attendance")
 @CrossOrigin("*")
@@ -31,9 +33,9 @@ public class AttendanceController {
         attendanceService.logPunchOutTime(attendanceDto);
     }
 
-    @GetMapping("/")
-    public void getAttendanceForTimePeriod(@RequestBody AttendanceFetchUserDateRange dto){ // get attendance list for time period.
-        attendanceService.getAttendanceBetweenTime(dto.getUsername(), dto.getStartDate(), dto.getEndDate());
+    @PostMapping("/range")
+    public List<AttendanceDto> getAttendanceForTimePeriod(@RequestBody AttendanceFetchUserDateRange dto){ // get attendance list for time period.
+        return attendanceService.getAttendanceBetweenTime(dto.getUsername(), dto.getStartDate(), dto.getEndDate());
     }
 
     //no update/delete.

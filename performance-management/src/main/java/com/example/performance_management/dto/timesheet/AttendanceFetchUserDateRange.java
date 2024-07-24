@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AttendanceFetchUserDateRange {
-    String username;
+        String username;
     String startDate;
     String endDate;
 }

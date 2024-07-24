@@ -14,7 +14,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AttendanceService {
@@ -66,13 +68,12 @@ public class AttendanceService {
 
         String date = attendance.getDate();
         String today = parseTimeStringToRetrieveDate(LocalDateTime.now());
-        if(date.equals(today) || isTestEntry(attendanceDto)){
+        if (date.equals(today) || isTestEntry(attendanceDto)) {
             String punchInTime = attendance.getPunchInTime();
             if (punchInTime == null || punchInTime.trim().isEmpty()) {  // earliest punch in time considered.
                 attendance.setPunchInTime(LocalDateTime.now().toString());
             }
-        }
-        else{
+        } else {
             throw new CustomException("Punch in can be done for the current day only.");
         }
         attendanceRepo.save(attendance);
@@ -107,9 +108,12 @@ public class AttendanceService {
     }
 
     public AttendanceDto getAttendanceForDate(String username, String date) {
-        Attendance attendance = getAttendance(attendanceRepo.findByUsernameAndDate(username, date));
-        AttendanceDto attendanceDto = attendanceMapper.convertToDto(attendance);
-        return attendanceDto;
+        Optional<Attendance> attendance = attendanceRepo.findByUsernameAndDate(username, date);
+        if (attendance.isPresent()) {
+            return attendanceMapper.convertToDto(attendance.get());
+        } else {
+            return attendanceMapper.emptyDto(username, date);
+        }
     }
 
     public List<AttendanceDto> getAttendanceBetweenTime(String username, String startDate, String endDate) {
@@ -119,7 +123,7 @@ public class AttendanceService {
             attendance.add(getAttendanceForDate(username, date.toString()));
         }
         attendance.add(getAttendanceForDate(username, parse(endDate).toString()));
-        return attendance;
+         return attendance;
     }
 
     private LocalDate parse(String startDate) {
