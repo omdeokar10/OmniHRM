@@ -39,7 +39,6 @@ const HeaderComponent = () => {
     } else if (section === 'time') {
       return (
         <>
-          <DropdownItem><NavLink to="/time/attendance" className="nav-link">Attendance</NavLink></DropdownItem>
           <DropdownItem><NavLink to="/time/timesheet" className="nav-link">Worksheet</NavLink></DropdownItem>
           <DropdownItem><NavLink to="/time/summary" className="nav-link">Summary</NavLink></DropdownItem>
         </>

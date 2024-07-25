@@ -2,18 +2,15 @@ import axios from "axios";
 import { getLoggedInUser } from "../auth/AuthService";
 
 const baseURL = "http://localhost:8081/api/attendance";
-
 const timeSheetURL = "http://localhost:8081/api/timesheet";
+const currentDate = new Date();
 
 export const logPunchInTime = () => {
-
     var username = getLoggedInUser();
     var date = getCurrentDate();
 
     const attendanceDto = { username, date };
-
     axios.post(baseURL + "/login", attendanceDto);
-
 }
 
 function getCurrentDate() {
@@ -23,9 +20,41 @@ function getCurrentDate() {
     return date;
 }
 
+export const setEndDay = (globalDate) => {
+    const currentDate = new Date(globalDate);
+    const nextWeekDate = new Date(globalDate);
+    nextWeekDate.setDate(currentDate.getDate() + 7);
+    return nextWeekDate;
+}
+
+export const getCurrentGlobalDate = () => {
+    const currentDate = new Date();
+    const startOfWeekDate = new Date(currentDate);
+
+    const dayOfWeek = currentDate.getDay();
+    startOfWeekDate.setDate(currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1));
+
+    const yyyy = startOfWeekDate.getFullYear();
+    const mm = String(startOfWeekDate.getMonth()).padStart(2, '0');
+    const dd = String(startOfWeekDate.getDate()).padStart(2, '0');
+
+    return new Date(yyyy, mm, dd);
+}
+
 export const startDayOfWorkingWeek = () => {
     var curr = new Date();
     return curr.getDate() - curr.getDay() + 1;
+}
+
+export const getNextWeekStart = () => {
+    var firstDay = startDayOfWorkingWeek();
+    var dateString = new Date(getYear() + "/" + getCurrentMonth() + "/" + startDayOfWorkingWeek());
+    var nextWeek = new Date(dateString.getTime() + 7 * 24 * 60 * 60 * 1000);
+    console.log(nextWeek.getDate());
+}
+
+export const getNextWeekEnd = () => {
+
 }
 
 export const endDayOfWorkingWeek = () => {
@@ -56,13 +85,11 @@ export const fetchTasksForDate = (date) => {
     var username = getLoggedInUser();
     var object = { username, createdDate };
     return axios.get(timeSheetURL + "/user/date/" + username + "/" + createdDate);
+}
 
-    // const formattedDate = `${date.year}-${date.month}-${date.date}`;
-    // axios.get(`/api/tasks?date=${formattedDate}`)
-    //   .then(response => {
-    //     console.log(`Tasks for ${formattedDate}:`, response.data);
-    //   })
-    //   .catch(error => {
-    //     // console.error(`Error fetching tasks for ${formattedDate}:`, error);
-    //   });
+export const fetchAttendance = (startDate, endDate) => {
+    var username = getLoggedInUser();
+    const attendanceDto = { username, startDate, endDate };
+    var present = 0;
+    return axios.post(baseURL + "/range", attendanceDto);
 }

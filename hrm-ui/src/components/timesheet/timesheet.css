@@ -35,11 +35,12 @@
   }
   
   .day-header {
-    background-color: #e0e0e0;
-    padding: 10px;
+    background-color: gainsboro;
+    padding: 2px;
     text-align: center;
     font-weight: bold;
     border-bottom: 1px solid #ddd;
+    height: fit-content;
   }
   
   .tasks {
