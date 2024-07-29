@@ -93,3 +93,9 @@ export const fetchAttendance = (startDate, endDate) => {
     var present = 0;
     return axios.post(baseURL + "/range", attendanceDto);
 }
+
+export const addTask = (description, durationLogged, createdDate) => {
+    var username = getLoggedInUser();
+    const task = { description, username, durationLogged, createdDate };
+    return axios.post(timeSheetURL + "/add", task);
+}

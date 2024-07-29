@@ -6,7 +6,9 @@ import { useState, useEffect } from 'react';
 function TimesheetSummaryComponent() {
 
   const [attendanceRecord, setAttendanceRecord] = useState(0);
-  const months = ['','January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  const [hoursWorked, setHoursWorked] = useState(0);
+
+  const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const [month, setMonth] = useState(months[new Date().getMonth() + 1]);
   const [year, setYear] = useState(new Date().getFullYear());
   function punchTimeIn() {
@@ -19,16 +21,23 @@ function TimesheetSummaryComponent() {
     var startDate = getStartOfMonth(year, month).toISOString().slice(0, 10);
     var endDate = getEndOfMonth(year, month).toISOString().slice(0, 10);
     var count = 0;
+    var hours = 0;
     fetchAttendance(startDate, endDate)
       .then((res) => {
         var dataEntries = res.data;
         for (let i = 0; i < dataEntries.length; i++) {
-          console.log(dataEntries[i].isPresent);
           if (dataEntries[i].isPresent) {
             count += 1;
           }
+          if (dataEntries[i].punchOutTime != null && dataEntries[i].punchInTime != null) {
+            var punchOutTime = new Date(dataEntries[i].punchOutTime);
+            var punchInTime = new Date(dataEntries[i].punchInTime);
+            let minutes = (punchOutTime - punchInTime) / (1000*60);
+            hours += minutes;
+          }
         }
         setAttendanceRecord(count);
+        setHoursWorked(hours);
       });
 
   }
@@ -70,13 +79,18 @@ function TimesheetSummaryComponent() {
       </div>
 
       <div className="summary-container">
-      <div className="summary-item">
+        <div className="summary-item">
           <a href="/time/timesheet" className="summary-link">{month}, {year}</a>
         </div>
 
         <div className="summary-item">
           <span className="summary-link">Attendance for this month: {attendanceRecord} </span>
         </div>
+
+        <div className="summary-item">
+          <span className="summary-link">Hours worked this month: {hoursWorked} </span>
+        </div>
+
       </div>
 
 
