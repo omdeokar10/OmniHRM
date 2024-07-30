@@ -48,6 +48,16 @@ public class EmployeeService {
         return employeeRepo.findById(id).orElseThrow(supplier);
     }
 
+    public EmployeeDto getEmployeeByEmail(String email){
+        Employee employee = employeeRepo.findByEmailStartsWith(email).orElseThrow(()->new CustomException("Employee does not exist."));
+        return employeeMapper.convertToDto(employee, passwordEncoder);
+    }
+    public EmployeeDto getEmployeeByUsername(String username){
+        Supplier<CustomException> supplier = () -> new CustomException("Employee does not exist.");
+        Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(supplier);
+        return employeeMapper.convertToDto(employee, passwordEncoder);
+    }
+
     public EmployeeDto getViewableEmployeeById(Long id){
         Employee employee = getEmployeeById(id);
         return mapEmployee.apply(employee);
@@ -62,8 +72,7 @@ public class EmployeeService {
         performChecks(employeeDto);
         Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
         setIds(employee);
-        Employee savedEmployee = employeeRepo.save(employee);
-        return savedEmployee;
+        return employeeRepo.save(employee);
     }
 
     private void performChecks(EmployeeDto employeeDto) {
@@ -109,7 +118,7 @@ public class EmployeeService {
         employee.setFullName(employeeDto.getFullName());
         employee.setDateOfBirth(employeeDto.getDateOfBirth());
         employee.setRoles(employeeDto.getRoles());
-        employee.setTeam(employeeDto.getTeam());
+
     }
 
     public void deleteEmployee(Long id) {

@@ -33,6 +33,5 @@ public class Employee {
     private String password;
     private String dateOfBirth;
     private List<Role> roles; // For referencing roles
-    private String team;
     public boolean isEnabled = true;
 }

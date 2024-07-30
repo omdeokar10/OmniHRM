@@ -23,7 +23,5 @@ public class EmployeeDto {
     private String password;
     private String dateOfBirth;
     private List<Role> roles;
-    private String team;
-
 
 }

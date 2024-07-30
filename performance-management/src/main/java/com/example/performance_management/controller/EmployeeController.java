@@ -1,6 +1,7 @@
 package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.EmployeeDto;
+import com.example.performance_management.entity.Employee;
 import com.example.performance_management.service.AuthService;
 import com.example.performance_management.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/employees")
+@CrossOrigin("*")
 public class EmployeeController {
 
     private final EmployeeService employeeService;
@@ -31,6 +33,12 @@ public class EmployeeController {
         employeeService.getEmployeeById(id);
         EmployeeDto employeeDto = employeeService.getViewableEmployeeById(id);
         return ResponseEntity.ok(employeeDto);
+    }
+
+    @GetMapping("/username/{username}")
+    public ResponseEntity<EmployeeDto> getEmployeeByUsername(@PathVariable String username){
+        EmployeeDto employeeByUsername = employeeService.getEmployeeByUsername(username);
+        return ResponseEntity.ok(employeeByUsername);
     }
 
     @PostMapping

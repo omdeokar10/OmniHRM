@@ -2,14 +2,10 @@ package com.example.performance_management.controller.timesheet;
 
 
 import com.example.performance_management.dto.timesheet.TaskEntryDto;
-import com.example.performance_management.dto.timesheet.TaskFetchUserDate;
 import com.example.performance_management.dto.timesheet.TaskFetchUserDateRange;
 import com.example.performance_management.service.timesheet.TimesheetService;
 import com.example.performance_management.utils.TimesheetUtils;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -36,7 +32,8 @@ public class TimesheetController {
         //
     }
 
-    public ResponseEntity<String> deleteTaskForUser(@RequestBody Long taskId){ //task id.
+    @DeleteMapping("/delete/{taskId}")
+    public ResponseEntity<String> deleteTaskForUser(@PathVariable Long taskId){
         timesheetService.deleteTask(taskId);
         return ResponseEntity.ok("Task deleted.");
     }
@@ -52,6 +49,8 @@ public class TimesheetController {
         List<TaskEntryDto> tasks = timesheetService.getAllTaskForUserForDate(username, dateStr);
         return ResponseEntity.ok(tasks);
     }
+
+
 
     @GetMapping("/user/range")
     public ResponseEntity<List<TaskEntryDto>> getTasksForUserBetweenDates(@RequestBody TaskFetchUserDateRange taskFetchUserDateRange){

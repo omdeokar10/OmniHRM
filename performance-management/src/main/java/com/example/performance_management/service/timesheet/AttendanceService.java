@@ -123,7 +123,7 @@ public class AttendanceService {
             attendance.add(getAttendanceForDate(username, date.toString()));
         }
         attendance.add(getAttendanceForDate(username, parse(endDate).toString()));
-         return attendance;
+        return attendance;
     }
 
     private LocalDate parse(String startDate) {

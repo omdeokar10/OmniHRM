@@ -28,7 +28,6 @@ public class EmployeeMapper {
         employeeDto.setUserName(employee.getUserName());
         employeeDto.setDateOfBirth(employee.getDateOfBirth());
         employeeDto.setRoles(employee.getRoles());
-        employeeDto.setTeam(employee.getTeam());
         return employeeDto;
     }
 
@@ -45,7 +44,6 @@ public class EmployeeMapper {
         employee.setPassword(passwordEncoder.encode(employeeDto.getPassword()));
         employee.setDateOfBirth(employeeDto.getDateOfBirth());
         setRoles(employeeDto, employee);
-        employee.setTeam(employeeDto.getTeam());
         return employee;
     }
 

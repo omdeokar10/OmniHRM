@@ -8,7 +8,9 @@ public class AttendanceMapper {
     public AttendanceDto convertToDto(Attendance attendance){
         AttendanceDto attendanceDto = new AttendanceDto();
         attendanceDto.setUsername(attendance.getUsername());
-        attendanceDto.setDate(attendanceDto.getDate());
+        attendanceDto.setDate(attendance.getDate());
+        attendanceDto.setPunchInTime(attendance.getPunchInTime());
+        attendanceDto.setPunchOutTime(attendance.getPunchOutTime());
         return attendanceDto;
     }
 
