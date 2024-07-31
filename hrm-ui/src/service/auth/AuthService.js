@@ -19,9 +19,7 @@ export const saveLoggedInUser = (username, roles) => {
 }
 
 export const isUserLoggedIn = () => {
-
     const username = getLoggedInUser();
-
     if (username == null) {
         return false;
     }

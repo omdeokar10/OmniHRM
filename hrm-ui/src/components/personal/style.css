@@ -1,0 +1,87 @@
+.employee-details {
+  padding: 20px;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  margin-right: 5px;
+  cursor: pointer;
+  border: none;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.tab-button.active {
+  background-color: #007bff;
+  color: white;
+}
+
+.tab-content {
+  border: 1px solid #ddd;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.hierarchy-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  /* Added to position the line absolutely */
+}
+
+.hierarchy-box {
+  border: 1px solid #ddd;
+  padding: 16px;
+  margin: 8px 0;
+  width: 80%;
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+  position: relative;
+  /* Ensure the line is layered correctly */
+}
+
+.hierarchy-box::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: 2px;
+  background-color: #ddd;
+  top: -8px;
+  /* Slight overlap for smooth connection */
+  z-index: -1;
+  /* Ensure the line is behind the box */
+}
+
+.hierarchy-box:first-child::before {
+  display: none;
+}
+
+.hierarchy-box::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  height: 16px;
+  width: 2px;
+  background-color: #ddd;
+  top: 100%;
+  z-index: -1;
+}
+
+.hierarchy-box:last-child::after {
+  display: none;
+}
+
+.hierarchy-box p {
+  margin: 4px 0;
+  font-size: 14px;
+}

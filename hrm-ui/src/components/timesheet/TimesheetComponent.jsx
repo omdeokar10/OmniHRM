@@ -1,9 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import { getCurrentGlobalDate, startDayOfWorkingWeek, endDayOfWorkingWeek, getCurrentMonth, getYear, fetchTasksForDate, getNextWeekStart, addTask } from '../../service/timesheet/TimesheetService';
-import axios from "axios";
-import { getLoggedInUser } from '../../service/auth/AuthService';
-import { useNavigate, useParams } from 'react-router-dom'
+import { getCurrentGlobalDate, getYear, fetchTasksForDate, addTask, deleteTask } from '../../service/timesheet/TimesheetService';
 
 const TimesheetComponent = () => {
   const hours = Array.from({ length: 24 }, (_, i) => i);
@@ -11,7 +8,6 @@ const TimesheetComponent = () => {
   const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const [tasks, setTasks] = useState({});
   const [showModal, setShowModal] = useState(false);
-  const [year, setYear] = useState(0);
   const [weekDates, setWeekDates] = useState([]);
   const [globalDate, setGlobalDate] = useState(getCurrentGlobalDate());
   const [startDay, setStartDay] = useState(getCurrentGlobalDate().getDate());
@@ -20,16 +16,14 @@ const TimesheetComponent = () => {
   const [description, setDescription] = useState('');
   const [durationLogged, setDurationLogged] = useState('');
   const [createdDate, setCreatedDate] = useState(getCurrentGlobalDate().toISOString().slice(0, 10));
+  const [update, setUpdate] = useState(false);
 
   useEffect(() => {
-
-    console.log(globalDate.getMonth());
-    setCurrentMonth(getCurrentGlobalDate().getMonth());
-    setYear(globalDate.getFullYear());
-    setCurrentYear(globalDate.getFullYear());
-
-    const dates = getWeekDates(startDay, currentMonth, currentYear);
+    console.log('use effect');
+    const dates = getWeekDates(globalDate.getDate(), globalDate.getMonth(), globalDate.getFullYear());
     setWeekDates(dates);
+
+
 
     dates.forEach(date =>
       fetchTasksForDate(date)
@@ -45,7 +39,7 @@ const TimesheetComponent = () => {
         }));
 
 
-  }, [globalDate, startDay])
+  }, [globalDate, startDay, update])
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -61,10 +55,10 @@ const TimesheetComponent = () => {
   };
 
   function addTimeSheetTask() {
-    var loggedInUser = getLoggedInUser();
     addTask(description, durationLogged, createdDate)
       .then(() => {
-        that.setState({ update: true })
+        console.log('setting update');
+        setUpdate(true);
       })
       .catch(function (err) {
         console.log(err)
@@ -87,30 +81,51 @@ const TimesheetComponent = () => {
   };
 
   const nextweek = () => {
-    console.log('global dates' + globalDate);
-    var dateString = new Date(year + "-" + currentMonth + "-" + startDay);
+    var dateString = new Date(currentYear + "-" + (currentMonth + 1) + "-" + startDay);
     var nextWeek = new Date(dateString.getTime() + 7 * 24 * 60 * 60 * 1000);
     setGlobalDate(nextWeek);
     setStartDay(nextWeek.getDate());
     setCurrentMonth(nextWeek.getMonth());
+    setCurrentYear(nextWeek.getFullYear());
+
   }
 
 
   const pastweek = () => {
-    console.log('global dates' + globalDate);
-    var dateString = new Date(year + "-" + currentMonth + "-" + startDay);
+    var dateString = new Date(currentYear + "-" + (currentMonth + 1) + "-" + startDay);
     var nextWeek = new Date(dateString.getTime() - 7 * 24 * 60 * 60 * 1000);
     setGlobalDate(nextWeek);
     setStartDay(nextWeek.getDate());
     setCurrentMonth(nextWeek.getMonth());
+    setCurrentYear(nextWeek.getFullYear());
+    console.log('past week - current month' + months[nextWeek.getMonth() + 1]);
   }
 
+
+  function handleDeleteTask(taskId, dateString) {
+    console.log('delete task' + taskId + ':' + dateString);
+    const confirmDelete = window.confirm("Are you sure you want to delete this task?");
+    if (confirmDelete) {
+      deleteTask(taskId)
+        .then(() => {
+          setTasks((prevTasks) => {
+            const updatedTasks = { ...prevTasks };
+            updatedTasks[dateString] = updatedTasks[dateString].filter(task => task.id !== taskId);
+            return updatedTasks;
+          });
+          setUpdate(prev => !prev);
+        })
+        .catch(error => {
+          console.error(`Error deleting task ${taskId}:`, error);
+        });
+    }
+  }
 
   return (
     <div className="container">
       <div className="header">
         <button className="nav-button" onClick={pastweek}>{'<'}</button>
-        <span className='m-2'>Week of {startDay} {months[currentMonth]} {year}</span>
+        <span className='m-2'>Week of {startDay} {months[currentMonth]} {currentYear}</span>
         <button className="nav-button" onClick={nextweek}>{'>'}</button>
       </div>
       <button type="button" className="btn btn-secondary m-4" onClick={handleShowModal}>
@@ -134,7 +149,7 @@ const TimesheetComponent = () => {
                 <div className="tasks">
                   {dayTasks.length > 0 ? (
                     dayTasks.map(task => (
-                      <div key={task.id} className="task">
+                      <div key={task.id} className="task" onDoubleClick={() => handleDeleteTask(task.id, dateString)}>
                         <div className="task-description">{task.description}</div>
                         <div className="task-duration">{task.durationLogged}</div>
                       </div>
@@ -201,7 +216,9 @@ const TimesheetComponent = () => {
         </div>
       )
       }
-
+      <div>
+        <span className='text-danger'><hr></hr>Double click deletes the task <hr></hr></span>
+      </div>
     </div >
 
   );

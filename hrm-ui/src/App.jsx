@@ -17,6 +17,7 @@ import SummaryComponent from './components/performance/SummaryComponent'
 import AttendanceComponent from './components/timesheet/AttendanceComponent'
 import TimesheetSummaryComponent from './components/timesheet/TimesheetSummaryComponent'
 import TimesheetComponent from './components/timesheet/TimesheetComponent'
+import EmployeeDetails from './components/personal/EmployeeDetails'
 
 
 function App() {
@@ -45,6 +46,8 @@ function App() {
           <Route path='/time/attendance' element={< AttendanceComponent />}></Route>
           <Route path='/time/timesheet' element={< TimesheetComponent />}></Route>
           <Route path='/time/summary' element={< TimesheetSummaryComponent />}></Route>
+
+          <Route path='/personal/summary' element={< EmployeeDetails />}></Route>
 
         </Routes>
 

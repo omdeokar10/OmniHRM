@@ -26,6 +26,7 @@ function LoginComponent() {
             storeToken(token);
 
             saveLoggedInUser(username, roles);
+            
             navigator("/performance/summary")
 
             window.location.reload(false);

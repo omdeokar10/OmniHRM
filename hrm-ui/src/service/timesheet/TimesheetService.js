@@ -38,23 +38,14 @@ export const getCurrentGlobalDate = () => {
     const mm = String(startOfWeekDate.getMonth()).padStart(2, '0');
     const dd = String(startOfWeekDate.getDate()).padStart(2, '0');
 
+
+
     return new Date(yyyy, mm, dd);
 }
 
 export const startDayOfWorkingWeek = () => {
     var curr = new Date();
     return curr.getDate() - curr.getDay() + 1;
-}
-
-export const getNextWeekStart = () => {
-    var firstDay = startDayOfWorkingWeek();
-    var dateString = new Date(getYear() + "/" + getCurrentMonth() + "/" + startDayOfWorkingWeek());
-    var nextWeek = new Date(dateString.getTime() + 7 * 24 * 60 * 60 * 1000);
-    console.log(nextWeek.getDate());
-}
-
-export const getNextWeekEnd = () => {
-
 }
 
 export const endDayOfWorkingWeek = () => {
@@ -98,4 +89,8 @@ export const addTask = (description, durationLogged, createdDate) => {
     var username = getLoggedInUser();
     const task = { description, username, durationLogged, createdDate };
     return axios.post(timeSheetURL + "/add", task);
+}
+
+export const deleteTask = (taskId) => {
+    return axios.delete(timeSheetURL + "/delete/" + taskId);
 }

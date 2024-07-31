@@ -25,6 +25,7 @@ const HeaderComponent = () => {
       return (
         <>
           <DropdownItem><NavLink to="/performance/listforms" className="nav-link">Forms</NavLink></DropdownItem>
+          <DropdownItem><NavLink to="/performance/createform" className="nav-link">Create Form</NavLink></DropdownItem>
           <DropdownItem><NavLink to="/performance/listgoal" className="nav-link">Goals</NavLink></DropdownItem>
           <DropdownItem><NavLink to="/performance/summary" className="nav-link">Summary</NavLink></DropdownItem>
         </>
@@ -32,8 +33,6 @@ const HeaderComponent = () => {
     } else if (section === 'leave-management') {
       return (
         <>
-          <DropdownItem><NavLink to="/leave-management/subsection1" className="nav-link">Leaves Subsection 1</NavLink></DropdownItem>
-          <DropdownItem><NavLink to="/leave-management/subsection2" className="nav-link">Leaves Subsection 2</NavLink></DropdownItem>
         </>
       );
     } else if (section === 'time') {
@@ -43,11 +42,10 @@ const HeaderComponent = () => {
           <DropdownItem><NavLink to="/time/summary" className="nav-link">Summary</NavLink></DropdownItem>
         </>
       );
-    } else if (section === 'salary') {
+    } else if (section === 'personal') {
       return (
         <>
-          <DropdownItem><NavLink to="/salary/subsection1" className="nav-link">Salary Subsection 1</NavLink></DropdownItem>
-          <DropdownItem><NavLink to="/salary/subsection2" className="nav-link">Salary Subsection 2</NavLink></DropdownItem>
+          <DropdownItem><NavLink to="/personal/summary" className="nav-link">Summary</NavLink></DropdownItem>
         </>
       );
     }
@@ -94,12 +92,12 @@ const HeaderComponent = () => {
                 </Dropdown>
               </li>}
               {isAuth && <li className='nav-item dropdown'>
-                <Dropdown isOpen={dropdownOpen['salary']} toggle={() => toggleDropdown('salary')}>
+                <Dropdown isOpen={dropdownOpen['personal']} toggle={() => toggleDropdown('personal')}>
                   <DropdownToggle nav caret>
-                    Finance
+                    Personal
                   </DropdownToggle>
                   <DropdownMenu>
-                    {renderSubsections('salary')}
+                    {renderSubsections('personal')}
                   </DropdownMenu>
                 </Dropdown>
               </li>}
