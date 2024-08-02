@@ -1,6 +1,7 @@
 import axios from "axios";
 import React from "react";
+import api from "../BaseService";
 
-const baseURL = "http://localhost:8081/api/goals";
+const performanceURL = "/api/goals";
 
-export const addPerformanceGoal = (goal) => axios.post(baseURL, goal);
+export const addPerformanceGoal = (goal) => api.post(performanceURL, goal);

@@ -9,7 +9,6 @@ import PerformanceComponent from './components/performance/PerformanceComponent'
 import LoginComponent from './components/auth/LoginComponent'
 import CreateFormComponent from './components/performance/CreateFormComponent'
 import ShowFormComponent from './components/performance/ShowFormComponent'
-import AreasOfImprovement from './components/performance/AreasOfImprovement'
 import CreateGoalComponent from './components/performance/CreateGoalComponent'
 import ListGoals from './components/performance/ListGoals'
 import ListAllPendingFormComponent from './components/performance/ListAllPendingFormComponent'
@@ -40,7 +39,6 @@ function App() {
           <Route path='/performance/listforms' element={< ListAllPendingFormComponent />}></Route>
           <Route path='/performance/showforms/:id' element={< ShowFormComponent />}></Route>
 
-          <Route path='/performance/areasofimprovement' element={< AreasOfImprovement />}></Route>
           <Route path='/performance/summary' element={< SummaryComponent />}></Route>
           
           <Route path='/time/attendance' element={< AttendanceComponent />}></Route>

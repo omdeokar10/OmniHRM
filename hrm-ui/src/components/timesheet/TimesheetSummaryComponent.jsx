@@ -20,22 +20,9 @@ function TimesheetSummaryComponent() {
     var month = date.getMonth();
     var startDate = getStartOfMonth(year, month).toISOString().slice(0, 10);
     var endDate = getEndOfMonth(year, month).toISOString().slice(0, 10);
-    var count = 0;
-    var hours = 0;
     fetchAttendance(startDate, endDate)
       .then((res) => {
-        var dataEntries = res.data;
-        for (let i = 0; i < dataEntries.length; i++) {
-          if (dataEntries[i].isPresent) {
-            count += 1;
-          }
-          if (dataEntries[i].punchOutTime != null && dataEntries[i].punchInTime != null) {
-            var punchOutTime = new Date(dataEntries[i].punchOutTime);
-            var punchInTime = new Date(dataEntries[i].punchInTime);
-            let minutes = (punchOutTime - punchInTime) / (1000*60);
-            hours += minutes;
-          }
-        }
+        var { count, hours } = calculateHours(res);
         setAttendanceRecord(count);
         setHoursWorked(hours);
       });
@@ -46,6 +33,27 @@ function TimesheetSummaryComponent() {
     fetchAttendanceRecord();
   }, []);
 
+  function calculateHours(res) {
+    var count = 0;
+    var hours = 0;
+    var dataEntries = res.data;
+    for (let i = 0; i < dataEntries.length; i++) {
+      if (dataEntries[i].isPresent) {
+        count += 1;
+      }
+      if (dataEntries[i].punchOutTime != null && dataEntries[i].punchInTime != null) {
+        var punchOutTime = new Date(dataEntries[i].punchOutTime);
+        var punchInTime = new Date(dataEntries[i].punchInTime);
+        let hour = parseInt(punchOutTime - punchInTime) / (1000 * 60 * 60);
+        hour = hour.toFixed(2);
+        let minutes = parseInt(punchOutTime - punchInTime) / (1000 * 60);
+        minutes = minutes.toFixed(2);
+        hours += hour + 'h';
+        hours += minutes + 'm';
+      }
+    }
+    return { count, hours };
+  }
 
   const getStartOfMonth = (year, month) => {
     return new Date(year, month, 2);
@@ -84,16 +92,18 @@ function TimesheetSummaryComponent() {
         </div>
 
         <div className="summary-item">
-          <span className="summary-link">Attendance for this month: {attendanceRecord} </span>
+          <span className="summary-link">*Attendance for this month: {attendanceRecord} </span>
         </div>
 
         <div className="summary-item">
-          <span className="summary-link">Hours worked this month: {hoursWorked} </span>
+          <span className="summary-link">*Hours worked this month: {hoursWorked} </span>
         </div>
 
       </div>
 
-
+      <div className='footer'>
+        *Attendance & hours calculated on basis on punch in time and punch out time.
+      </div>
     </div >
 
   )

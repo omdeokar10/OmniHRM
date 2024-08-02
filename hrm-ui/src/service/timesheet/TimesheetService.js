@@ -1,16 +1,44 @@
-import axios from "axios";
 import { getLoggedInUser } from "../auth/AuthService";
+import api from "../BaseService";
 
-const baseURL = "http://localhost:8081/api/attendance";
-const timeSheetURL = "http://localhost:8081/api/timesheet";
-const currentDate = new Date();
+const attendanceUrl = "/api/attendance";
+const timesheetURL = "/api/timesheet";
 
 export const logPunchInTime = () => {
+    var date = getCurrentDate();
+    const attendanceDto = { date };
+    api.post(attendanceUrl + "/login", attendanceDto);
+}
+
+export const logPunchOutTime = () => {
     var username = getLoggedInUser();
     var date = getCurrentDate();
-
     const attendanceDto = { username, date };
-    axios.post(baseURL + "/login", attendanceDto);
+    api.post(attendanceUrl + "/logout", attendanceDto);
+}
+
+export const fetchTasksForDate = (date) => {
+    var createdDate = `${date.year}-${date.month}-${date.date}`;
+    var username = getLoggedInUser();
+    var object = { username, createdDate };
+    return api.get(timesheetURL + "/user/date/" + username + "/" + createdDate);
+}
+
+export const fetchAttendance = (startDate, endDate) => {
+    var username = getLoggedInUser();
+    const attendanceDto = { username, startDate, endDate };
+    var present = 0;
+    return api.post(attendanceUrl + "/range", attendanceDto);
+}
+
+export const addTask = (description, durationLogged, createdDate) => {
+    var username = getLoggedInUser();
+    const task = { description, durationLogged, createdDate };
+    return api.post(timesheetURL + "/add", task);
+}
+
+export const deleteTask = (taskId) => {
+    return api.delete(timesheetURL + "/delete/" + taskId);
 }
 
 function getCurrentDate() {
@@ -30,16 +58,11 @@ export const setEndDay = (globalDate) => {
 export const getCurrentGlobalDate = () => {
     const currentDate = new Date();
     const startOfWeekDate = new Date(currentDate);
-
     const dayOfWeek = currentDate.getDay();
     startOfWeekDate.setDate(currentDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1));
-
     const yyyy = startOfWeekDate.getFullYear();
     const mm = String(startOfWeekDate.getMonth()).padStart(2, '0');
     const dd = String(startOfWeekDate.getDate()).padStart(2, '0');
-
-
-
     return new Date(yyyy, mm, dd);
 }
 
@@ -63,34 +86,3 @@ export const getYear = () => {
     return date.getYear() + 1900;
 }
 
-
-export const logPunchOutTime = () => {
-    var username = getLoggedInUser();
-    var date = getCurrentDate();
-    const attendanceDto = { username, date };
-    axios.post(baseURL + "/logout", attendanceDto);
-}
-
-export const fetchTasksForDate = (date) => {
-    var createdDate = `${date.year}-${date.month}-${date.date}`;
-    var username = getLoggedInUser();
-    var object = { username, createdDate };
-    return axios.get(timeSheetURL + "/user/date/" + username + "/" + createdDate);
-}
-
-export const fetchAttendance = (startDate, endDate) => {
-    var username = getLoggedInUser();
-    const attendanceDto = { username, startDate, endDate };
-    var present = 0;
-    return axios.post(baseURL + "/range", attendanceDto);
-}
-
-export const addTask = (description, durationLogged, createdDate) => {
-    var username = getLoggedInUser();
-    const task = { description, username, durationLogged, createdDate };
-    return axios.post(timeSheetURL + "/add", task);
-}
-
-export const deleteTask = (taskId) => {
-    return axios.delete(timeSheetURL + "/delete/" + taskId);
-}

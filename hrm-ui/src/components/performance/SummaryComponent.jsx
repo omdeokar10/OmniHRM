@@ -9,18 +9,17 @@ function SummaryComponent() {
     const [pendingform, setPendingForm] = useState(0);
     const [pendingGoal, setPendingGoals] = useState(0);
     const [pendingKpi, setPendingKpi] = useState(0);
+
     useEffect(() => {
-        console.log('in use effect: setup code');
         fetchFormData();
         fetchGoalData();
-        return () => {
-            console.log('in use effect, cleanup code');
-        };
     }, [])
 
     function fetchFormData() {
         getPendingFormData().then((response) => {
             setPendingForm(response.data.length);
+        }).catch((error) => {
+            return Promise.reject(error);
         });
     }
 
@@ -30,6 +29,8 @@ function SummaryComponent() {
             var kpis = 0;
             response.data.forEach((goal) => kpis += (goal.kpis.length));
             setPendingKpi(kpis);
+        }).catch((error) => {
+            return Promise.reject(error);
         });
     }
 

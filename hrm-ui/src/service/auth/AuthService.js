@@ -1,17 +1,17 @@
-import axios from "axios";
-import React from "react";
+import api from "../BaseService";
 
-const baseURL = "http://localhost:8081/api/auth";
-//localhost:8081/api/auth/login
-export const registerAPICall = (registerObj) => axios.post(baseURL + '/register', registerObj);
+const authUrl = '/api/auth';
 
-export const loginAPICall = (loginObj) => {
-    return axios.post(baseURL + '/login', loginObj);
+export const getAccessToken = () => localStorage.getItem("accesstoken");
+
+export const storeToken = (token, refreshToken) => {
+    localStorage.setItem("accesstoken", token);
+    localStorage.getItem("accesstoken");
+    if (refreshToken) {
+        localStorage.setItem("refreshToken", refreshToken);
+        localStorage.getItem("refreshToken");
+    }
 }
-
-export const storeToken = (token) => localStorage.setItem("token", token);
-
-export const getToken = () => localStorage.getItem("token");
 
 export const saveLoggedInUser = (username, roles) => {
     sessionStorage.setItem("authenticatedUser", username);
@@ -32,19 +32,34 @@ export const getLoggedInUser = () => {
     return sessionStorage.getItem("authenticatedUser");
 }
 
-export const logout = () => {
-    localStorage.clear();
-    sessionStorage.clear();
-}
-
 export const isAdminUser = () => {
-
     let role = sessionStorage.getItem("role");
-
     if (role != null && role === 'ROLE_ADMIN') {
         return true;
     } else {
         return false;
     }
-
 }
+
+export const registerAPICall = (registerObj) => api.post(authUrl + '/register', registerObj);
+
+export const loginAPICall = (loginObj) => {
+    return api.post(authUrl + '/login', loginObj);
+}
+
+export const refreshApiCall = () => {
+    var refreshToken = localStorage.getItem("refreshToken");
+    var username = getLoggedInUser();
+    var refreshRequestObj = { refreshToken, username };
+    return api.post(authUrl + '/refresh/token', refreshRequestObj);
+}
+
+export const logout = () => {
+    var refreshToken = localStorage.getItem("refreshToken");
+    var user = getLoggedInUser();
+    const logoutObj = { user, refreshToken };
+    api.post(authUrl + '/logout', logoutObj);
+    localStorage.clear();
+    sessionStorage.clear();
+}
+

@@ -20,11 +20,12 @@ function LoginComponent() {
         await loginAPICall(loginDto).then((response) => {
             console.log(response.data);
 
-            const token = 'Bearer ' + response.data.jwtToken;
+            const token = 'Bearer ' + response.data.accessToken;
+            const refreshToken = response.data.refreshToken;
             const username = response.data.username;
             const roles = response.data.roles;
-            storeToken(token);
-
+            storeToken(token, refreshToken);
+            
             saveLoggedInUser(username, roles);
             
             navigator("/performance/summary")

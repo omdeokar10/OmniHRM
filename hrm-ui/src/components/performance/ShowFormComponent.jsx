@@ -12,16 +12,13 @@ function ShowFormComponent() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        console.log('in use effect: setup code');
         fetchFormData(id);
         return () => {
-            console.log('in use effect, cleanup code');
         };
     }, [])
 
     function fetchFormData(id) {
         getFormData(id).then((response) => {
-            console.log('show form component' + response.data);
             setFormData(response.data["fields"]);
         }).catch(error => {
             console.log(error);

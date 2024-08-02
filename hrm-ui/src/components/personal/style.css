@@ -52,7 +52,7 @@
   content: '';
   position: absolute;
   left: 50%;
-  transform: translateX(-50%);
+  /* transform: translateX(-50%); */
   height: 100%;
   width: 2px;
   background-color: #ddd;

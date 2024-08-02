@@ -19,7 +19,6 @@ const TimesheetComponent = () => {
   const [update, setUpdate] = useState(false);
 
   useEffect(() => {
-    console.log('use effect');
     const dates = getWeekDates(globalDate.getDate(), globalDate.getMonth(), globalDate.getFullYear());
     setWeekDates(dates);
 

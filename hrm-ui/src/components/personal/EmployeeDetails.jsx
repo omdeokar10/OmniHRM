@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { fetch_details_for_current_employee, fetchDetailsForHierarchy } from '../../service/personal/employeedetails';
+import { fetchDetailsCurrentEmployee, fetchDetailsForHierarchy } from '../../service/personal/employeedetails';
 import '../personal/style.css';
 
 function EmployeeDetails() {
@@ -9,12 +9,11 @@ function EmployeeDetails() {
 
     useEffect(() => {
 
-        fetch_details_for_current_employee().then((response) => {
+        fetchDetailsCurrentEmployee().then((response) => {
             setDetails(response.data);
         });
 
         fetchDetailsForHierarchy().then((res) => {
-            console.log('hierarchy set');
             setHierarchy(res.data);
         });
 

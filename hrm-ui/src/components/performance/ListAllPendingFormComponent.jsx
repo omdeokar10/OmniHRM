@@ -10,10 +10,8 @@ function ListAllPendingFormComponent() {
     const navigate = useNavigate()
 
     useEffect(() => {
-        console.log('in use effect: setup code');
         fetchFormData();
         return () => {
-            console.log('in use effect, cleanup code');
         };
     }, [])
 
