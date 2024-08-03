@@ -28,6 +28,7 @@ public class EmployeeCompanyDetails {
 
     public String email; // can use this... to map the employee in hrm system.
     public String workAddress;
+    public String username;
 
     //personal details.
 

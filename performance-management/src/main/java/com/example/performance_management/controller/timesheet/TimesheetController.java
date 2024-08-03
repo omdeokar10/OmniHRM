@@ -1,8 +1,10 @@
 package com.example.performance_management.controller.timesheet;
 
 
+import com.example.performance_management.controller.HelperUtil;
 import com.example.performance_management.dto.timesheet.TaskEntryDto;
 import com.example.performance_management.dto.timesheet.TaskFetchUserDateRange;
+import com.example.performance_management.entity.timesheet.Task;
 import com.example.performance_management.service.timesheet.TimesheetService;
 import com.example.performance_management.utils.TimesheetUtils;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +18,24 @@ import java.util.List;
 public class TimesheetController {
 
     private final TimesheetService timesheetService;
+    private final HelperUtil helperUtil;
 
-    public TimesheetController(TimesheetService timesheetService) {
+    public TimesheetController(TimesheetService timesheetService, HelperUtil helperUtil) {
         this.timesheetService = timesheetService;
+        this.helperUtil = helperUtil;
     }
 
     @PostMapping("/add")
-    public ResponseEntity<String> addTaskForUser(@RequestBody TaskEntryDto taskEntryDto){ // task description, user, time logged, start time, end time, date & logged at (now)
+    public ResponseEntity<String> addTaskForUser(@RequestBody TaskEntryDto taskEntryDto){
+        taskEntryDto.setUsername(helperUtil.getLoggedInUser());
         timesheetService.addTaskForUser(taskEntryDto);
         return ResponseEntity.ok("Task created");
+    }
+
+    @GetMapping("/getall")
+    public ResponseEntity<String> getAllTasks(){
+        List<Task> tasks = timesheetService.getAllTasks();
+        return ResponseEntity.ok("ok");
     }
 
     public void calculateOvertimeForUser(){ // calculate if above x hours.

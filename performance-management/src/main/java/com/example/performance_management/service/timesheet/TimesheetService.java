@@ -74,4 +74,9 @@ public class TimesheetService {
         }
         return optionalTask.get();
     }
+
+    public List<Task> getAllTasks() {
+        List<Task> tasks = taskRepo.findAll();
+        return tasks;
+    }
 }

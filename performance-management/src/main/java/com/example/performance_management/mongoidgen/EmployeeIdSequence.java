@@ -17,4 +17,5 @@ public class EmployeeIdSequence {
     private Long goalId;
     private Long taskId;
     private Long attendanceId;
+    private Long refreshTokenId;
 }

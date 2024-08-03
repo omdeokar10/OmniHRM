@@ -10,12 +10,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class TaskEntryDto {
-
     private Long id;
     private String description;
     private String username;
     private String durationLogged;
     private String createdDate;
-    private String lastUpdatedAt;
-
 }

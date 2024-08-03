@@ -14,25 +14,28 @@ import java.util.List;
 public class EmployeeCompanyDetailsController {
 
     private final EmployeeCompanyDetailsService employeeCompanyDetailsService;
+    private final HelperUtil helperUtil;
 
-    public EmployeeCompanyDetailsController(EmployeeCompanyDetailsService employeeCompanyDetailsService) {
+    public EmployeeCompanyDetailsController(EmployeeCompanyDetailsService employeeCompanyDetailsService, HelperUtil helperUtil) {
         this.employeeCompanyDetailsService = employeeCompanyDetailsService;
+        this.helperUtil = helperUtil;
     }
 
-    @GetMapping("/{email}")
-    public ResponseEntity<EmployeeCompanyDetailsDto> getEmployeeDetailsById(@PathVariable String email){
-        EmployeeCompanyDetailsDto employeeCompanyDetails = employeeCompanyDetailsService.getDetailsForEmployee(email);
+    @GetMapping("/")
+    public ResponseEntity<EmployeeCompanyDetailsDto> getCompanyDetailsForEmp(){
+        String loggedInUser = helperUtil.getLoggedInUser();
+        EmployeeCompanyDetailsDto employeeCompanyDetails = employeeCompanyDetailsService.getDetailsForEmployeeByUsername(loggedInUser);
         return ResponseEntity.ok(employeeCompanyDetails);
     }
 
     @PostMapping("/")
-    public ResponseEntity<String> createEmployee(@RequestBody EmployeeCompanyDetailsDto employeeDto) {
+    public ResponseEntity<String> addCompanyDetailsForEmployee(@RequestBody EmployeeCompanyDetailsDto employeeDto) {
         employeeCompanyDetailsService.saveDetailsForEmployee(employeeDto);
         return ResponseEntity.ok("Created");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable Long id, @RequestBody EmployeeCompanyDetailsDto employeeDetails) {
+    public ResponseEntity<String> updateCompanyDetailsForEmployee(@PathVariable Long id, @RequestBody EmployeeCompanyDetailsDto employeeDetails) {
         employeeCompanyDetailsService.updateDetailsForEmployee(id, employeeDetails);
         return ResponseEntity.ok("Updated");
     }
@@ -43,9 +46,10 @@ public class EmployeeCompanyDetailsController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/hierarchy/{email}")
-    public List<EmployeeHierarchyDto> getHierarchy(@PathVariable String email){
-        return employeeCompanyDetailsService.getHierarchy(email);
+    @GetMapping("/hierarchy")
+    public List<EmployeeHierarchyDto> getHierarchy(){
+        String loggedInUser = helperUtil.getLoggedInUser();
+        return employeeCompanyDetailsService.getHierarchy(loggedInUser);
     }
 
 }

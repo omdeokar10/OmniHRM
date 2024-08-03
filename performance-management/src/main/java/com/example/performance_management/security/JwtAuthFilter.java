@@ -31,27 +31,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
-        String token = getTokenFromRequest(request);
-        System.out.println("Token:"+token+"request"+request.getRequestURI());
-        if (StringUtils.hasText(token) && jwtTokenProvider.validateJwtToken(response, token)) {
-            String usernameFromJWTToken = jwtTokenProvider.getUsernameFromJWTToken(token);
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(usernameFromJWTToken);
-            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
-                    userDetails, null, userDetails.getAuthorities());
-            //converts HttpServletRequest into WebAuthenticationDetails class.
-            WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetailsSource().buildDetails(request);
-            authToken.setDetails(webAuthenticationDetails);
-            SecurityContextHolder.getContext().setAuthentication(authToken);
+        if (request.getServletPath().equals("/api/auth/login") || request.getServletPath().equals("/api/auth/refresh/token")) {
+            filterChain.doFilter(request, response);
+        } else {
+            String token = getTokenFromRequest(request);
+            System.out.println("Token:" + token + ", request" + request.getRequestURI());
+            if (StringUtils.hasText(token) && jwtTokenProvider.validateJwtToken(response, token)) {
+                String usernameFromJWTToken = jwtTokenProvider.getUsernameFromJWTToken(token);
+                UserDetails userDetails =
+                        userDetailsService.loadUserByUsername(usernameFromJWTToken);
+                UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+                        userDetails, null, userDetails.getAuthorities());
+                WebAuthenticationDetails webAuthenticationDetails = new WebAuthenticationDetailsSource().buildDetails(request);
+                authToken.setDetails(webAuthenticationDetails);
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+
+            filterChain.doFilter(request, response);
         }
-
-        filterChain.doFilter(request, response);
-
     }
 
     public String getTokenFromRequest(HttpServletRequest request) {
         final String bearer = "Bearer ";
         String bearerToken = request.getHeader("Authorization");
+        System.out.println("gettoken from request: Bearer Token " + bearerToken);
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(bearer)) {
             return bearerToken.substring(bearer.length(), bearerToken.length());
         }

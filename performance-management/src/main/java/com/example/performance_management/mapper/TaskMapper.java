@@ -18,7 +18,6 @@ public class TaskMapper {
 
         if(!taskEntryDto.getCreatedDate().isBlank()){
             task.setCreatedDate(taskEntryDto.getCreatedDate());
-            task.setLastUpdatedAt(taskEntryDto.getLastUpdatedAt());
         }
         else{
             LocalDateTime now = LocalDateTime.now();
@@ -46,7 +45,6 @@ public class TaskMapper {
         taskEntryDto.setUsername(task.getUsername());
         taskEntryDto.setDurationLogged(task.getDurationLogged());
         taskEntryDto.setCreatedDate(task.getCreatedDate());
-        taskEntryDto.setLastUpdatedAt(task.getLastUpdatedAt());
         return taskEntryDto;
     }
 

@@ -1,7 +1,6 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
-import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.EmployeeHierarchyDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.EmployeeCompanyDetails;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -21,15 +21,18 @@ public class EmployeeCompanyDetailsService {
     private final EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
     private final EmployeeCompanyRepo employeeCompanyRepo;
     private final EmployeeCompanyDetailsMapper mapper = new EmployeeCompanyDetailsMapper();
-    private final EmployeeService employeeService;
 
-    public EmployeeCompanyDetailsService(EmployeeSequenceGeneratorService employeeSequenceGeneratorService, EmployeeCompanyRepo employeeCompanyRepo, EmployeeService employeeService) {
+    public EmployeeCompanyDetailsService(EmployeeSequenceGeneratorService employeeSequenceGeneratorService, EmployeeCompanyRepo employeeCompanyRepo) {
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
         this.employeeCompanyRepo = employeeCompanyRepo;
-        this.employeeService = employeeService;
     }
 
-    public EmployeeCompanyDetailsDto getDetailsForEmployee(String email) {
+    public EmployeeCompanyDetailsDto getDetailsForEmployeeByUsername(String username) {
+        EmployeeCompanyDetails employeeCompanyDetails = getEmployeeCompanyDetails(employeeCompanyRepo.findByUsername(username));
+        return mapper.convertToDto(employeeCompanyDetails);
+    }
+
+    public EmployeeCompanyDetailsDto getDetailsForEmployeeByEmail(String email) {
         EmployeeCompanyDetails employeeCompanyDetails = getEmployeeCompanyDetails(employeeCompanyRepo.findByEmail(email));
         return mapper.convertToDto(employeeCompanyDetails);
     }
@@ -72,26 +75,20 @@ public class EmployeeCompanyDetailsService {
 
     }
 
-    public List<EmployeeHierarchyDto> getHierarchy(String email) {
+    public List<EmployeeHierarchyDto> getHierarchy(String username) {
 
-        EmployeeCompanyDetailsDto employeeDetails = getDetailsForEmployee(email);
-        EmployeeDto employee = employeeService.getEmployeeByEmail(email);
         List<EmployeeHierarchyDto> list = new ArrayList<>();
 
-        while (true) {
-            String managerEmail = employeeDetails.getManagerEmail();
-            if (managerEmail == null || managerEmail.isEmpty()) {
-                break;
-            }
-            EmployeeDto manager = employeeService.getEmployeeByEmail(managerEmail);
-            list.add(new EmployeeHierarchyDto(employee.getFullName(), employee.getEmail(), manager.getFirstName(), manager.getEmail()));
-            employeeDetails = getDetailsForEmployee(manager.getEmail());
-            employee = employeeService.getEmployeeByEmail(manager.getEmail());
+        EmployeeCompanyDetailsDto employeeDetails = getDetailsForEmployeeByUsername(username);
+        while (!Objects.isNull(employeeDetails.getManagerEmail())) {
+
+            EmployeeCompanyDetailsDto managerDetails = getDetailsForEmployeeByEmail(employeeDetails.getManagerEmail());
+            list.add(new EmployeeHierarchyDto(employeeDetails.getUsername(), employeeDetails.getEmail(),
+                    managerDetails.getUsername(), managerDetails.getEmail()));
+            employeeDetails = getDetailsForEmployeeByUsername(managerDetails.getUsername());
+            System.out.println(employeeDetails);
         }
-
-return list;
-
-
+        return list;
     }
 
 }

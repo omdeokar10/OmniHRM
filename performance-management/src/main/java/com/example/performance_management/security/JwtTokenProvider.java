@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
@@ -14,19 +15,24 @@ import javax.crypto.spec.SecretKeySpec;
 import java.io.IOException;
 import java.security.Key;
 import java.util.Base64;
+import java.util.Collection;
 import java.util.Date;
 
 @Service
 @Getter
 public class JwtTokenProvider {
 
-    private static String jwtSecret = "c17be0b65f0824272ace47e24bc0503275024e1d7b63763f4c8ab79a53ee2ce3";
+    private static final String jwtSecret = "c17be0b65f0824272ace47e24bc0503275024e1d7b63763f4c8ab79a53ee2ce3";
+
     private static SecretKey getSecretKey() {
         byte[] decodedKey = Base64.getDecoder().decode(jwtSecret);
         return new SecretKeySpec(decodedKey, 0, decodedKey.length, "HmacSHA256");
     }
-    public static final long JWT_EXPIRATION = 432_000_000;
+
+    public static final long JWT_EXPIRATION = 1000 * 60 * 5;
+    public static final long REFRESH_EXPIRATION = 1000 * 60 * 50;
     private static final Key key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(jwtSecret));
+
     public String generateToken(Authentication authentication) {
         return generateToken(authentication.getName());
     }
@@ -42,7 +48,7 @@ public class JwtTokenProvider {
                 .signWith(getSecretKey())
                 .compact();
 
-        System.out.println("New token :"+ token);
+        System.out.println("New token :" + token);
         return token;
     }
 

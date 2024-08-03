@@ -41,4 +41,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 verifiedUser.isEnabled(), true, true, true,
                 permissions);
     }
+
+
+
+
+
 }

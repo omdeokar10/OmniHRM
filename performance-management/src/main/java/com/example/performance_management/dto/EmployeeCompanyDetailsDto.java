@@ -21,6 +21,7 @@ public class EmployeeCompanyDetailsDto {
     public String telephone;
 
     public String email; // can use this... to map the employee in hrm system.
+    public String username;
     public String workAddress;
 
     //personal details.

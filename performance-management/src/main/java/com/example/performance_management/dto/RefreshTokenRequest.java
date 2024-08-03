@@ -1,5 +1,6 @@
 package com.example.performance_management.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -7,9 +8,8 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RolePermissionDto {
-    String role;
-    //requires comma separated input.
-    String permissionString;
-
+public class RefreshTokenRequest {
+    @NotBlank
+    private String refreshToken;
+    private String username;
 }

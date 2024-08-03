@@ -68,6 +68,10 @@ public class EmployeeCompanyDetailsMapper {
             employeeCompanyDetails.setEmail(companyDetailsDto.getEmail());
         }
 
+        if (companyDetailsDto.getUsername() != null && !companyDetailsDto.getUsername().isEmpty()) {
+            employeeCompanyDetails.setUsername(companyDetailsDto.getUsername());
+        }
+
         if (companyDetailsDto.getWorkAddress() != null && !companyDetailsDto.getWorkAddress().isEmpty()) {
             employeeCompanyDetails.setWorkAddress(companyDetailsDto.getWorkAddress());
         }
@@ -156,6 +160,7 @@ public class EmployeeCompanyDetailsMapper {
         dto.setLengthOfService(entity.getLengthOfService());
         dto.setTelephone(entity.getTelephone());
         dto.setEmail(entity.getEmail());
+        dto.setUsername(entity.getUsername());
         dto.setWorkAddress(entity.getWorkAddress());
         dto.setManagerEmail(entity.getManagerEmail());
 

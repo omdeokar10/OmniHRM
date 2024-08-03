@@ -1,6 +1,8 @@
 package com.example.performance_management.service;
 
+import com.example.performance_management.dto.AuthenticationResponse;
 import com.example.performance_management.dto.EmployeeDto;
+import com.example.performance_management.dto.RefreshTokenRequest;
 import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.Role;
@@ -12,16 +14,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -35,15 +44,17 @@ public class AuthService {
     private final EmployeeService employeeService;
     private final PermissionService permissionService;
     private final EmployeeRepo employeeRepo;
+    private final RefreshTokenService refreshTokenService;
 
-
-    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, PermissionService permissionService, EmployeeRepo employeeRepo) {
+    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, PermissionService permissionService, EmployeeRepo employeeRepo, RefreshTokenService refreshTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.employeeService = employeeService;
         this.permissionService = permissionService;
         this.employeeRepo = employeeRepo;
+        this.refreshTokenService = refreshTokenService;
     }
+
     Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
@@ -57,14 +68,21 @@ public class AuthService {
 
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("Invalid username"));
         if (employee.isEnabled()) {
-            Authentication authenticate = authenticationManager.authenticate(UsernamePasswordAuthenticationToken.unauthenticated(
-                    username, password));
+            List<? extends GrantedAuthority> roles = getGrantedAuthorities(employee);
+            Authentication authenticate = authenticationManager.authenticate(UsernamePasswordAuthenticationToken.authenticated(username, password, roles));
             SecurityContextHolder.getContext().setAuthentication(authenticate);
-            String jwtToken = jwtProvider.generateToken(authenticate);
-            List<String> roles = employee.getRoles().stream().map(Role::getRoleName).toList();
-            return new EmployeeLoginResponseDto(username, jwtToken, roles.toArray(new String[0]));
+            String accessToken = jwtProvider.generateToken(authenticate);
+            String refreshToken = refreshTokenService.generateRefreshToken().getToken();
+            List<String> rolesString = employee.getRoles().stream().map(role -> role.getRoleName()).toList();
+            return new EmployeeLoginResponseDto(username, accessToken, refreshToken, rolesString.toArray(new String[0]));
         }
         throw new CustomException("User is disabled");
+    }
+
+    private List<GrantedAuthority> getGrantedAuthorities(Employee employee) {
+        List<GrantedAuthority> roles = new ArrayList<>();
+        roles.addAll(employee.getRoles().stream().map(Role::getPermissions).flatMap(Collection::stream).toList());
+        return roles;
     }
 
     public UserDetails getCurrentUserDetails(String username) {
@@ -78,13 +96,24 @@ public class AuthService {
     }
 
 
-
     public Employee getEmployeeByEmail(String email) {
         return employeeRepo.findByUserNameStartsWith(email).orElseThrow(() -> new CustomException("User not found with id -" + email));
     }
 
     public Employee getEmployeeByUserName(String username) {
         return employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("User not found with id -" + username));
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest) {
+        refreshTokenService.validateRefreshToken(refreshTokenRequest.getRefreshToken());
+        String token = jwtProvider.generateToken(refreshTokenRequest.getUsername());
+        String refreshToken = refreshTokenRequest.getRefreshToken();
+        Instant expiry = Instant.now().plusMillis(JwtTokenProvider.REFRESH_EXPIRATION);
+        return new AuthenticationResponse(refreshTokenRequest.getUsername(), token, refreshToken, expiry);
+    }
+
+    public void deleteRefreshToken(String refreshToken) {
+        refreshTokenService.deleteRefreshToken(refreshToken);
     }
 
         /*

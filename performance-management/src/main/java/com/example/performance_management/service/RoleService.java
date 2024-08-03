@@ -39,8 +39,7 @@ public class RoleService {
     public Collection<? extends GrantedAuthority> getRolesForCurrentUser() {
         String username = authService.getNameForCurrentUser();
         UserDetails userDetails = authService.getCurrentUserDetails(username);
-        Collection<? extends GrantedAuthority> authorities = userDetails.getAuthorities();
-        return authorities;
+        return userDetails.getAuthorities();
     }
 
 

@@ -1,7 +1,6 @@
 package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.EmployeeDto;
-import com.example.performance_management.entity.Employee;
 import com.example.performance_management.service.AuthService;
 import com.example.performance_management.service.EmployeeService;
 import org.springframework.http.ResponseEntity;
@@ -16,10 +15,13 @@ public class EmployeeController {
 
     private final EmployeeService employeeService;
     private final AuthService authService;
+    private final HelperUtil helperUtil;
 
-    public EmployeeController(EmployeeService employeeService, AuthService authService) {
+
+    public EmployeeController(EmployeeService employeeService, AuthService authService, HelperUtil helperUtil) {
         this.employeeService = employeeService;
         this.authService = authService;
+        this.helperUtil = helperUtil;
     }
 
     @GetMapping
@@ -35,9 +37,10 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeDto);
     }
 
-    @GetMapping("/username/{username}")
-    public ResponseEntity<EmployeeDto> getEmployeeByUsername(@PathVariable String username){
-        EmployeeDto employeeByUsername = employeeService.getEmployeeByUsername(username);
+    @GetMapping("/")
+    public ResponseEntity<EmployeeDto> getEmployeeByUsername(){
+        String loggedInUser = helperUtil.getLoggedInUser();
+        EmployeeDto employeeByUsername = employeeService.getEmployeeByUsername(loggedInUser);
         return ResponseEntity.ok(employeeByUsername);
     }
 
