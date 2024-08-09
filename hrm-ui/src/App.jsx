@@ -18,6 +18,7 @@ import TimesheetSummaryComponent from './components/timesheet/TimesheetSummaryCo
 import TimesheetComponent from './components/timesheet/TimesheetComponent'
 import EmployeeDetails from './components/personal/EmployeeDetails'
 
+import RegisterCompanyComponent from './components/flow/RegisterCompanyComponent'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -29,6 +30,8 @@ function App() {
         <Toaster />
         <Routes>
           <Route path='/' element={<LoginComponent />}></Route>
+          <Route path='/:companyName' element={<LoginComponent />}></Route>
+
           <Route path='/performance' element={< PerformanceComponent />}></Route>
 
           <Route path='/performance/creategoal' element={< CreateGoalComponent />}></Route>
@@ -46,6 +49,8 @@ function App() {
           <Route path='/time/summary' element={< TimesheetSummaryComponent />}></Route>
 
           <Route path='/personal/summary' element={< EmployeeDetails />}></Route>
+
+          <Route path='/register-company' element={< RegisterCompanyComponent />}></Route>
 
         </Routes>
 

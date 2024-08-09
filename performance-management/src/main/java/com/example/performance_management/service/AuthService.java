@@ -64,6 +64,7 @@ public class AuthService {
         return employeeService.createViewableEmployee(employeeDto, passwordEncoder);
     }
 
+
     public EmployeeLoginResponseDto employeeLogin(String username, String password) {
 
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("Invalid username"));

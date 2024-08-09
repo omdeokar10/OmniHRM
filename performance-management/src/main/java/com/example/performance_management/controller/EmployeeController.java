@@ -1,12 +1,19 @@
 package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.EmployeeDto;
+import com.example.performance_management.dto.UserRoleDto;
+import com.example.performance_management.entity.Role;
 import com.example.performance_management.service.AuthService;
 import com.example.performance_management.service.EmployeeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.StringJoiner;
 
 @RestController
 @RequestMapping("/api/employees")
@@ -24,7 +31,7 @@ public class EmployeeController {
         this.helperUtil = helperUtil;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
         List<EmployeeDto> employees = employeeService.getAllViewableEmployees();
         return ResponseEntity.ok(employees);
@@ -40,7 +47,7 @@ public class EmployeeController {
     @GetMapping("/")
     public ResponseEntity<EmployeeDto> getEmployeeByUsername(){
         String loggedInUser = helperUtil.getLoggedInUser();
-        EmployeeDto employeeByUsername = employeeService.getEmployeeByUsername(loggedInUser);
+        EmployeeDto employeeByUsername = employeeService.getEmployeeDtoByUsername(loggedInUser);
         return ResponseEntity.ok(employeeByUsername);
     }
 
@@ -54,6 +61,30 @@ public class EmployeeController {
         EmployeeDto updatedEmployee = employeeService.updateEmployee(id, employeeDetails);
         return ResponseEntity.ok(updatedEmployee);
     }
+
+    @GetMapping("")
+    public ResponseEntity<String> getRolesForUser() {
+        String name = helperUtil.getLoggedInUser();
+        List<Role> roles = employeeService.getRolesForUser(name);
+        StringJoiner stringJoiner = new StringJoiner(",");
+        for(Role role: roles){
+            stringJoiner.add(role.toString());
+        }
+        return ResponseEntity.ok(stringJoiner.toString());
+    }
+
+    @PostMapping("/add-role")
+    public ResponseEntity<String> addRolesToUser(@RequestBody UserRoleDto userRoleDto) {
+        employeeService.addRoleForEmployee(userRoleDto.getRole(), userRoleDto.getUser());
+        return ResponseEntity.status(HttpStatus.OK).body("Role: " + userRoleDto.getRole() + " added for user: " + userRoleDto.getUser());
+    }
+
+    @DeleteMapping("/remove-role")
+    public ResponseEntity<String> deleteRoleForUser(@RequestBody UserRoleDto userRoleDto) {
+        employeeService.deleteRoleForEmployee(userRoleDto.getRole(), userRoleDto.getUser());
+        return ResponseEntity.ok("OK");
+    }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {

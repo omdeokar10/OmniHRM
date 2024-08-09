@@ -43,7 +43,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests((requests) ->
                         {
                             requests.requestMatchers("/api/auth/**").permitAll();
-                            requests.requestMatchers("/api/company/").authenticated();
+                            requests.requestMatchers("/api/company/**").permitAll();
                             requests.anyRequest().authenticated();
                         }
                 );

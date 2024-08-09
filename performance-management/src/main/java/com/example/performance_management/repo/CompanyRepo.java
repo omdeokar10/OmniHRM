@@ -10,6 +10,5 @@ import java.util.Optional;
 public interface CompanyRepo extends MongoRepository<Company, Long> {
 
     Optional<Company> findByCompanyNameStartsWith(String name);
-
     void deleteByCompanyName(String companyName);
 }

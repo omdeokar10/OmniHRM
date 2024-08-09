@@ -1,39 +1,77 @@
 import React from 'react'
 import { useState } from 'react';
 import { loginAPICall, saveLoggedInUser, storeToken } from '../../service/auth/AuthService';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { companyLogin } from '../../service/company/CompanyService';
 
 function LoginComponent() {
 
     const [userName, setUsername] = useState('')
     const [password, setPassword] = useState('')
+    const { companyName } = useParams()
+
+    const [title, setTitle] = useState('')
 
     const navigator = useNavigate();
+
+    function pageTitle() {
+        if (companyName) {
+            return <h3 className='text-center'>Company Admin Login</h3>
+        } else {
+            return <h3 className='text-center'>Employee Login</h3>
+        }
+    }
+
 
     async function handleLoginForm(e) {
 
         e.preventDefault();
 
-        const loginDto = { userName, password };
-        storeToken(null);
+        if (companyName) {
+            console.log('company name: ' + companyName);
+            const loginDto = { userName, password };
+            await loginAPICall(loginDto).then((response) => {
+                console.log(response.data);
+                const token = 'Bearer ' + response.data.accessToken;
+                const refreshToken = response.data.refreshToken;
+                const username = response.data.username;
+                const roles = response.data.roles;
+                storeToken(token, refreshToken);
 
-        await loginAPICall(loginDto).then((response) => {
-            console.log(response.data);
+                saveLoggedInUser(username, roles);
 
-            const token = 'Bearer ' + response.data.accessToken;
-            const refreshToken = response.data.refreshToken;
-            const username = response.data.username;
-            const roles = response.data.roles;
-            storeToken(token, refreshToken);
-            
-            saveLoggedInUser(username, roles);
-            
-            navigator("/performance/summary")
+                navigator("/performance/summary");
+                
+                window.location.reload(false);
+            }).catch(error => {
+                console.error(error);
+            })
 
-            window.location.reload(false);
-        }).catch(error => {
-            console.error(error);
-        })
+        }
+        else {
+
+            const loginDto = { userName, password };
+            storeToken(null);
+            setTitle('');
+
+            await loginAPICall(loginDto).then((response) => {
+                console.log(response.data);
+
+                const token = 'Bearer ' + response.data.accessToken;
+                const refreshToken = response.data.refreshToken;
+                const username = response.data.username;
+                const roles = response.data.roles;
+                storeToken(token, refreshToken);
+
+                saveLoggedInUser(username, roles);
+
+                navigator("/performance/summary")
+
+                window.location.reload(false);
+            }).catch(error => {
+                console.error(error);
+            })
+        }
 
     }
 
@@ -44,7 +82,7 @@ function LoginComponent() {
                 <div className='col-md-6 offset-md-3'>
                     <div className='card'>
                         <div className='card-header'>
-                            <h2 className='text-center'> Login </h2>
+                            {pageTitle()}
                         </div>
 
                         <div className='card-body'>
@@ -82,11 +120,14 @@ function LoginComponent() {
 
                                 <div className='form-group mb-3'>
                                     <button className='btn btn-primary' onClick={(e) => handleLoginForm(e)}>Submit</button>
-
                                 </div>
                             </form>
-
+                            <div className='parent-links'>
+                                <a className='child-link' href='/register-company'>New Company ? Register</a>
+                                <a className='child-link' href='/admin-login'>Company Admin Login</a>
+                            </div>
                         </div>
+
 
                     </div>
                 </div>

@@ -1,12 +1,17 @@
 package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.CompanyDto;
+import com.example.performance_management.dto.LoginRequestDto;
+import com.example.performance_management.dto.UserCompanyDto;
+import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Company;
 import com.example.performance_management.mapper.CompanyMapper;
 import com.example.performance_management.service.CompanyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/company")
@@ -21,8 +26,13 @@ public class CompanyController {
     }
 
     @PostMapping("")
-    public ResponseEntity<String> create(@RequestBody CompanyDto companyDto) {
-        companyService.createCompany(companyDto);
+    public ResponseEntity<String> create(@RequestBody UserCompanyDto companyDto) {
+        String userPassword = companyService.sendMail(companyDto.getCompanyEmail());
+        companyService.createCompany(companyDto.getCompanyName(), companyDto.getCompanyDomain(), companyDto.getCompanyEmail());
+
+        companyService.createCompanyAdmin(companyDto.getUserName(), companyDto.getFirstName(), companyDto.getLastName(),
+                companyDto.getCompanyEmail(), userPassword, companyDto.getCompanyName());
+
         return new ResponseEntity<>("Company created: " + companyDto.getCompanyName(), HttpStatus.OK);
     }
 
@@ -51,4 +61,5 @@ public class CompanyController {
         companyService.deleteCompanyByName(companyName);
         return new ResponseEntity<>("Company deleted.", HttpStatus.OK);
     }
+
 }

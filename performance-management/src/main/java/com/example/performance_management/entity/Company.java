@@ -22,5 +22,5 @@ public class Company {
     public Long id;
     private String companyName;
     private String companyDomain; //used for email ids.
-
+    private String companyEmail;
 }

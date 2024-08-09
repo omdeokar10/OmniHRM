@@ -5,16 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
-import java.util.Map;
-
 @Setter
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyDto {
-    private Long id;
+public class UserCompanyDto {
+
     public String companyName;
     public String companyDomain;
     public String companyEmail;
+    public String firstName;
+    public String lastName;
+    public String userName;
 }

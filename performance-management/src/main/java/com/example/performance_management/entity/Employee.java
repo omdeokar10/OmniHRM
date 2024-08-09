@@ -31,7 +31,6 @@ public class Employee {
     private String email;
     private String userName;
     private String password;
-    private String dateOfBirth;
     private List<Role> roles; // For referencing roles
     public boolean isEnabled = true;
 }

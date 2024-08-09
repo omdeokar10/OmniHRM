@@ -2,6 +2,7 @@ package com.example.performance_management.service;
 
 import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.entity.Employee;
+import com.example.performance_management.entity.Role;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.EmployeeMapper;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
@@ -20,16 +21,16 @@ import java.util.stream.Collectors;
 public class EmployeeService {
 
     private final EmployeeRepo employeeRepo;
-    private final CompanyService companyService;
+    private final RoleService roleService;
     private final EmployeeMapper employeeMapper = new EmployeeMapper();
     private final EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final Function<Employee, EmployeeDto> mapEmployee = (employee) -> employeeMapper.convertToDto(employee, passwordEncoder);
 
-    public EmployeeService(EmployeeRepo employeeRepo, CompanyService companyService,
-                           EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
+    public EmployeeService(EmployeeRepo employeeRepo,
+                           RoleService roleService, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
         this.employeeRepo = employeeRepo;
-        this.companyService = companyService;
+        this.roleService = roleService;
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
     }
 
@@ -48,17 +49,22 @@ public class EmployeeService {
         return employeeRepo.findById(id).orElseThrow(supplier);
     }
 
-    public EmployeeDto getEmployeeByEmail(String email){
-        Employee employee = employeeRepo.findByEmailStartsWith(email).orElseThrow(()->new CustomException("Employee does not exist."));
+    public EmployeeDto getEmployeeByEmail(String email) {
+        Employee employee = employeeRepo.findByEmailStartsWith(email).orElseThrow(() -> new CustomException("Employee does not exist."));
         return employeeMapper.convertToDto(employee, passwordEncoder);
     }
-    public EmployeeDto getEmployeeByUsername(String username){
+
+    private Employee getEmployeeByUsername(String username){
+        Supplier<CustomException> supplier = () -> new CustomException("Employee does not exist.");
+        return employeeRepo.findByUserNameStartsWith(username).orElseThrow(supplier);
+    }
+    public EmployeeDto getEmployeeDtoByUsername(String username) {
         Supplier<CustomException> supplier = () -> new CustomException("Employee does not exist.");
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(supplier);
         return employeeMapper.convertToDto(employee, passwordEncoder);
     }
 
-    public EmployeeDto getViewableEmployeeById(Long id){
+    public EmployeeDto getViewableEmployeeById(Long id) {
         Employee employee = getEmployeeById(id);
         return mapEmployee.apply(employee);
     }
@@ -68,7 +74,7 @@ public class EmployeeService {
         return employeeMapper.convertToDto(savedEmployee, passwordEncoder);
     }
 
-    private Employee createEmployee(EmployeeDto employeeDto, PasswordEncoder passwordEncoder) {
+    public Employee createEmployee(EmployeeDto employeeDto, PasswordEncoder passwordEncoder) {
         performChecks(employeeDto);
         Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
         setIds(employee);
@@ -78,9 +84,6 @@ public class EmployeeService {
     private void performChecks(EmployeeDto employeeDto) {
         if (checkIfUserExistsWithName(employeeDto.getUserName()) || checkForEmail(employeeDto.getEmail())) {
             throw new CustomException("Name already exists");
-        }
-        if (!companyService.checkForSameName(employeeDto.getCompanyName())) {
-            throw new CustomException("Company does not exist");
         }
     }
 
@@ -104,7 +107,7 @@ public class EmployeeService {
         return employeeMapper.convertToDto(updatedEmployee, passwordEncoder);
     }
 
-    public void updateEmployee(Long id, Employee employee){
+    public void updateEmployee(Long id, Employee employee) {
         EmployeeDto dto = mapEmployee.apply(employee);
         updateEmployee(id, dto);
     }
@@ -116,7 +119,6 @@ public class EmployeeService {
         employee.setEmail(employeeDto.getEmail());
         employee.setUserName(employeeDto.getUserName());
         employee.setFullName(employeeDto.getFullName());
-        employee.setDateOfBirth(employeeDto.getDateOfBirth());
         employee.setRoles(employeeDto.getRoles());
 
     }
@@ -131,9 +133,27 @@ public class EmployeeService {
     }
 
     private Employee getEmployee(Optional<Employee> user) {
-        if(user.isEmpty()){
+        if (user.isEmpty()) {
             throw new CustomException("Employee is not present");
         }
         return user.get();
+    }
+
+    public List<Role> getRolesForUser(String name) {
+        Employee emp = getEmployeeByUsername(name);
+        List<Role> roles = emp.getRoles();
+        return roles;
+    }
+
+    public void addRoleForEmployee(String role, String user) {
+        Employee employee = getEmployeeByUsername(user);
+        roleService.addRoleForEmployee(role, employee);
+        updateEmployee(employee.getId(), employee);
+    }
+
+    public void deleteRoleForEmployee(String role, String user){
+        Employee employee = getEmployeeByUsername(user);
+        roleService.deleteRoleForEmployee(role, employee);
+        updateEmployee(employee.getId(), employee);
     }
 }

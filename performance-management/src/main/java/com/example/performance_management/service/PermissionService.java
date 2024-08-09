@@ -10,10 +10,8 @@ import java.util.stream.Collectors;
 @Service
 public class PermissionService {
 
-    private final EmployeeService employeeService;
 
-    public PermissionService(EmployeeService employeeService) {
-        this.employeeService = employeeService;
+    public PermissionService() {
     }
 
     public List<Permission> deserializePermissions(String permissionString){
