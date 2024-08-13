@@ -24,3 +24,23 @@ export const fetchDetailsForHierarchy = () => {
         });
 
 }
+
+export const addEmployee = (employeeDetails) => {
+    return api.post(empDetailUrl + '/', employeeDetails)
+}
+
+export const getAllEmployeesByCompany = (company) => {
+    return api.get(empDetailUrl + '/all/' + company);
+}
+
+export const getEmployeeById = (id) => {
+    return api.get(empDetailUrl + '/' + id);
+}
+
+export const updateEmployee = (id, employee) => {
+    return api.put(empDetailUrl + '/' + id, employee);
+}
+
+export const deleteEmployeeById = (id) => {
+    return api.delete(empDetailUrl + '/' + id);
+}

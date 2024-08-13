@@ -13,9 +13,17 @@ export const storeToken = (token, refreshToken) => {
     }
 }
 
+export const storeInfo = (key, value) => {
+    localStorage.setItem(key, value);
+    sessionStorage.setItem(key, value);
+}
+
 export const saveLoggedInUser = (username, roles) => {
     sessionStorage.setItem("authenticatedUser", username);
     sessionStorage.setItem("roles", roles);
+
+    localStorage.setItem("authenticatedUser", username);
+    localStorage.setItem("roles", roles);
 }
 
 export const isUserLoggedIn = () => {
@@ -29,7 +37,11 @@ export const isUserLoggedIn = () => {
 }
 
 export const getLoggedInUser = () => {
-    return sessionStorage.getItem("authenticatedUser");
+    return localStorage.getItem("authenticatedUser");
+}
+
+export const getCompanyName = () => {
+    return localStorage.getItem("companyName");
 }
 
 export const isAdminUser = () => {
@@ -56,8 +68,8 @@ export const refreshApiCall = () => {
 
 export const logout = () => {
     var refreshToken = localStorage.getItem("refreshToken");
-    var user = getLoggedInUser();
-    const logoutObj = { user, refreshToken };
+    var username = getLoggedInUser();
+    const logoutObj = { refreshToken, username };
     api.post(authUrl + '/logout', logoutObj);
     localStorage.clear();
     sessionStorage.clear();

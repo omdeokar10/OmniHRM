@@ -3,13 +3,14 @@ import '../performance/goalstyle.css';
 import '../../service/goal/GoalService';
 import { createGoal, updateGoal, getGoal } from '../../service/goal/GoalService';
 import { useNavigate, useParams } from 'react-router-dom'
-import { getLoggedInUser } from '../../service/auth/AuthService';
+import { getCompanyName, getLoggedInUser } from '../../service/auth/AuthService';
 
 const CreateGoalComponent = () => {
     const [goal, setGoal] = useState({
         title: '',
         managerName: '',
         employeeName: '',
+        companyName: '',
         description: '',
         category: '',
         startDate: '',
@@ -28,7 +29,8 @@ const CreateGoalComponent = () => {
         setGoal((prevGoal) => ({
             ...prevGoal,
             [name]: value,
-            employeeName: getLoggedInUser()
+            employeeName: getLoggedInUser(),
+            companyName: getCompanyName()
         }));
     };
 
@@ -37,13 +39,21 @@ const CreateGoalComponent = () => {
         e.preventDefault();
 
         if (id) {
-            updateGoal(id, goal);
+            updateGoal(id, goal).then((res) => {
+                performNavigateToGoalsPage();
+            });
         }
         else {
-            createGoal(goal);
+            createGoal(goal).then((res) => {
+                performNavigateToGoalsPage();
+            });
         }
-        navigate('/performance/listgoal')
+
     };
+
+    function performNavigateToGoalsPage() {
+        navigate('/performance/listgoal');
+    }
 
     function fetchAndUpdateTodo(id) {
         var old_goal = getGoal(id).then((res) => {

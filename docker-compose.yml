@@ -9,7 +9,7 @@ services:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - /home/kaustubh/Desktop/HRM/mongo_data/db/:/data/db
+      - /mongo_data/db/:/data/db
   hrm-backend-prod:
     image: hrm-backend
     container_name: "hrm-backend-prod"

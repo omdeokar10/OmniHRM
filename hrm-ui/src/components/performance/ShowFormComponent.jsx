@@ -1,5 +1,5 @@
 import React from 'react'
-import { getFormData, submitFormData } from '../../service/goal/FormService';
+import { getFormData, submitFormData, updateFormData } from '../../service/goal/FormService';
 import { useState, useEffect } from 'react'
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { useParams } from 'react-router-dom';
@@ -7,32 +7,33 @@ import { useNavigate } from 'react-router-dom'
 
 function ShowFormComponent() {
 
-    const [formData, setFormData] = useState([])
+    const [formData, setFormData] = useState([]);
+    const [formTemplate, setFormTemplate] = useState(null);
     const { id } = useParams()
     const navigate = useNavigate()
 
     useEffect(() => {
-        fetchFormData(id);
-        return () => {
-        };
-    }, [])
+        getFormData(id)
+            .then(response => {
+                console.log(response.data);
+                setFormTemplate(response.data)
+            });
+    }, [id]);
 
-    function fetchFormData(id) {
-        getFormData(id).then((response) => {
-            setFormData(response.data["fields"]);
-        }).catch(error => {
-            console.log(error);
-        })
+    if (!formTemplate) {
+        return <div>Loading...</div>;
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        submitFormData(formData);
+        console.log(formData);
+        updateFormData(id, formData, formTemplate.formName);
         navigate('/performance/listforms')
     };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        console.log(name, value);
         setFormData({
             ...formData,
             [name]: value,
@@ -40,65 +41,37 @@ function ShowFormComponent() {
     };
 
     return (
-        <Container>
-            <Form onSubmit={handleSubmit}>
-                <fieldset>
-                    <legend>{formData['formName']}</legend>
-                    {Object.entries(formData)
-                        .filter(([key]) => key !== 'formName')
-                        .map(([key, value]) => (
-                            <Form.Group as={Row} controlId={key} key={key} className="mb-3">
-                                <Form.Label column sm="2">
-                                    {key}
-                                </Form.Label>
-                                <Col sm="10">
-                                    {Array.isArray(value) ? (
-                                        <div>
-                                            {value.map(option => (
-                                                <Form.Check
-                                                    type="checkbox"
-                                                    label={option.label}
-                                                    name={key}
-                                                    value={option.value}
-                                                    checked={formData[key].includes(option.value)}
-                                                    onChange={handleChange}
-                                                    key={option.value}
-                                                />
-                                            ))}
-                                        </div>
-                                    ) : typeof value === 'object' && value.options ? (
-                                        <Form.Control
-                                            as="select"
-                                            name={key}
-                                            value={formData[key]}
-                                            onChange={handleChange}
-                                        >
-                                            {value.options.map(option => (
-                                                <option key={option.value} value={option.value}>
-                                                    {option.label}
-                                                </option>
-                                            ))}
-                                        </Form.Control>
-                                    ) : (
-                                        <Form.Control
-                                            type={key === 'dateOfBirth' ? 'date' : 'text'}
-                                            name={key}
-                                            value={formData[key]}
-                                            onChange={handleChange}
-                                        />
-                                    )}
-                                </Col>
-                            </Form.Group>
-                        ))}
-                </fieldset>
-                <Button variant="primary" type="submit">
-                    Submit
-                </Button>
-            </Form>
-        </Container>
+        <div className="container mt-5">
 
-
-    )
-}
+            <form name={formTemplate.formName} className="mb-4" onSubmit={handleSubmit}>
+                {formTemplate.fields.map((field, index) => (
+                    <div key={index} className="form-group mb-2">
+                        <label htmlFor={field.name}>{field.label}</label>
+                        {field.type === 'select' || field.type === 'checkbox' ? (
+                            <select className="form-control mb-2 w-25"
+                                name={field.name} required={true}>
+                                {field.options.map((option, idx) => (
+                                    <option key={idx} value={option}>
+                                        {option.label}
+                                    </option>
+                                ))}
+                            </select>
+                        ) : (
+                            <input
+                                className="form-control mb-2 w-25"
+                                type={field.type}
+                                name={field.name}
+                                placeholder={field.placeholder}
+                                required={true}
+                                onChange={handleChange}
+                            />
+                        )}
+                    </div>
+                ))}
+            </form>
+            <button type="submit" onClick={handleSubmit} className="btn btn-success mb-4">Submit Form</button>
+        </div>
+    );
+};
 
 export default ShowFormComponent

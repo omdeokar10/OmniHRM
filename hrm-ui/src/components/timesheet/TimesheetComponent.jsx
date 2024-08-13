@@ -57,7 +57,7 @@ const TimesheetComponent = () => {
     addTask(description, durationLogged, createdDate)
       .then(() => {
         console.log('setting update');
-        setUpdate(true);
+        setUpdate(prev => !prev);
       })
       .catch(function (err) {
         console.log(err)
@@ -172,38 +172,39 @@ const TimesheetComponent = () => {
               </div>
 
               <div className='form-group mb-2'>
+                <form>
+                  <label className='form-label'>Todo Description:</label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    placeholder='Enter Task Description'
+                    name='description'
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    required>
+                  </input>
+                  <label className='form-label'>Task Duration (hh:mm:ss) </label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    placeholder='Enter Duration'
+                    name='durationLogged'
+                    value={durationLogged}
+                    onChange={(e) => setDurationLogged(e.target.value)}
+                    required
+                  ></input>
 
-                <label className='form-label'>Todo Description:</label>
-                <input
-                  type='text'
-                  className='form-control'
-                  placeholder='Enter Task Description'
-                  name='description'
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                >
-                </input>
-                <label className='form-label'>Task Duration (hh:mm:ss) </label>
-                <input
-                  type='text'
-                  className='form-control'
-                  placeholder='Enter Duration'
-                  name='durationLogged'
-                  value={durationLogged}
-                  onChange={(e) => setDurationLogged(e.target.value)}
-                ></input>
 
-
-                <label className='form-label'>Task Date (yyyy-mm-dd) </label>
-                <input
-                  type='text'
-                  className='form-control'
-                  placeholder='Enter Created Date (yyyy-mm-dd)'
-                  name='createdDate'
-                  value={createdDate}
-                  onChange={(e) => setCreatedDate(e.target.value)}
-                ></input>
-
+                  <label className='form-label'>Task Date (yyyy-mm-dd) </label>
+                  <input
+                    type='text'
+                    className='form-control'
+                    placeholder='Enter Created Date (yyyy-mm-dd)'
+                    name='createdDate'
+                    value={createdDate}
+                    onChange={(e) => setCreatedDate(e.target.value)}
+                    required></input>
+                </form>
               </div>
 
               <div className="modal-footer">

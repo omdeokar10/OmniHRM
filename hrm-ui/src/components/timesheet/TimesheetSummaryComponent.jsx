@@ -2,6 +2,7 @@ import React from 'react'
 import './summarypage.css';
 import { fetchAttendance, logPunchInTime, logPunchOutTime } from '../../service/timesheet/TimesheetService';
 import { useState, useEffect } from 'react';
+import { calculateHours } from '../../service/timesheet/TimesheetService';
 
 function TimesheetSummaryComponent() {
 
@@ -33,27 +34,7 @@ function TimesheetSummaryComponent() {
     fetchAttendanceRecord();
   }, []);
 
-  function calculateHours(res) {
-    var count = 0;
-    var hours = 0;
-    var dataEntries = res.data;
-    for (let i = 0; i < dataEntries.length; i++) {
-      if (dataEntries[i].isPresent) {
-        count += 1;
-      }
-      if (dataEntries[i].punchOutTime != null && dataEntries[i].punchInTime != null) {
-        var punchOutTime = new Date(dataEntries[i].punchOutTime);
-        var punchInTime = new Date(dataEntries[i].punchInTime);
-        let hour = parseInt(punchOutTime - punchInTime) / (1000 * 60 * 60);
-        hour = hour.toFixed(2);
-        let minutes = parseInt(punchOutTime - punchInTime) / (1000 * 60);
-        minutes = minutes.toFixed(2);
-        hours += hour + 'h';
-        hours += minutes + 'm';
-      }
-    }
-    return { count, hours };
-  }
+
 
   const getStartOfMonth = (year, month) => {
     return new Date(year, month, 2);

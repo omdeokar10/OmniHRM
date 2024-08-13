@@ -1,31 +1,34 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
-import { getPendingFormData } from '../../service/goal/FormService';
+import { deleteFormById, getFormDataByCompanyName } from '../../service/goal/FormService';
 import { useNavigate } from 'react-router-dom'
 
 function ListAllPendingFormComponent() {
 
     const [formData, setFormData] = useState([])
+    const [dataChanged, setDataChanged] = useState(true);
     const navigate = useNavigate()
-
+    
     useEffect(() => {
-        fetchFormData();
-        return () => {
-        };
-    }, [])
+        retrieveFormsByCompany();
+    }, [dataChanged]);
 
-    function fetchFormData() {
-        getPendingFormData().then((response) => {
-            console.log('pending form data' + response.data);
-            if(response.data.length > 0){
-                setFormData(response.data);
-            }
+    function retrieveFormsByCompany() {
+        getFormDataByCompanyName().then((response) => {
+            setFormData(response.data);
         });
     }
 
+    function deleteForm(id) {
+        deleteFormById(id).then((response) => {
+            retrieveFormsByCompany();
+        });
+        setDataChanged(!dataChanged);
+    }
+
     function updateForm(id){
-        navigate(`/performance/showforms/${id}`)
+        navigate(`/performance/showforms/${id}`);
     }
 
     return (
@@ -36,10 +39,10 @@ function ListAllPendingFormComponent() {
                     {formData.length > 0 && <thead>
                         <tr>
                             <th>Form name</th>
-                            <th>Description (Optional)</th>
+                            <th>Description(Optional)</th>
                             <th>Actions</th>
                         </tr>
-                    </thead> }
+                    </thead>}
                     <tbody>
                         {formData.map(form => (
                             <tr key={form.id}>
@@ -47,15 +50,16 @@ function ListAllPendingFormComponent() {
                                 <td>{form.description}</td>
                                 <td>
                                     <button className="btn minima-btn mb-2" onClick={() => updateForm(form.id)}>Update</button>
+                                    <button className="btn minima-btn mb-2" onClick={() => deleteForm(form.id)}>Delete</button>
                                 </td>
                             </tr>
                         ))}
                     </tbody>
                 </table>
-                {formData.length ==0 && <div className="minima">
+                {formData.length == 0 && <div className="minima">
                     <p>All Caught up.</p>
-                    </div>
-                    }
+                </div>
+                }
             </div>
 
         </div>

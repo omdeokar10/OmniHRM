@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { loginAPICall, saveLoggedInUser, storeToken } from '../../service/auth/AuthService';
 import { useNavigate, useParams } from 'react-router-dom';
 import { companyLogin } from '../../service/company/CompanyService';
+import { storeInfo } from '../../service/auth/AuthService';
 
 function LoginComponent() {
 
@@ -22,13 +23,20 @@ function LoginComponent() {
         }
     }
 
+    function loginLink(){
+        if (companyName) {
+            return  <a className='child-link' href='/'>Employee Login</a>
+        } else {
+            return <a className='child-link' href='/admin-login'>Company Admin Login</a>
+        }
+    }
 
     async function handleLoginForm(e) {
 
         e.preventDefault();
 
         if (companyName) {
-            console.log('company name: ' + companyName);
+
             const loginDto = { userName, password };
             await loginAPICall(loginDto).then((response) => {
                 console.log(response.data);
@@ -37,11 +45,10 @@ function LoginComponent() {
                 const username = response.data.username;
                 const roles = response.data.roles;
                 storeToken(token, refreshToken);
-
+                storeInfo("companyName", response.data.companyName);
                 saveLoggedInUser(username, roles);
+                navigator("/hr/summary");
 
-                navigator("/performance/summary");
-                
                 window.location.reload(false);
             }).catch(error => {
                 console.error(error);
@@ -61,10 +68,9 @@ function LoginComponent() {
                 const refreshToken = response.data.refreshToken;
                 const username = response.data.username;
                 const roles = response.data.roles;
+                storeInfo("companyName", response.data.companyName);
                 storeToken(token, refreshToken);
-
                 saveLoggedInUser(username, roles);
-
                 navigator("/performance/summary")
 
                 window.location.reload(false);
@@ -124,7 +130,7 @@ function LoginComponent() {
                             </form>
                             <div className='parent-links'>
                                 <a className='child-link' href='/register-company'>New Company ? Register</a>
-                                <a className='child-link' href='/admin-login'>Company Admin Login</a>
+                                {loginLink()}
                             </div>
                         </div>
 

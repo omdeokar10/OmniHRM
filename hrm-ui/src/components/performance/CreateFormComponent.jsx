@@ -12,15 +12,15 @@ function CreateFormComponent() {
     const [formConfig, setFormConfig] = useState([]);
     const [formData, setFormData] = useState({});
     const [showModal, setShowModal] = useState(false);
-    const [formName, setFormName] = useState('')
-    const navigate = useNavigate()
+    const [formName, setFormName] = useState('');
+    const [formInput, setFormInput] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         defineSampleInput();
         return () => {
         };
     }, [])
-
 
     const handleJsonChange = (e) => {
         setJsonInput(e.target.value);
@@ -29,17 +29,22 @@ function CreateFormComponent() {
     const handleJsonSubmit = (e) => {
         e.preventDefault();
         try {
+            console.log(e);
             const parsedConfig = JSON.parse(jsonInput);
             setFormConfig(parsedConfig);
             setFormData(parsedConfig.reduce((acc, field) => {
-                if (field.type === 'checkbox') {
-                    acc[field.name] = []; // Initialize checkbox fields with an empty array
+
+                if (field.type === 'checkbox' || field.type === 'select') {
+                    acc[field.name] = [];
                 } else {
-                    acc[field.name] = '';
+                    acc[field.name] = '' + field.name;
                 }
                 return acc;
             }, {}));
-            
+
+            console.log(parsedConfig);
+            setFormInput(parsedConfig);
+
         } catch (error) {
             console.log(error);
         }
@@ -55,15 +60,16 @@ function CreateFormComponent() {
         } else {
             setFormData({
                 ...formData,
-                [name]: value,
+                [name]: { value, type },
             });
         }
     };
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        submitForm(formData);
-        navigate('/performance/listforms')
+        submitForm(formInput, formName).then((res) => {
+            navigate('/hr/listforms');
+        })
     };
 
     const handleShowJson = () => {
@@ -92,10 +98,6 @@ function CreateFormComponent() {
             [name]: value,
         }); ``
     }
-
-    useEffect(() => {
-        console.log('Form data updated:', formData);
-    }, [formData]);
 
     return (
 
@@ -138,9 +140,9 @@ function CreateFormComponent() {
                                     type="text"
                                     className="form-control mb-2 w-25"
                                     name={field.name}
-                                    value={formData[field.name]}
+                                    // value={formData[field.name]}
                                     datatype="text"
-                                    placeholder={formData[field.placeholder]}
+
                                     onChange={handleInputChange}
                                 />
                             )}
@@ -149,7 +151,7 @@ function CreateFormComponent() {
                                     type="date"
                                     className="form-control mb-2 w-25"
                                     name={field.name}
-                                    value={formData[field.name]}
+                                    // value={formData[field.name]}
                                     onChange={handleInputChange}
                                     datatype="date"
                                 />

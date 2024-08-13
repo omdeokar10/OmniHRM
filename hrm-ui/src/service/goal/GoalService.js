@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { getLoggedInUser } from "../auth/AuthService";
+import { getCompanyName, getLoggedInUser } from "../auth/AuthService";
 import api from "../BaseService";
 
 const baseURL = "/api/goals";
@@ -15,8 +15,8 @@ export const getAllGoals = () => {
 
 
 export const getAllGoalsByUser = () => {
-    var username = getLoggedInUser();
-    return api.get(baseURL + '/user/'+ username);
+    var company = getCompanyName();
+    return api.get(baseURL + '/company/' + company);
 }
 
 

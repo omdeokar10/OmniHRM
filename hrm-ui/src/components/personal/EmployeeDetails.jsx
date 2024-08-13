@@ -94,8 +94,7 @@ const HierarchyDetails = ({ hierarchy }) => {
                 <p>No hierarchy data available.</p>
             ) : (
                 hierarchy
-                    .slice()
-                    .reverse()
+                    
                     .map((employee, index) => (
                         <div key={index} className="hierarchy-box">
                             <p><strong>Username:</strong> {employee.username}</p>

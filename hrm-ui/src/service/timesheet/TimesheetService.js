@@ -31,6 +31,13 @@ export const fetchAttendance = (startDate, endDate) => {
     return api.post(attendanceUrl + "/range", attendanceDto);
 }
 
+export const fetchAttendanceForUser = (startDate, endDate, id) => {
+    const attendanceDto = { id, startDate, endDate };
+    var present = 0;
+    return api.post(attendanceUrl + "/admin/range", attendanceDto);
+}
+
+
 export const addTask = (description, durationLogged, createdDate) => {
     var username = getLoggedInUser();
     const task = { description, durationLogged, createdDate };
@@ -86,3 +93,24 @@ export const getYear = () => {
     return date.getYear() + 1900;
 }
 
+export const calculateHours = (res) => {
+    var count = 0;
+    var hours = 0;
+    var dataEntries = res.data;
+    for (let i = 0; i < dataEntries.length; i++) {
+        if (dataEntries[i].isPresent) {
+            count += 1;
+        }
+        if (dataEntries[i].punchOutTime != null && dataEntries[i].punchInTime != null) {
+            var punchOutTime = new Date(dataEntries[i].punchOutTime);
+            var punchInTime = new Date(dataEntries[i].punchInTime);
+            let hour = parseInt(punchOutTime - punchInTime) / (1000 * 60 * 60);
+            hour = hour.toFixed(2);
+            let minutes = parseInt(punchOutTime - punchInTime) / (1000 * 60);
+            minutes = minutes.toFixed(2);
+            hours += hour + 'h';
+            hours += minutes + 'm';
+        }
+    }
+    return { count, hours };
+}
