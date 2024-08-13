@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface EmployeeFormRepo extends MongoRepository<EmployeeForms, Long> {
 
-    Optional<EmployeeForms> findByEmployeeNameAndFormName(String employeeName, String formName);
+    Optional<EmployeeForms> findByCompanyNameAndEmployeeNameAndFormName(String companyName, String employeeName, String formName);
+
+    Optional<EmployeeForms> findByCompanyNameAndEmployeeName(String companyName, String employeeName);
 
 }

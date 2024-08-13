@@ -10,37 +10,39 @@ public class GoalMapper {
     }
 
     public GoalDto convertToDto(Goal goal) {
-        GoalDto goalDto = new GoalDto();
-        goalDto.setId(goal.getId());
-        goalDto.setTitle(goal.getTitle());
-        goalDto.setManagerName(goal.getManagerName());
-        goalDto.setEmployeeName(goal.getEmployeeName());
-        goalDto.setDescription(goal.getDescription());
-        goalDto.setCategory(goal.getCategory());
-        goalDto.setStartDate(goal.getStartDate());
-        goalDto.setEndDate(goal.getEndDate());
-        goalDto.setKpis(goal.getKpis());
-        goalDto.setMilestones(goal.getMilestones());
-        goalDto.setFeedbackNotes(goal.getFeedbackNotes());
-        goalDto.setSelfAssessment(goal.getSelfAssessment());
-        goalDto.setCompleted(goal.isCompleted());
-        return goalDto;
+        GoalDto dto = new GoalDto();
+        dto.setId(goal.getId());
+        dto.setCompanyName(goal.getCompanyName());
+        dto.setTitle(goal.getTitle());
+        dto.setManagerName(goal.getManagerName());
+        dto.setEmployeeName(goal.getEmployeeName());
+        dto.setDescription(goal.getDescription());
+        dto.setCategory(goal.getCategory());
+        dto.setStartDate(goal.getStartDate());
+        dto.setEndDate(goal.getEndDate());
+        dto.setKpis(goal.getKpis());
+        dto.setMilestones(goal.getMilestones());
+        dto.setFeedbackNotes(goal.getFeedbackNotes());
+        dto.setSelfAssessment(goal.getSelfAssessment());
+        dto.setCompleted(goal.isCompleted());
+        return dto;
     }
 
-    public Goal convertToGoal(GoalDto goalDto) {
+    public Goal convertToGoal(GoalDto dto) {
         Goal goal = new Goal();
-        goal.setTitle(goalDto.getTitle());
-        goal.setManagerName(goalDto.getManagerName());
-        goal.setEmployeeName(goalDto.getEmployeeName());
-        goal.setDescription(goalDto.getDescription());
-        goal.setCategory(goalDto.getCategory());
-        goal.setStartDate(goalDto.getStartDate());
-        goal.setEndDate(goalDto.getEndDate());
-        goal.setKpis(goalDto.getKpis());
-        goal.setMilestones(goalDto.getMilestones());
-        goal.setFeedbackNotes(goalDto.getFeedbackNotes());
-        goal.setSelfAssessment(goalDto.getSelfAssessment());
-        goal.setCompleted(goalDto.isCompleted());
+        goal.setTitle(dto.getTitle());
+        goal.setManagerName(dto.getManagerName());
+        goal.setCompanyName(dto.getCompanyName());
+        goal.setEmployeeName(dto.getEmployeeName());
+        goal.setDescription(dto.getDescription());
+        goal.setCategory(dto.getCategory());
+        goal.setStartDate(dto.getStartDate());
+        goal.setEndDate(dto.getEndDate());
+        goal.setKpis(dto.getKpis());
+        goal.setMilestones(dto.getMilestones());
+        goal.setFeedbackNotes(dto.getFeedbackNotes());
+        goal.setSelfAssessment(dto.getSelfAssessment());
+        goal.setCompleted(dto.isCompleted());
         return goal;
     }
 

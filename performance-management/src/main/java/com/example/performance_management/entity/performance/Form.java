@@ -1,12 +1,13 @@
 package com.example.performance_management.entity.performance;
 
 
+import com.example.performance_management.dto.performance.FieldsDto;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
 import java.util.Map;
 
 @Document(collection = "form")
@@ -27,19 +28,23 @@ public class Form {
     public static final String FORM_NAME_VARIABLE = "formName"; //IdSequence.formId
     @Id
     private Long id;
+    private String companyName;
     private String formName;
-    @SuppressWarnings("JpaAttributeTypeInspection") @Field("formdata")
-    private Map<String,String> keyValuePairs;
+    private List<FieldsDto> templateFields;
+    private Map<String, String> userFilledInputs;
 
-    public Form(String formName, Map<String, String> requestDto) {
+    public Form(Long id, String companyName, String formName, List<FieldsDto> templateFields) {
+        this.id = id;
+        this.companyName = companyName;
         this.formName = formName;
-        keyValuePairs = requestDto;
+        this.templateFields = templateFields;
     }
 
-    public Form(long id, Map<String, String> requestDto) {
+    public Form(Long id, String companyName, String formName, Map<String, String> userFilledInputs) {
         this.id = id;
-        this.formName = requestDto.get(FORM_NAME_VARIABLE);
-        this.keyValuePairs = requestDto;
+        this.companyName = companyName;
+        this.formName = formName;
+        this.userFilledInputs = userFilledInputs;
     }
 }
 

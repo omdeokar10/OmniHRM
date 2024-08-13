@@ -46,6 +46,12 @@ public class GoalService {
                 .map(goalMapper::convertToDto).collect(Collectors.toList());
     }
 
+    public List<GoalDto> getAllGoals(String username,String companyName) {
+        return goalRepo.findByEmployeeNameAndCompanyName(username, companyName).stream()
+                .filter(goal -> goal.getEmployeeName().equals(username))
+                .map(goalMapper::convertToDto).collect(Collectors.toList());
+    }
+
     public GoalDto getGoalById(Long id) {
         Goal goal = getGoal(id);
         return goalMapper.convertToDto(goal);

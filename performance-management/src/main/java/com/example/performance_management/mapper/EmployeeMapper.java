@@ -2,10 +2,8 @@ package com.example.performance_management.mapper;
 
 import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.Role;
-import org.apache.catalina.util.StringUtil;
+import com.example.performance_management.entity.role.Role;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.util.StringUtils;
 
 import java.util.Collections;
 import java.util.List;
@@ -15,34 +13,27 @@ public class EmployeeMapper {
     public EmployeeMapper() {
     }
 
-
     public EmployeeDto convertToDto(Employee employee, PasswordEncoder passwordEncoder) {
-
-        EmployeeDto employeeDto = new EmployeeDto();
-        employeeDto.setId(employee.getId());
-        employeeDto.setCompanyName(employee.getCompanyName());
-        employeeDto.setFirstName(employee.getFirstName());
-        employeeDto.setLastName(employee.getLastName());
-        employeeDto.setFullName(employee.getFirstName() + " " + employee.getLastName());
-        employeeDto.setEmail(employee.getEmail());
-        employeeDto.setUserName(employee.getUserName());
-        employeeDto.setRoles(employee.getRoles());
-        return employeeDto;
+        EmployeeDto dto = new EmployeeDto();
+        dto.setId(employee.getId());
+        dto.setUserName(employee.getUserName());
+        dto.setRoles(employee.getRoles());
+        dto.setEmail(employee.getEmail());
+        dto.setCompanyName(employee.getCompanyName());
+        dto.setPassword(employee.getPassword());
+        return dto;
     }
 
-    public Employee convertToEntity(EmployeeDto employeeDto, PasswordEncoder passwordEncoder) {
-        Employee employee = new Employee();
-
-        employee.setId(employeeDto.getId());
-        employee.setCompanyName(employeeDto.getCompanyName());
-        employee.setFirstName(employeeDto.getFirstName());
-        employee.setLastName(employeeDto.getLastName());
-        employee.setFullName(employeeDto.getFirstName() + " " + employeeDto.getLastName());
-        employee.setEmail(employeeDto.getEmail());
-        employee.setUserName(employeeDto.getUserName());
-        employee.setPassword(passwordEncoder.encode(employeeDto.getPassword()));
-        setRoles(employeeDto, employee);
-        return employee;
+    public Employee convertToEntity(EmployeeDto dto, PasswordEncoder passwordEncoder) {
+        Employee entity = new Employee();
+        entity.setId(dto.getId());
+        entity.setUserName(dto.getUserName());
+        entity.setEmail(dto.getEmail());
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.setCompanyName(dto.getCompanyName());
+        entity.setRoles(dto.getRoles());
+        setRoles(dto, entity);
+        return entity;
     }
 
     private void setRoles(EmployeeDto employeeDto, Employee employee) {
@@ -56,4 +47,12 @@ public class EmployeeMapper {
     }
 
 
+    public Employee updateEmployee(Employee entity, EmployeeDto dto, PasswordEncoder passwordEncoder) {
+        entity.setCompanyName(dto.getCompanyName());
+        entity.setRoles(dto.getRoles());
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        entity.setUserName(dto.getUserName());
+        entity.setEmail(dto.getEmail());
+        return entity;
+    }
 }

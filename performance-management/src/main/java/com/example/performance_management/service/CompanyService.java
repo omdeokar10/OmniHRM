@@ -1,10 +1,10 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.dto.CompanyDto;
-import com.example.performance_management.dto.EmployeeDto;
+import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
 import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Company;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Role;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.CompanyMapper;
 import com.example.performance_management.mongoidgen.CompanySequenceGeneratorService;
@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -28,15 +27,17 @@ public class CompanyService {
     private final CompanySequenceGeneratorService companySequenceGeneratorService;
     private final RoleService roleService;
     private final AuthService authService;
+    private final EmployeeCompanyDetailsService employeeCompanyDetailsService;
     @Autowired
     private JavaMailSender javaMailSender;
 
-    public CompanyService(CompanyRepo companyRepo, CompanyMapper companyMapper, CompanySequenceGeneratorService companySequenceGeneratorService, RoleService roleService, AuthService authService) {
+    public CompanyService(CompanyRepo companyRepo, CompanyMapper companyMapper, CompanySequenceGeneratorService companySequenceGeneratorService, RoleService roleService, AuthService authService, EmployeeCompanyDetailsService employeeCompanyDetailsService) {
         this.companyRepo = companyRepo;
         this.companyMapper = companyMapper;
         this.companySequenceGeneratorService = companySequenceGeneratorService;
         this.roleService = roleService;
         this.authService = authService;
+        this.employeeCompanyDetailsService = employeeCompanyDetailsService;
     }
 
     public void createCompany(String companyName, String companyDomain, String companyEmail) {
@@ -84,7 +85,7 @@ public class CompanyService {
 
     public Company getCompanyByName(String companyName) {
         Optional<Company> optionalCompany = companyRepo.findByCompanyNameStartsWith(companyName);
-        if (!optionalCompany.isPresent()) {
+        if (optionalCompany.isEmpty()) {
             throw new CustomException("Company is not present");
         }
         return optionalCompany.get();
@@ -105,7 +106,7 @@ public class CompanyService {
         simpleMessage.setTo(companyEmail);
         simpleMessage.setSubject("Use this password to login into the platform.");
         simpleMessage.setText("Password:" + password);
-//        javaMailSender.send(simpleMessage);
+        javaMailSender.send(simpleMessage);
 
         return password;
     }
@@ -127,7 +128,14 @@ public class CompanyService {
         fullName.add(lastName);
 
         Role officeAdmin = roleService.getRole("office_admin");
-        authService.employeeSignup(new EmployeeDto(1L, companyName, firstName, lastName, fullName.toString(),
-                companyEmail, userName, userPassword, List.of(officeAdmin)));
+        EmployeeCompanyDetailsDto employeeCompanyDetailsDto = new EmployeeCompanyDetailsDto();
+
+        employeeCompanyDetailsDto.setCompanyName(companyName);
+        employeeCompanyDetailsDto.setFullName(fullName.toString());
+        employeeCompanyDetailsDto.setEmail(companyEmail);
+        employeeCompanyDetailsDto.setUserName(userName);
+        employeeCompanyDetailsDto.setPassword(userPassword);
+        employeeCompanyDetailsDto.setRoles(List.of(officeAdmin));
+        employeeCompanyDetailsService.createEmployeeForCompany(employeeCompanyDetailsDto);
     }
 }

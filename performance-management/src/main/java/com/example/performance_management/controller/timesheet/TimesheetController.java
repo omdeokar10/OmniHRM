@@ -56,7 +56,6 @@ public class TimesheetController {
 
     @GetMapping("/user/date/{username}/{dateStr}")
     public ResponseEntity<List<TaskEntryDto>> getTaskForUserAndCreatedDate(@PathVariable String username, @PathVariable String dateStr){
-//        String username = SecurityContextHolder.getContext().getAuthentication().getName(); //todo: jwt.. remove username from request url.
         List<TaskEntryDto> tasks = timesheetService.getAllTaskForUserForDate(username, dateStr);
         return ResponseEntity.ok(tasks);
     }

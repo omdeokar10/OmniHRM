@@ -33,8 +33,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if (request.getServletPath().contains("swagger") ||
-                getPermittedUrls().contains(request.getServletPath()))
-        {
+                getPermittedUrls().contains(request.getServletPath())) {
             filterChain.doFilter(request, response);
         } else {
             String token = getTokenFromRequest(request);
@@ -64,10 +63,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return null;
     }
 
-    public Set<String> getPermittedUrls(){
-        return Set.of("/api/auth/login","/api/auth/refresh/token",
+    public Set<String> getPermittedUrls() {
+        return Set.of("/api/auth/login", "/api/auth/refresh/token",
                 "/api/company",
-                "/api/company/login");
+                "/api/company/login",
+                "/api/auth/logout"
+        );
     }
+
 
 }

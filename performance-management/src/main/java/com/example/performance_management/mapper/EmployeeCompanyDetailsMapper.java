@@ -2,38 +2,60 @@ package com.example.performance_management.mapper;
 
 
 import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
+import com.example.performance_management.dto.EmployeeDto;
+import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.EmployeeCompanyDetails;
+
+import java.util.List;
 
 public class EmployeeCompanyDetailsMapper {
 
-    public EmployeeCompanyDetails convertToEntity(EmployeeCompanyDetailsDto companyDetailsDto) {
-        EmployeeCompanyDetails employeeCompanyDetails = new EmployeeCompanyDetails();
-        employeeCompanyDetails.setEmployeeId(companyDetailsDto.getEmployeeId());
-        employeeCompanyDetails.setTeam(companyDetailsDto.getTeam());
-        employeeCompanyDetails.setManagerEmail(companyDetailsDto.getManagerEmail());
-        employeeCompanyDetails.setBusinessTitle(companyDetailsDto.getBusinessTitle());
-        employeeCompanyDetails.setJobProfile(companyDetailsDto.getJobProfile());
-        employeeCompanyDetails.setLocation(companyDetailsDto.getLocation());
-        employeeCompanyDetails.setHireDate(companyDetailsDto.getHireDate());
-        employeeCompanyDetails.setTelephone(companyDetailsDto.getTelephone());
-        employeeCompanyDetails.setEmail(companyDetailsDto.getEmail());
-        employeeCompanyDetails.setWorkAddress(companyDetailsDto.getWorkAddress());
+    public EmployeeDto convertToEmployeeDto(EmployeeCompanyDetailsDto companyDetailsDto){
+        EmployeeDto dto = new EmployeeDto();
+        dto.setUserName(companyDetailsDto.getUserName());
+        dto.setPassword(companyDetailsDto.getUserName());
+        dto.setId(companyDetailsDto.getEmployeeId());
+        dto.setRoles(companyDetailsDto.getRoles());
+        dto.setCompanyName(companyDetailsDto.getCompanyName());
+        dto.setEmail(companyDetailsDto.getEmail());
+        return dto;
+    }
 
-        employeeCompanyDetails.setGender(companyDetailsDto.getGender());
-        employeeCompanyDetails.setDateOfBirth(companyDetailsDto.getDateOfBirth());
-        employeeCompanyDetails.setAge(companyDetailsDto.getAge());
-        employeeCompanyDetails.setCountryOfBirth(companyDetailsDto.getCountryOfBirth());
-        employeeCompanyDetails.setCityOfBirth(companyDetailsDto.getCityOfBirth());
-        employeeCompanyDetails.setMaritalStatus(companyDetailsDto.getMaritalStatus());
-        employeeCompanyDetails.setNationality(companyDetailsDto.getNationality());
-        employeeCompanyDetails.setDependantName(companyDetailsDto.getDependantName());
-        employeeCompanyDetails.setRelationToDependant(companyDetailsDto.getRelationToDependant());
+    public EmployeeCompanyDetails convertToEntity(EmployeeCompanyDetailsDto dto) {
+        EmployeeCompanyDetails entity = new EmployeeCompanyDetails();
 
-        employeeCompanyDetails.setBaseSalary(getAnInt(companyDetailsDto.getBaseSalary()));
-        employeeCompanyDetails.setBonusAllotted(Integer.parseInt(companyDetailsDto.getBonusAllotted()));
-        employeeCompanyDetails.setStocksOffered(Integer.parseInt(companyDetailsDto.getStocksOffered()));
+        entity.setPassword(dto.getPassword());
+        entity.setRoles(dto.getRoles());
+        entity.setUserName(dto.getUserName());
 
-        return employeeCompanyDetails;
+        entity.setEmployeeId(dto.getEmployeeId());
+        entity.setTeam(dto.getTeam());
+        entity.setManagerEmail(dto.getManagerEmail());
+        entity.setBusinessTitle(dto.getBusinessTitle());
+        entity.setJobProfile(dto.getJobProfile());
+        entity.setLocation(dto.getLocation());
+        entity.setHireDate(dto.getHireDate());
+        entity.setTelephone(dto.getTelephone());
+        entity.setEmail(dto.getEmail());
+        entity.setFullName(dto.getFullName());
+        entity.setWorkAddress(dto.getWorkAddress());
+        entity.setCompanyName(dto.getCompanyName());
+
+        entity.setGender(dto.getGender());
+        entity.setDateOfBirth(dto.getDateOfBirth());
+        entity.setAge(dto.getAge());
+        entity.setCountryOfBirth(dto.getCountryOfBirth());
+        entity.setCityOfBirth(dto.getCityOfBirth());
+        entity.setMaritalStatus(dto.getMaritalStatus());
+        entity.setNationality(dto.getNationality());
+        entity.setDependantName(dto.getDependantName());
+        entity.setRelationToDependant(dto.getRelationToDependant());
+
+        entity.setBaseSalary(getAnInt(dto.getBaseSalary()));
+        entity.setBonusAllotted(getAnInt(dto.getBonusAllotted()));
+        entity.setStocksOffered(getAnInt(dto.getStocksOffered()));
+
+        return entity;
 
     }
 
@@ -56,6 +78,18 @@ public class EmployeeCompanyDetailsMapper {
             employeeCompanyDetails.setLocation(companyDetailsDto.getLocation());
         }
 
+        if(companyDetailsDto.getFullName()!=null && !companyDetailsDto.getFullName().isEmpty()){
+            employeeCompanyDetails.setFullName(companyDetailsDto.getFullName());
+        }
+
+        if(companyDetailsDto.getCompanyName()!=null && !companyDetailsDto.getCompanyName().isEmpty()){
+            employeeCompanyDetails.setCompanyName(companyDetailsDto.getCompanyName());
+        }
+
+        if(companyDetailsDto.getRoles()!=null && !companyDetailsDto.getCompanyName().isEmpty()){
+            employeeCompanyDetails.setRoles(companyDetailsDto.getRoles());
+        }
+
         if (companyDetailsDto.getHireDate() != null) {
             employeeCompanyDetails.setHireDate(companyDetailsDto.getHireDate());
         }
@@ -68,8 +102,8 @@ public class EmployeeCompanyDetailsMapper {
             employeeCompanyDetails.setEmail(companyDetailsDto.getEmail());
         }
 
-        if (companyDetailsDto.getUsername() != null && !companyDetailsDto.getUsername().isEmpty()) {
-            employeeCompanyDetails.setUsername(companyDetailsDto.getUsername());
+        if (companyDetailsDto.getUserName() != null && !companyDetailsDto.getUserName().isEmpty()) {
+            employeeCompanyDetails.setUserName(companyDetailsDto.getUserName());
         }
 
         if (companyDetailsDto.getWorkAddress() != null && !companyDetailsDto.getWorkAddress().isEmpty()) {
@@ -112,25 +146,40 @@ public class EmployeeCompanyDetailsMapper {
             employeeCompanyDetails.setRelationToDependant(companyDetailsDto.getRelationToDependant());
         }
 
+        int totalComp = 0;
         if (validityCheck(companyDetailsDto.getBaseSalary()) && checkIfContainsOnlyDigits(companyDetailsDto.getBaseSalary())) {
-            employeeCompanyDetails.setBaseSalary(getAnInt(companyDetailsDto.getBaseSalary()));
+            int baseSalary = getAnInt(companyDetailsDto.getBaseSalary());
+            employeeCompanyDetails.setBaseSalary(baseSalary);
+            totalComp += baseSalary;
         }
 
         if (validityCheck(companyDetailsDto.getBonusAllotted()) && checkIfContainsOnlyDigits(companyDetailsDto.getBonusAllotted())) {
-            employeeCompanyDetails.setBonusAllotted(getAnInt(companyDetailsDto.getBonusAllotted()));
+            int bonus = getAnInt(companyDetailsDto.getBonusAllotted());
+            employeeCompanyDetails.setBonusAllotted(bonus);
+            totalComp += bonus;
         }
 
         if (validityCheck(companyDetailsDto.getStocksOffered()) && checkIfContainsOnlyDigits(companyDetailsDto.getStocksOffered())) {
-            employeeCompanyDetails.setStocksOffered(getAnInt(companyDetailsDto.getStocksOffered()));
+            int stocks = getAnInt(companyDetailsDto.getStocksOffered());
+            employeeCompanyDetails.setStocksOffered(stocks);
+            totalComp += stocks;
         }
 
         if (validityCheck(companyDetailsDto.getTotalComp()) && checkIfContainsOnlyDigits(companyDetailsDto.getTotalComp())) {
-            employeeCompanyDetails.setTotalComp(getAnInt(companyDetailsDto.getTotalComp()));
+            int totalCompDto = getAnInt(companyDetailsDto.getTotalComp());
+            employeeCompanyDetails.setTotalComp(totalCompDto);
+        }
+
+        if(employeeCompanyDetails.getTotalComp()!=totalComp){
+            employeeCompanyDetails.setTotalComp(totalComp);
         }
 
     }
 
     public int getAnInt(String entity) {
+        if(entity==null||entity.isEmpty()){
+            return 0;
+        }
         return Integer.parseInt(entity);
     }
 
@@ -160,10 +209,11 @@ public class EmployeeCompanyDetailsMapper {
         dto.setLengthOfService(entity.getLengthOfService());
         dto.setTelephone(entity.getTelephone());
         dto.setEmail(entity.getEmail());
-        dto.setUsername(entity.getUsername());
+        dto.setUserName(entity.getUserName());
         dto.setWorkAddress(entity.getWorkAddress());
         dto.setManagerEmail(entity.getManagerEmail());
-
+        dto.setCompanyName(entity.getCompanyName());
+        dto.setFullName(entity.getFullName());
         dto.setGender(entity.getGender());
         dto.setDateOfBirth(entity.getDateOfBirth());
         dto.setAge(entity.getAge());

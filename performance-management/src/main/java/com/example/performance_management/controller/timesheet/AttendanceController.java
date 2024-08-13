@@ -3,6 +3,7 @@ package com.example.performance_management.controller.timesheet;
 import com.example.performance_management.controller.HelperUtil;
 import com.example.performance_management.dto.timesheet.AttendanceDto;
 import com.example.performance_management.dto.timesheet.AttendanceFetchUserDateRange;
+import com.example.performance_management.dto.timesheet.AttendanceFetchUserDateRangeById;
 import com.example.performance_management.service.timesheet.AttendanceService;
 import org.springframework.web.bind.annotation.*;
 
@@ -45,6 +46,10 @@ public class AttendanceController {
         return attendanceService.getAttendanceBetweenTime(dto.getUsername(), dto.getStartDate(), dto.getEndDate());
     }
 
+    @PostMapping("/admin/range")
+    public List<AttendanceDto> getAttendanceByIdForTimePeriod(@RequestBody AttendanceFetchUserDateRangeById dto){ // get attendance list for time period.
+        return attendanceService.getAttendanceBetweenTimeForUserId(dto.getId(), dto.getStartDate(), dto.getEndDate());
+    }
 
 
     //no update/delete.

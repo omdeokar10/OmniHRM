@@ -1,9 +1,11 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
+import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.EmployeeHierarchyDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.EmployeeCompanyDetails;
+import com.example.performance_management.entity.role.RoleUtil;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.EmployeeCompanyDetailsMapper;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
@@ -14,21 +16,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EmployeeCompanyDetailsService {
 
     private final EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
     private final EmployeeCompanyRepo employeeCompanyRepo;
+    private final EmployeeService employeeService;
     private final EmployeeCompanyDetailsMapper mapper = new EmployeeCompanyDetailsMapper();
+    private final RoleService roleService;
 
-    public EmployeeCompanyDetailsService(EmployeeSequenceGeneratorService employeeSequenceGeneratorService, EmployeeCompanyRepo employeeCompanyRepo) {
+    public EmployeeCompanyDetailsService(EmployeeSequenceGeneratorService employeeSequenceGeneratorService, EmployeeCompanyRepo employeeCompanyRepo, EmployeeService employeeService, RoleService roleService) {
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
         this.employeeCompanyRepo = employeeCompanyRepo;
+        this.employeeService = employeeService;
+        this.roleService = roleService;
     }
 
     public EmployeeCompanyDetailsDto getDetailsForEmployeeByUsername(String username) {
-        EmployeeCompanyDetails employeeCompanyDetails = getEmployeeCompanyDetails(employeeCompanyRepo.findByUsername(username));
+        EmployeeCompanyDetails employeeCompanyDetails = getEmployeeCompanyDetails(employeeCompanyRepo.findByUserName(username));
         return mapper.convertToDto(employeeCompanyDetails);
     }
 
@@ -42,14 +49,27 @@ public class EmployeeCompanyDetailsService {
         return mapper.convertToDto(employeeCompanyDetails);
     }
 
-    public void saveDetailsForEmployee(EmployeeCompanyDetailsDto employeeCompanyDetailsDto) {
+    public void createEmployeeForCompany(EmployeeCompanyDetailsDto employeeCompanyDetailsDto) {
+
+        long id = generateId();
+
         EmployeeCompanyDetails employeeCompanyDetails = mapper.convertToEntity(employeeCompanyDetailsDto);
-        employeeCompanyDetails.setEmployeeId(generateId());
-        employeeCompanyDetails.setLengthOfService("0");
+        employeeCompanyDetails.setEmployeeId(id);
+        employeeCompanyDetails.setRoles(List.of(roleService.getRole(RoleUtil.USER)));
+        employeeCompanyDetails.setPassword(employeeCompanyDetails.getUserName());
+        setSalary(employeeCompanyDetailsDto, employeeCompanyDetails);
+        employeeCompanyRepo.save(employeeCompanyDetails);
+
+        EmployeeDto dto = mapper.convertToEmployeeDto(employeeCompanyDetailsDto);
+        dto.setId(id);
+        dto.setRoles(List.of(roleService.getRole(RoleUtil.USER)));
+        employeeService.createEmployee(dto);
+    }
+
+    private void setSalary(EmployeeCompanyDetailsDto employeeCompanyDetailsDto, EmployeeCompanyDetails employeeCompanyDetails) {
         if (mapper.validityCheck(employeeCompanyDetailsDto.getBaseSalary()) && mapper.validityCheck(employeeCompanyDetailsDto.getBonusAllotted())) {
             employeeCompanyDetails.setTotalComp(mapper.getAnInt(employeeCompanyDetailsDto.getBaseSalary()) + mapper.getAnInt(employeeCompanyDetailsDto.getBonusAllotted()));
         }
-        employeeCompanyRepo.save(employeeCompanyDetails);
     }
 
     private long generateId() {
@@ -61,6 +81,9 @@ public class EmployeeCompanyDetailsService {
         EmployeeCompanyDetails employeeCompanyDetails = getEmployeeCompanyDetails(employeeCompanyRepo.findById(id));
         mapper.updateEntity(employeeCompanyDetails, employeeCompanyDetailsDto);
         employeeCompanyRepo.save(employeeCompanyDetails);
+
+        EmployeeDto employeeDto = mapper.convertToEmployeeDto(employeeCompanyDetailsDto);
+        employeeService.updateEmployee(id, employeeDto);
     }
 
     public void deleteEmployeeDetails(Long id) {
@@ -80,15 +103,20 @@ public class EmployeeCompanyDetailsService {
         List<EmployeeHierarchyDto> list = new ArrayList<>();
 
         EmployeeCompanyDetailsDto employeeDetails = getDetailsForEmployeeByUsername(username);
-        while (!Objects.isNull(employeeDetails.getManagerEmail())) {
-
+        while (!Objects.isNull(employeeDetails.getManagerEmail()) && employeeDetails.getManagerEmail().contains("@")) {
             EmployeeCompanyDetailsDto managerDetails = getDetailsForEmployeeByEmail(employeeDetails.getManagerEmail());
-            list.add(new EmployeeHierarchyDto(employeeDetails.getUsername(), employeeDetails.getEmail(),
-                    managerDetails.getUsername(), managerDetails.getEmail()));
-            employeeDetails = getDetailsForEmployeeByUsername(managerDetails.getUsername());
+            list.add(new EmployeeHierarchyDto(employeeDetails.getUserName(), employeeDetails.getEmail(),
+                    managerDetails.getUserName(), managerDetails.getEmail()));
+            employeeDetails = getDetailsForEmployeeByUsername(managerDetails.getUserName());
             System.out.println(employeeDetails);
         }
         return list;
     }
+
+    public List<EmployeeCompanyDetailsDto> getEmployeesByCompany(String companyName) {
+        return employeeCompanyRepo.findAllByCompanyName(companyName).stream().map(entity -> mapper.convertToDto(entity)).collect(Collectors.toList());
+    }
+
+
 
 }

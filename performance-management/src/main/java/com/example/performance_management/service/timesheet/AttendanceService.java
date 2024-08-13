@@ -1,5 +1,6 @@
 package com.example.performance_management.service.timesheet;
 
+import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
 import com.example.performance_management.dto.timesheet.AttendanceDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.timesheet.Attendance;
@@ -7,6 +8,7 @@ import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.AttendanceMapper;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
 import com.example.performance_management.repo.AttendanceRepo;
+import com.example.performance_management.service.EmployeeCompanyDetailsService;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -14,19 +16,19 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class AttendanceService {
 
     private final AttendanceRepo attendanceRepo;
+    private final EmployeeCompanyDetailsService employeeCompanyDetailsService;
     final private EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
     private final AttendanceMapper attendanceMapper = new AttendanceMapper();
 
-    public AttendanceService(AttendanceRepo attendanceRepo, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
+    public AttendanceService(AttendanceRepo attendanceRepo, EmployeeCompanyDetailsService authService, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
         this.attendanceRepo = attendanceRepo;
+        this.employeeCompanyDetailsService = authService;
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
     }
 
@@ -137,4 +139,9 @@ public class AttendanceService {
         return optionalAttendance.get();
     }
 
+    public List<AttendanceDto> getAttendanceBetweenTimeForUserId(Long id, String startDate, String endDate) {
+        EmployeeCompanyDetailsDto detailsForEmployeeById = employeeCompanyDetailsService.getDetailsForEmployeeById(id);
+        String username = detailsForEmployeeById.getUserName();
+        return getAttendanceBetweenTime(username, startDate, endDate);
+    }
 }

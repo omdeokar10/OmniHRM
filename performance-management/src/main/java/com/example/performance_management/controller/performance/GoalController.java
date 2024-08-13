@@ -1,8 +1,10 @@
 package com.example.performance_management.controller.performance;
 
+import com.example.performance_management.controller.HelperUtil;
 import com.example.performance_management.dto.performance.GoalDto;
 import com.example.performance_management.service.GoalService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,8 +18,10 @@ import java.util.List;
 public class GoalController {
 
     private final GoalService goalService;
-    public GoalController(GoalService goalService) {
+    private final HelperUtil helperUtil;
+    public GoalController(GoalService goalService, HelperUtil helperUtil) {
         this.goalService = goalService;
+        this.helperUtil = helperUtil;
     }
 
     @PostMapping
@@ -31,9 +35,10 @@ public class GoalController {
         return ResponseEntity.ok(goalService.getAllGoals());
     }
 
-    @GetMapping("/user/{username}")
-    public ResponseEntity<List<GoalDto>> getAllGoalsByUser(@PathVariable String username) {
-        return ResponseEntity.ok(goalService.getAllGoals(username));
+    @GetMapping("/company/{companyName}")
+    public ResponseEntity<List<GoalDto>> getAllGoalsByUser(@PathVariable String companyName) {
+        String username = helperUtil.getLoggedInUser();
+        return ResponseEntity.ok(goalService.getAllGoals(username, companyName));
     }
 
     @GetMapping("/{id}")

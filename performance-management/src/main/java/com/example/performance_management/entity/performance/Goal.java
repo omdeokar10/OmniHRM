@@ -19,6 +19,7 @@ public class Goal {
     public static final String GENERATED_ID = "goalId"; //IdSequence.formId
     @Id
     private Long id;
+    private String companyName;
     private String title;
     private String managerName;
     private String employeeName;

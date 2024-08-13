@@ -2,7 +2,7 @@ package com.example.performance_management.service;
 
 import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Role;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.EmployeeMapper;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
@@ -81,6 +81,12 @@ public class EmployeeService {
         return employeeRepo.save(employee);
     }
 
+    public void createEmployee(EmployeeDto employeeDto){
+        performChecks(employeeDto);
+        Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
+        employeeRepo.save(employee);
+    }
+
     private void performChecks(EmployeeDto employeeDto) {
         if (checkIfUserExistsWithName(employeeDto.getUserName()) || checkForEmail(employeeDto.getEmail())) {
             throw new CustomException("Name already exists");
@@ -102,8 +108,8 @@ public class EmployeeService {
 
     public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDetails) {
         Employee employee = getEmployee(employeeRepo.findById(id));
-        setDetails(employeeDetails, employee);
-        Employee updatedEmployee = employeeRepo.save(employee);
+        Employee updatedEmployee = employeeMapper.updateEmployee(employee, employeeDetails, passwordEncoder);
+        employeeRepo.save(updatedEmployee);
         return employeeMapper.convertToDto(updatedEmployee, passwordEncoder);
     }
 
@@ -113,14 +119,8 @@ public class EmployeeService {
     }
 
     private void setDetails(EmployeeDto employeeDto, Employee employee) {
-        employee.setCompanyName(employeeDto.getCompanyName());
-        employee.setFirstName(employeeDto.getFirstName());
-        employee.setLastName(employeeDto.getLastName());
-        employee.setEmail(employeeDto.getEmail());
         employee.setUserName(employeeDto.getUserName());
-        employee.setFullName(employeeDto.getFullName());
         employee.setRoles(employeeDto.getRoles());
-
     }
 
     public void deleteEmployee(Long id) {
@@ -156,4 +156,10 @@ public class EmployeeService {
         roleService.deleteRoleForEmployee(role, employee);
         updateEmployee(employee.getId(), employee);
     }
+
+    public void resetPassword(String username, String password){
+        Employee employee = getEmployeeByUsername(username);
+        employee.setPassword(passwordEncoder.encode(password));
+    }
+
 }

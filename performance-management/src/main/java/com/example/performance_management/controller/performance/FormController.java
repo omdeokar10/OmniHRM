@@ -1,14 +1,15 @@
 package com.example.performance_management.controller.performance;
 
+import com.example.performance_management.controller.HelperUtil;
 import com.example.performance_management.dto.performance.FormDto;
+import com.example.performance_management.dto.performance.FormGenerationRequestDto;
+import com.example.performance_management.dto.performance.FormSubmissionRequestDto;
 import com.example.performance_management.dto.performance.PendingFormDto;
 import com.example.performance_management.service.EmployeeFormService;
-import com.example.performance_management.service.EmployeeService;
 import com.example.performance_management.service.FormService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/form")
@@ -17,36 +18,42 @@ public class FormController {
 
     private final FormService formService;
     private final EmployeeFormService employeeFormService;
-    private final EmployeeService employeeService;
+    private final HelperUtil helperUtil;
 
-    public FormController(FormService formService, EmployeeFormService employeeFormService, EmployeeService employeeService) {
+    public FormController(FormService formService, EmployeeFormService employeeFormService, HelperUtil helperUtil) {
         this.formService = formService;
         this.employeeFormService = employeeFormService;
-        this.employeeService = employeeService;
+        this.helperUtil = helperUtil;
     }
 
-    @PostMapping
-    public void submitForm(@RequestBody Map<String, String> requestDto) {
-        formService.createForm(requestDto);
+    @PostMapping("/")
+    public void submitForm(@RequestBody FormGenerationRequestDto requestDto) {
+        formService.createForm(requestDto.getCompanyName(), requestDto.getFormName(), requestDto.getFormData());
     }
 
-    @PostMapping("/{username}")
-    public void submitFormForAUser(@PathVariable String username, @RequestBody Map<String, String> requestDto) {
-        requestDto.remove("audience");// todo: remove.
-        requestDto.remove("dueDate");// todo: remove.
-        String formName = requestDto.remove("formName");// todo: remove.
-        employeeFormService.saveFormForEmployee(username, formName, requestDto);
+    @GetMapping("/company/{companyName}")
+    public List<PendingFormDto> getAllFormsForCompany(@PathVariable String companyName) {
+        return getAllPendingFormsForUser();
     }
 
-    @GetMapping("/user/{username}")
-    public List<PendingFormDto> getAllPendingFormsForUser(@PathVariable String username) {
+    @PutMapping("/{id}")
+    public void submitFormForAUser(@PathVariable String id, @RequestBody FormSubmissionRequestDto requestDto) {
+        System.out.println(id);
+        String username = helperUtil.getLoggedInUser();
+        employeeFormService.saveFormForEmployee(username, requestDto.getCompanyName(), requestDto.getFormName(), requestDto.getFormData());
+    }
+
+    @GetMapping("/user")
+    public List<PendingFormDto> getAllPendingFormsForUser() {
+        String username = helperUtil.getLoggedInUser();
         return employeeFormService.getUserPendingForm(username);
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public FormDto getFormById(@PathVariable Long id) {
-        return formService.getFormById(id);
+        return employeeFormService.getFormById(id);
     }
+
 
     @DeleteMapping("/{id}")
     public void deleteForm(@PathVariable Long id) {

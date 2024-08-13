@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class PendingFormDto {
-
     Long id;
     String formName;
 }

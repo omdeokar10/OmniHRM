@@ -1,5 +1,6 @@
 package com.example.performance_management.entity;
 
+import com.example.performance_management.entity.role.Role;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,13 +25,10 @@ public class Employee {
     public static final String ID_KEY = "employeeid"; //IdSequence.formId
     @Id
     private Long id;
-    private String companyName;
-    private String firstName;
-    private String lastName;
-    private String fullName;
-    private String email;
     private String userName;
     private String password;
-    private List<Role> roles; // For referencing roles
+    private String email;
+    private List<Role> roles;
+    private String companyName;
     public boolean isEnabled = true;
 }

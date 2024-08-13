@@ -12,6 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class EmployeeForms {
 
     private String employeeName;
+    private String companyName;
     private String formName;
     private Form form;
 

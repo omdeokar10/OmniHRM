@@ -1,8 +1,9 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.Permission;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Permission;
+import com.example.performance_management.entity.role.Role;
+import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.repo.EmployeeRepo;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,7 +28,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         System.out.println("user details service.");
         Optional<Employee> user = employeeRepo.findByUserNameStartsWith(username);
         if (user.isEmpty()) {
-            throw new UsernameNotFoundException("User not present!");
+            throw new CustomException("User not present!");
         }
         Employee verifiedUser = user.get();
         List<Role> roles = verifiedUser.getRoles();

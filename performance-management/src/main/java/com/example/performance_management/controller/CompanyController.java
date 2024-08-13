@@ -7,8 +7,10 @@ import com.example.performance_management.dto.performance.EmployeeLoginResponseD
 import com.example.performance_management.entity.Company;
 import com.example.performance_management.mapper.CompanyMapper;
 import com.example.performance_management.service.CompanyService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -25,6 +27,7 @@ public class CompanyController {
         this.companyMapper = companyMapper;
     }
 
+    @Transactional
     @PostMapping("")
     public ResponseEntity<String> create(@RequestBody UserCompanyDto companyDto) {
         String userPassword = companyService.sendMail(companyDto.getCompanyEmail());
@@ -56,9 +59,15 @@ public class CompanyController {
         return new ResponseEntity<>("Updated company: " + updatedDto.getCompanyName(), HttpStatus.OK);
     }
 
-    @DeleteMapping("/{companyName}")
+    @DeleteMapping("/company-name/{companyName}")
     public ResponseEntity<String> delete(@PathVariable String companyName) {
         companyService.deleteCompanyByName(companyName);
+        return new ResponseEntity<>("Company deleted.", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/company-id/{id}")
+    public ResponseEntity<String> deleteById(@PathVariable @Valid Long id) {
+        companyService.deleteCompanyById(id);
         return new ResponseEntity<>("Company deleted.", HttpStatus.OK);
     }
 

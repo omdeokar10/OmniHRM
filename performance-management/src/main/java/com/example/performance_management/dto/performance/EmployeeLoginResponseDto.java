@@ -11,5 +11,6 @@ public class EmployeeLoginResponseDto {
     private String username;
     private String accessToken;
     private String refreshToken;
+    private String companyName;
     private String[] roles;
 }

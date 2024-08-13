@@ -4,6 +4,7 @@ import com.example.performance_management.dto.AuthenticationResponse;
 import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.LoginRequestDto;
 import com.example.performance_management.dto.RefreshTokenRequest;
+import com.example.performance_management.dto.employee.ResetPasswordDto;
 import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.service.AuthService;
@@ -50,4 +51,11 @@ public class AuthController {
         authService.deleteRefreshToken(refreshTokenRequest.getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).body("Logged out.");
     }
+
+    @PostMapping("/reset")
+    public ResponseEntity<String> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        authService.resetPassword(resetPasswordDto.getUsername(), resetPasswordDto.getPassword());
+        return ResponseEntity.ok("done");
+    }
+
 }

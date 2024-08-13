@@ -1,6 +1,6 @@
 package com.example.performance_management.repo;
 
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Role;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.Optional;

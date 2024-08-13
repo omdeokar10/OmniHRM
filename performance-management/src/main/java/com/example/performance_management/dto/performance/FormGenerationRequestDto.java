@@ -5,13 +5,12 @@ import lombok.*;
 import java.util.List;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-public class FormDto {
-    private Long id;
-    private String formName;
+public class FormGenerationRequestDto {
     private String companyName;
-    private List<FieldsDto> fields;
+    private String formName;
+    private List<FieldsDto> formData;
 }

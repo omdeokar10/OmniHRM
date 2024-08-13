@@ -1,6 +1,6 @@
 package com.example.performance_management.service;
 
-import com.example.performance_management.entity.Permission;
+import com.example.performance_management.entity.role.Permission;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;

@@ -22,20 +22,39 @@ public class EmployeeCompanyDetailsController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<EmployeeCompanyDetailsDto> getCompanyDetailsForEmp(){
+    public ResponseEntity<EmployeeCompanyDetailsDto> getCompanyDetailsForEmp() {
         String loggedInUser = helperUtil.getLoggedInUser();
         EmployeeCompanyDetailsDto employeeCompanyDetails = employeeCompanyDetailsService.getDetailsForEmployeeByUsername(loggedInUser);
         return ResponseEntity.ok(employeeCompanyDetails);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeCompanyDetailsDto> getCompanyDetailsForEmp(@PathVariable String id) {
+        EmployeeCompanyDetailsDto employeeCompanyDetails = employeeCompanyDetailsService.getDetailsForEmployeeById(Long.parseLong(id));
+        return ResponseEntity.ok(employeeCompanyDetails);
+    }
+
+    @GetMapping("/all/{companyName}")
+    public ResponseEntity<List<EmployeeCompanyDetailsDto>> getAllEmployeeForCompany(@PathVariable String companyName) {
+        return ResponseEntity.ok(employeeCompanyDetailsService.getEmployeesByCompany(companyName));
+    }
+
     @PostMapping("/")
-    public ResponseEntity<String> addCompanyDetailsForEmployee(@RequestBody EmployeeCompanyDetailsDto employeeDto) {
-        employeeCompanyDetailsService.saveDetailsForEmployee(employeeDto);
+    public ResponseEntity<String> createEmployee(@RequestBody EmployeeCompanyDetailsDto employeeDto) {
+        employeeCompanyDetailsService.createEmployeeForCompany(employeeDto);
         return ResponseEntity.ok("Created");
     }
 
+    @GetMapping("/hierarchy")
+    public List<EmployeeHierarchyDto> getHierarchy() {
+        String loggedInUser = helperUtil.getLoggedInUser();
+        return employeeCompanyDetailsService.getHierarchy(loggedInUser);
+    }
+
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateCompanyDetailsForEmployee(@PathVariable Long id, @RequestBody EmployeeCompanyDetailsDto employeeDetails) {
+    public ResponseEntity<String> updateCompanyDetailsForEmployee(@PathVariable Long id,
+                                                                  @RequestBody EmployeeCompanyDetailsDto employeeDetails)
+    {
         employeeCompanyDetailsService.updateDetailsForEmployee(id, employeeDetails);
         return ResponseEntity.ok("Updated");
     }
@@ -44,12 +63,6 @@ public class EmployeeCompanyDetailsController {
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         employeeCompanyDetailsService.deleteEmployeeDetails(id);
         return ResponseEntity.noContent().build();
-    }
-
-    @GetMapping("/hierarchy")
-    public List<EmployeeHierarchyDto> getHierarchy(){
-        String loggedInUser = helperUtil.getLoggedInUser();
-        return employeeCompanyDetailsService.getHierarchy(loggedInUser);
     }
 
 }

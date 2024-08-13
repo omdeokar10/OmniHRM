@@ -1,18 +1,17 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Role;
+import com.example.performance_management.entity.role.RoleUtil;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
 import com.example.performance_management.repo.RoleRepo;
 import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -39,8 +38,8 @@ public class RoleService {
 
     public void addRoleForEmployee(String role, Employee employee) {
         Role roleFromRepo = getRole(role);
-        if (!employee.getRoles().contains(roleFromRepo)) {
-            employee.getRoles().add(roleFromRepo);
+        if (employee.getRoles()==null || !employee.getRoles().contains(roleFromRepo)) {
+            employee.setRoles(List.of(roleFromRepo));
         } else {
             System.out.println("Role already assigned to user.");
         }
@@ -52,8 +51,16 @@ public class RoleService {
     }
 
     public Role getRole(String role) {
-
         Optional<Role> optionalRole = roleRepo.findByRoleNameStartsWith(role);
+        if (optionalRole.isEmpty()) {
+            throw new CustomException("Role does not exist");
+        } else {
+            return optionalRole.get();
+        }
+    }
+
+    public Role getRole(RoleUtil roleUtil) {
+        Optional<Role> optionalRole = roleRepo.findByRoleNameStartsWith(roleUtil.getValue());
         if (optionalRole.isEmpty()) {
             throw new CustomException("Role does not exist");
         } else {

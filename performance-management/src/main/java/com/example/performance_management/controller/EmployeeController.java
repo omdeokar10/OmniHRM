@@ -2,16 +2,13 @@ package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.UserRoleDto;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Role;
 import com.example.performance_management.service.AuthService;
 import com.example.performance_management.service.EmployeeService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -45,7 +42,7 @@ public class EmployeeController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<EmployeeDto> getEmployeeByUsername(){
+    public ResponseEntity<EmployeeDto> getEmployeeByUsername() {
         String loggedInUser = helperUtil.getLoggedInUser();
         EmployeeDto employeeByUsername = employeeService.getEmployeeDtoByUsername(loggedInUser);
         return ResponseEntity.ok(employeeByUsername);
@@ -67,7 +64,7 @@ public class EmployeeController {
         String name = helperUtil.getLoggedInUser();
         List<Role> roles = employeeService.getRolesForUser(name);
         StringJoiner stringJoiner = new StringJoiner(",");
-        for(Role role: roles){
+        for (Role role : roles) {
             stringJoiner.add(role.toString());
         }
         return ResponseEntity.ok(stringJoiner.toString());
@@ -91,5 +88,6 @@ public class EmployeeController {
         employeeService.deleteEmployee(id);
         return ResponseEntity.noContent().build();
     }
+
 
 }

@@ -5,7 +5,7 @@ import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.RefreshTokenRequest;
 import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.Role;
+import com.example.performance_management.entity.role.Role;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.repo.EmployeeRepo;
 import com.example.performance_management.security.JwtTokenProvider;
@@ -14,8 +14,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,7 +28,6 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -74,8 +71,8 @@ public class AuthService {
             SecurityContextHolder.getContext().setAuthentication(authenticate);
             String accessToken = jwtProvider.generateToken(authenticate);
             String refreshToken = refreshTokenService.generateRefreshToken().getToken();
-            List<String> rolesString = employee.getRoles().stream().map(role -> role.getRoleName()).toList();
-            return new EmployeeLoginResponseDto(username, accessToken, refreshToken, rolesString.toArray(new String[0]));
+            List<String> rolesString = employee.getRoles().stream().map(Role::getRoleName).toList();
+            return new EmployeeLoginResponseDto(username, accessToken, refreshToken, employee.getCompanyName(), rolesString.toArray(new String[0]));
         }
         throw new CustomException("User is disabled");
     }
@@ -115,6 +112,10 @@ public class AuthService {
 
     public void deleteRefreshToken(String refreshToken) {
         refreshTokenService.deleteRefreshToken(refreshToken);
+    }
+
+    public void resetPassword(String username, String password) {
+        employeeService.resetPassword(username, password);
     }
 
         /*

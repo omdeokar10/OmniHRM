@@ -13,6 +13,7 @@ import lombok.Setter;
 public class GoalDto {
 
     private Long id;
+    private String companyName;
     private String title;
     private String managerName;
     private String employeeName;
