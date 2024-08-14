@@ -5,7 +5,7 @@ import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.EmployeeHierarchyDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.EmployeeCompanyDetails;
-import com.example.performance_management.entity.role.RoleUtil;
+import com.example.performance_management.entity.role.RoleEnum;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.EmployeeCompanyDetailsMapper;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
@@ -55,14 +55,14 @@ public class EmployeeCompanyDetailsService {
 
         EmployeeCompanyDetails employeeCompanyDetails = mapper.convertToEntity(employeeCompanyDetailsDto);
         employeeCompanyDetails.setEmployeeId(id);
-        employeeCompanyDetails.setRoles(List.of(roleService.getRole(RoleUtil.USER)));
+        employeeCompanyDetails.setRoles(List.of(roleService.getRole(RoleEnum.USER)));
         employeeCompanyDetails.setPassword(employeeCompanyDetails.getUserName());
         setSalary(employeeCompanyDetailsDto, employeeCompanyDetails);
         employeeCompanyRepo.save(employeeCompanyDetails);
 
         EmployeeDto dto = mapper.convertToEmployeeDto(employeeCompanyDetailsDto);
         dto.setId(id);
-        dto.setRoles(List.of(roleService.getRole(RoleUtil.USER)));
+        dto.setRoles(List.of(roleService.getRole(RoleEnum.USER)));
         employeeService.createEmployee(dto);
     }
 
@@ -108,15 +108,13 @@ public class EmployeeCompanyDetailsService {
             list.add(new EmployeeHierarchyDto(employeeDetails.getUserName(), employeeDetails.getEmail(),
                     managerDetails.getUserName(), managerDetails.getEmail()));
             employeeDetails = getDetailsForEmployeeByUsername(managerDetails.getUserName());
-            System.out.println(employeeDetails);
         }
         return list;
     }
 
     public List<EmployeeCompanyDetailsDto> getEmployeesByCompany(String companyName) {
-        return employeeCompanyRepo.findAllByCompanyName(companyName).stream().map(entity -> mapper.convertToDto(entity)).collect(Collectors.toList());
+        return employeeCompanyRepo.findAllByCompanyName(companyName).stream().map(mapper::convertToDto).collect(Collectors.toList());
     }
-
 
 
 }

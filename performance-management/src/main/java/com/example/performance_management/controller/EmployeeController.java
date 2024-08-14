@@ -21,7 +21,6 @@ public class EmployeeController {
     private final AuthService authService;
     private final HelperUtil helperUtil;
 
-
     public EmployeeController(EmployeeService employeeService, AuthService authService, HelperUtil helperUtil) {
         this.employeeService = employeeService;
         this.authService = authService;

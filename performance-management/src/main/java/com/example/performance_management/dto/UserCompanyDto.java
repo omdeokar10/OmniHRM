@@ -14,7 +14,5 @@ public class UserCompanyDto {
     public String companyName;
     public String companyDomain;
     public String companyEmail;
-    public String firstName;
-    public String lastName;
     public String userName;
 }

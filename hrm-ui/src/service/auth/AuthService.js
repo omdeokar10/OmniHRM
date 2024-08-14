@@ -59,6 +59,8 @@ export const loginAPICall = (loginObj) => {
     return api.post(authUrl + '/login', loginObj);
 }
 
+export const forgotPasswordApiCall = (email) => api.post(authUrl + '/forgot-password/' + email);
+
 export const refreshApiCall = () => {
     var refreshToken = localStorage.getItem("refreshToken");
     var username = getLoggedInUser();

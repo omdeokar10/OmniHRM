@@ -20,6 +20,5 @@ public class Role {
     @Id
     private Long id;
     private String roleName;
-    private List<Permission> permissions;
 
 }

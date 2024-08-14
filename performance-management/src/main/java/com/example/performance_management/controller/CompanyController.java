@@ -33,7 +33,7 @@ public class CompanyController {
         String userPassword = companyService.sendMail(companyDto.getCompanyEmail());
         companyService.createCompany(companyDto.getCompanyName(), companyDto.getCompanyDomain(), companyDto.getCompanyEmail());
 
-        companyService.createCompanyAdmin(companyDto.getUserName(), companyDto.getFirstName(), companyDto.getLastName(),
+        companyService.createCompanyAdmin(companyDto.getUserName(),
                 companyDto.getCompanyEmail(), userPassword, companyDto.getCompanyName());
 
         return new ResponseEntity<>("Company created: " + companyDto.getCompanyName(), HttpStatus.OK);

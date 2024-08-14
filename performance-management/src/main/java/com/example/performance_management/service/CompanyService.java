@@ -5,6 +5,7 @@ import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
 import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Company;
 import com.example.performance_management.entity.role.Role;
+import com.example.performance_management.entity.role.RoleEnum;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.CompanyMapper;
 import com.example.performance_management.mongoidgen.CompanySequenceGeneratorService;
@@ -101,14 +102,18 @@ public class CompanyService {
         int index = companyEmail.indexOf('@');
         String password = companyEmail.substring(0, index);
 
+        sendMail(companyEmail, password);
+
+        return password;
+    }
+
+    private void sendMail(String companyEmail, String password) {
         SimpleMailMessage simpleMessage = new SimpleMailMessage();
         simpleMessage.setFrom("kaustubhdeokarsde@gmail.com");
         simpleMessage.setTo(companyEmail);
         simpleMessage.setSubject("Use this password to login into the platform.");
         simpleMessage.setText("Password:" + password);
         javaMailSender.send(simpleMessage);
-
-        return password;
     }
 
     public EmployeeLoginResponseDto companyAdminLogin(String username, String password) {
@@ -122,16 +127,12 @@ public class CompanyService {
         return optionalCompany.get();
     }
 
-    public void createCompanyAdmin(String userName, String firstName, String lastName, String companyEmail, String userPassword, String companyName) {
-        StringJoiner fullName = new StringJoiner(" ");
-        fullName.add(firstName);
-        fullName.add(lastName);
+    public void createCompanyAdmin(String userName, String companyEmail, String userPassword, String companyName) {
 
-        Role officeAdmin = roleService.getRole("office_admin");
+        Role officeAdmin = roleService.getRole(RoleEnum.COMPANYADMIN);
         EmployeeCompanyDetailsDto employeeCompanyDetailsDto = new EmployeeCompanyDetailsDto();
 
         employeeCompanyDetailsDto.setCompanyName(companyName);
-        employeeCompanyDetailsDto.setFullName(fullName.toString());
         employeeCompanyDetailsDto.setEmail(companyEmail);
         employeeCompanyDetailsDto.setUserName(userName);
         employeeCompanyDetailsDto.setPassword(userPassword);

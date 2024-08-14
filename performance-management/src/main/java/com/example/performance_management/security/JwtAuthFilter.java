@@ -33,7 +33,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
         if (request.getServletPath().contains("swagger") ||
-                getPermittedUrls().contains(request.getServletPath())) {
+                getPermittedUrls().contains(request.getServletPath()) ||
+                request.getServletPath().contains("forgot-password")
+        ) {
             filterChain.doFilter(request, response);
         } else {
             String token = getTokenFromRequest(request);
@@ -64,7 +66,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     public Set<String> getPermittedUrls() {
-        return Set.of("/api/auth/login", "/api/auth/refresh/token",
+        return Set.of("/api/auth/login",
+                "/api/auth/refresh/token",
                 "/api/company",
                 "/api/company/login",
                 "/api/auth/logout"

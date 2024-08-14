@@ -2,7 +2,7 @@ package com.example.performance_management.service;
 
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.role.Role;
-import com.example.performance_management.entity.role.RoleUtil;
+import com.example.performance_management.entity.role.RoleEnum;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mongoidgen.EmployeeSequenceGeneratorService;
 import com.example.performance_management.repo.RoleRepo;
@@ -20,26 +20,25 @@ import java.util.Optional;
 public class RoleService {
 
     final private RoleRepo roleRepo;
-    private final PermissionService permissionService;
     final private EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
 
     @Autowired
-    public RoleService(RoleRepo roleRepo, PermissionService permissionService, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
+    public RoleService(RoleRepo roleRepo, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
         this.roleRepo = roleRepo;
-        this.permissionService = permissionService;
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
     }
 
-
-    public void addRole(String roleName, String permStr) {
-        Role role = new Role(getRoleId(), roleName, permissionService.deserializePermissions(permStr));
+    public void addRole(String roleName) {
+        Role role = new Role(getRoleId(), roleName);
         roleRepo.save(role);
     }
 
     public void addRoleForEmployee(String role, Employee employee) {
         Role roleFromRepo = getRole(role);
-        if (employee.getRoles()==null || !employee.getRoles().contains(roleFromRepo)) {
+        if (employee.getRoles() == null) {
             employee.setRoles(List.of(roleFromRepo));
+        } else if (!employee.getRoles().contains(roleFromRepo)) {
+            employee.getRoles().add(roleFromRepo);
         } else {
             System.out.println("Role already assigned to user.");
         }
@@ -47,20 +46,17 @@ public class RoleService {
 
     public void deleteRoleForEmployee(String role, Employee employee) {
         Role roleFromRepo = getRole(role);
-        employee.getRoles().remove(roleFromRepo);
+        if (employee.getRoles() != null) {
+            employee.getRoles().remove(roleFromRepo);
+        }
+    }
+
+    public Role getRole(RoleEnum roleEnum) {
+        return getRole(roleEnum.getRoleName());
     }
 
     public Role getRole(String role) {
         Optional<Role> optionalRole = roleRepo.findByRoleNameStartsWith(role);
-        if (optionalRole.isEmpty()) {
-            throw new CustomException("Role does not exist");
-        } else {
-            return optionalRole.get();
-        }
-    }
-
-    public Role getRole(RoleUtil roleUtil) {
-        Optional<Role> optionalRole = roleRepo.findByRoleNameStartsWith(roleUtil.getValue());
         if (optionalRole.isEmpty()) {
             throw new CustomException("Role does not exist");
         } else {
@@ -73,5 +69,7 @@ public class RoleService {
                 (Employee.ID_KEY, Employee.ID_VAL, Role.GENERATED_ID);
     }
 
-
+    public void deleteRole(Long id) {
+        roleRepo.deleteById(id);
+    }
 }

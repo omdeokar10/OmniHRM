@@ -23,13 +23,15 @@ public class RoleController {
 
     @PostMapping("/add")
     public ResponseEntity<String> addRole(@RequestBody RolePermissionDto rolePermissionDto) {
-        roleService.addRole(rolePermissionDto.getRole(), rolePermissionDto.getPermissionString());
-        return ResponseEntity.ok("Role added:"+rolePermissionDto.getRole());
+        roleService.addRole(rolePermissionDto.getRole());
+        return ResponseEntity.ok("Role added:" + rolePermissionDto.getRole());
     }
 
-
-
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> addRole(@PathVariable Long id) {
+        roleService.deleteRole(id);
+        return ResponseEntity.ok("Role deleted.");
+    }
 
 
 }

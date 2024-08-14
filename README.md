@@ -1,6 +1,5 @@
 # OmniHRM
-
-Provides a HRM framework.
+Provides an end 
 
 > Components :
 

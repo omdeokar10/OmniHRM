@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
     public AuthController(AuthService authService) {
         this.authService = authService;
     }
@@ -38,6 +39,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<EmployeeLoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
         return new ResponseEntity<>(authService.employeeLogin(loginRequestDto.getUserName(), loginRequestDto.getPassword()), HttpStatus.OK);
+    }
+
+    @PostMapping("/forgot-password/{email}")
+    public ResponseEntity<String> forgotPassword(@PathVariable String email) {
+        authService.forgotPassword(email);
+        return new ResponseEntity<>("Password updated.", HttpStatus.OK);
     }
 
     @PostMapping("/refresh/token")

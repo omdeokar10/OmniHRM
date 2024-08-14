@@ -4,6 +4,9 @@ import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
 import com.example.performance_management.dto.EmployeeHierarchyDto;
 import com.example.performance_management.service.EmployeeCompanyDetailsService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +43,10 @@ public class EmployeeCompanyDetailsController {
     }
 
     @PostMapping("/")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<String> createEmployee(@RequestBody EmployeeCompanyDetailsDto employeeDto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println(auth.getAuthorities());
         employeeCompanyDetailsService.createEmployeeForCompany(employeeDto);
         return ResponseEntity.ok("Created");
     }
@@ -52,6 +58,7 @@ public class EmployeeCompanyDetailsController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_COMPANYADMIN','ROLE_ADMIN')")
     public ResponseEntity<String> updateCompanyDetailsForEmployee(@PathVariable Long id,
                                                                   @RequestBody EmployeeCompanyDetailsDto employeeDetails)
     {
@@ -60,6 +67,7 @@ public class EmployeeCompanyDetailsController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('COMPANYADMIN','ADMIN')")
     public ResponseEntity<Void> deleteEmployee(@PathVariable Long id) {
         employeeCompanyDetailsService.deleteEmployeeDetails(id);
         return ResponseEntity.noContent().build();

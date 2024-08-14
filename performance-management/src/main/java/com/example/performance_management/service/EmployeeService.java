@@ -49,15 +49,20 @@ public class EmployeeService {
         return employeeRepo.findById(id).orElseThrow(supplier);
     }
 
-    public EmployeeDto getEmployeeByEmail(String email) {
+    public EmployeeDto getEmployeeDtoByEmail(String email) {
         Employee employee = employeeRepo.findByEmailStartsWith(email).orElseThrow(() -> new CustomException("Employee does not exist."));
         return employeeMapper.convertToDto(employee, passwordEncoder);
     }
 
-    private Employee getEmployeeByUsername(String username){
+    public Employee getEmployeeByEmail(String email) {
+        return employeeRepo.findByEmailStartsWith(email).orElseThrow(() -> new CustomException("Employee does not exist."));
+    }
+
+    private Employee getEmployeeByUsername(String username) {
         Supplier<CustomException> supplier = () -> new CustomException("Employee does not exist.");
         return employeeRepo.findByUserNameStartsWith(username).orElseThrow(supplier);
     }
+
     public EmployeeDto getEmployeeDtoByUsername(String username) {
         Supplier<CustomException> supplier = () -> new CustomException("Employee does not exist.");
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(supplier);
@@ -81,7 +86,7 @@ public class EmployeeService {
         return employeeRepo.save(employee);
     }
 
-    public void createEmployee(EmployeeDto employeeDto){
+    public void createEmployee(EmployeeDto employeeDto) {
         performChecks(employeeDto);
         Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
         employeeRepo.save(employee);
@@ -151,13 +156,13 @@ public class EmployeeService {
         updateEmployee(employee.getId(), employee);
     }
 
-    public void deleteRoleForEmployee(String role, String user){
+    public void deleteRoleForEmployee(String role, String user) {
         Employee employee = getEmployeeByUsername(user);
         roleService.deleteRoleForEmployee(role, employee);
         updateEmployee(employee.getId(), employee);
     }
 
-    public void resetPassword(String username, String password){
+    public void resetPassword(String username, String password) {
         Employee employee = getEmployeeByUsername(username);
         employee.setPassword(passwordEncoder.encode(password));
     }

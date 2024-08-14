@@ -10,6 +10,4 @@ import lombok.NoArgsConstructor;
 public class RolePermissionDto {
     String role;
     //requires comma separated input.
-    String permissionString;
-
 }

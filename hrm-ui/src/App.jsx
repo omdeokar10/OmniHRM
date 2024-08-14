@@ -22,6 +22,7 @@ import RegisterCompanyComponent from './components/hr/RegisterCompanyComponent'
 import HRSummaryComponent from './components/hr/HRSummaryComponent'
 import AddEmployeeComponent from './components/hr/AddEmployeeComponent'
 import HRDetailsSummaryComponent from './components/hr/HRDetailsSummaryComponent'
+import ForgotPassComp from './components/auth/ForgotPassComp'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -61,6 +62,8 @@ function App() {
           <Route path='hr/createform' element={< CreateFormComponent />}></Route>
           <Route path='hr/employeesummary/:id' element={< HRDetailsSummaryComponent />}></Route>
           <Route path='/hr/listforms' element={< ListAllPendingFormComponent />}></Route>
+
+          <Route path='/forgotpassword' element={< ForgotPassComp />}></Route>
 
         </Routes>
 

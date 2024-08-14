@@ -23,9 +23,9 @@ function LoginComponent() {
         }
     }
 
-    function loginLink(){
+    function loginLink() {
         if (companyName) {
-            return  <a className='child-link' href='/'>Employee Login</a>
+            return <a className='child-link' href='/'>Employee Login</a>
         } else {
             return <a className='child-link' href='/admin-login'>Company Admin Login</a>
         }
@@ -130,8 +130,10 @@ function LoginComponent() {
                             </form>
                             <div className='parent-links'>
                                 <a className='child-link' href='/register-company'>New Company ? Register</a>
+                                <a className='child-link' href='/forgotpassword'>Forgot Password</a>
                                 {loginLink()}
                             </div>
+
                         </div>
 
 

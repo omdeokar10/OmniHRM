@@ -14,6 +14,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -26,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -39,15 +40,15 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final EmployeeService employeeService;
-    private final PermissionService permissionService;
     private final EmployeeRepo employeeRepo;
     private final RefreshTokenService refreshTokenService;
+    @Autowired
+    private JavaMailSender javaMailSender;
 
-    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, PermissionService permissionService, EmployeeRepo employeeRepo, RefreshTokenService refreshTokenService) {
+    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, EmployeeRepo employeeRepo, RefreshTokenService refreshTokenService) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.employeeService = employeeService;
-        this.permissionService = permissionService;
         this.employeeRepo = employeeRepo;
         this.refreshTokenService = refreshTokenService;
     }
@@ -79,7 +80,7 @@ public class AuthService {
 
     private List<GrantedAuthority> getGrantedAuthorities(Employee employee) {
         List<GrantedAuthority> roles = new ArrayList<>();
-        roles.addAll(employee.getRoles().stream().map(Role::getPermissions).flatMap(Collection::stream).toList());
+//        roles.addAll(employee.getRoles().stream().map(Role::getPermissions).flatMap(Collection::stream).toList());
         return roles;
     }
 
@@ -116,6 +117,22 @@ public class AuthService {
 
     public void resetPassword(String username, String password) {
         employeeService.resetPassword(username, password);
+    }
+
+    public void forgotPassword(String email) {
+        Employee emp = employeeService.getEmployeeByEmail(email);
+        emp.setPassword(passwordEncoder.encode("password"));
+        employeeRepo.save(emp);
+        //        sendMail(email, "password");
+    }
+
+    private void sendMail(String companyEmail, String password) {
+        SimpleMailMessage simpleMessage = new SimpleMailMessage();
+        simpleMessage.setFrom("kaustubhdeokarsde@gmail.com");
+        simpleMessage.setTo(companyEmail);
+        simpleMessage.setSubject("Use this password to login into the platform.");
+        simpleMessage.setText("Password:" + password);
+        javaMailSender.send(simpleMessage);
     }
 
         /*
