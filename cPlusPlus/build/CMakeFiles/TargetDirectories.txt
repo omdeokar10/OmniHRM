@@ -1,3 +1,0 @@
-/home/kaustubh/bostoncollab/cPlusPlus/build/CMakeFiles/hello_crow.dir
-/home/kaustubh/bostoncollab/cPlusPlus/build/CMakeFiles/edit_cache.dir
-/home/kaustubh/bostoncollab/cPlusPlus/build/CMakeFiles/rebuild_cache.dir
