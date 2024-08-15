@@ -52,8 +52,8 @@ public class EmployeeCompanyDetailsService {
     public void createEmployeeForCompany(EmployeeCompanyDetailsDto employeeCompanyDetailsDto) {
 
         long id = generateId();
-
-        EmployeeCompanyDetails employeeCompanyDetails = mapper.convertToEntity(employeeCompanyDetailsDto);
+        EmployeeCompanyDetails employeeCompanyDetails = new EmployeeCompanyDetails();
+        employeeCompanyDetails = mapper.convertToEmployeeCompanyDetails(employeeCompanyDetailsDto, employeeCompanyDetails);
         employeeCompanyDetails.setEmployeeId(id);
         employeeCompanyDetails.setRoles(List.of(roleService.getRole(RoleEnum.USER)));
         employeeCompanyDetails.setPassword(employeeCompanyDetails.getUserName());
@@ -66,23 +66,12 @@ public class EmployeeCompanyDetailsService {
         employeeService.createEmployee(dto);
     }
 
-    private void setSalary(EmployeeCompanyDetailsDto employeeCompanyDetailsDto, EmployeeCompanyDetails employeeCompanyDetails) {
-        if (mapper.validityCheck(employeeCompanyDetailsDto.getBaseSalary()) && mapper.validityCheck(employeeCompanyDetailsDto.getBonusAllotted())) {
-            employeeCompanyDetails.setTotalComp(mapper.getAnInt(employeeCompanyDetailsDto.getBaseSalary()) + mapper.getAnInt(employeeCompanyDetailsDto.getBonusAllotted()));
-        }
-    }
-
-    private long generateId() {
-        return employeeSequenceGeneratorService.getEmployeeSequenceNumber
-                (Employee.ID_KEY, Employee.ID_VAL, Employee.GENERATED_ID);
-    }
-
-    public void updateDetailsForEmployee(Long id, EmployeeCompanyDetailsDto employeeCompanyDetailsDto) {
+    public void updateDetailsForEmployee(Long id, EmployeeCompanyDetailsDto dto) {
         EmployeeCompanyDetails employeeCompanyDetails = getEmployeeCompanyDetails(employeeCompanyRepo.findById(id));
-        mapper.updateEntity(employeeCompanyDetails, employeeCompanyDetailsDto);
+        employeeCompanyDetails = mapper.convertToEmployeeCompanyDetails(dto, employeeCompanyDetails);
         employeeCompanyRepo.save(employeeCompanyDetails);
 
-        EmployeeDto employeeDto = mapper.convertToEmployeeDto(employeeCompanyDetailsDto);
+        EmployeeDto employeeDto = mapper.convertToEmployeeDto(dto);
         employeeService.updateEmployee(id, employeeDto);
     }
 
@@ -90,12 +79,10 @@ public class EmployeeCompanyDetailsService {
         employeeCompanyRepo.deleteById(id);
     }
 
-    private EmployeeCompanyDetails getEmployeeCompanyDetails(Optional<EmployeeCompanyDetails> employeeCompanyDetails) {
-        if (employeeCompanyDetails.isEmpty()) {
-            throw new CustomException("Employee Company Details are empty.");
+    private void setSalary(EmployeeCompanyDetailsDto employeeCompanyDetailsDto, EmployeeCompanyDetails employeeCompanyDetails) {
+        if (mapper.validityCheck(employeeCompanyDetailsDto.getBaseSalary()) && mapper.validityCheck(employeeCompanyDetailsDto.getBonusAllotted())) {
+            employeeCompanyDetails.setTotalComp(mapper.check(employeeCompanyDetailsDto.getBaseSalary()) + mapper.check(employeeCompanyDetailsDto.getBonusAllotted()));
         }
-        return employeeCompanyDetails.get();
-
     }
 
     public List<EmployeeHierarchyDto> getHierarchy(String username) {
@@ -110,6 +97,19 @@ public class EmployeeCompanyDetailsService {
             employeeDetails = getDetailsForEmployeeByUsername(managerDetails.getUserName());
         }
         return list;
+    }
+
+    private long generateId() {
+        return employeeSequenceGeneratorService.getEmployeeSequenceNumber
+                (Employee.ID_KEY, Employee.ID_VAL, Employee.GENERATED_ID);
+    }
+
+    private EmployeeCompanyDetails getEmployeeCompanyDetails(Optional<EmployeeCompanyDetails> employeeCompanyDetails) {
+        if (employeeCompanyDetails.isEmpty()) {
+            throw new CustomException("Employee Company Details are empty.");
+        }
+        return employeeCompanyDetails.get();
+
     }
 
     public List<EmployeeCompanyDetailsDto> getEmployeesByCompany(String companyName) {

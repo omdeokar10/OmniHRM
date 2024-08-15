@@ -29,14 +29,14 @@ public class EmployeeController {
 
     @GetMapping("/all")
     public ResponseEntity<List<EmployeeDto>> getAllEmployees() {
-        List<EmployeeDto> employees = employeeService.getAllViewableEmployees();
+        List<EmployeeDto> employees = employeeService.getAllEmployeeDto();
         return ResponseEntity.ok(employees);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EmployeeDto> getEmployeeById(@PathVariable Long id) {
         employeeService.getEmployeeById(id);
-        EmployeeDto employeeDto = employeeService.getViewableEmployeeById(id);
+        EmployeeDto employeeDto = employeeService.getEmployeeDtoById(id);
         return ResponseEntity.ok(employeeDto);
     }
 
@@ -48,14 +48,14 @@ public class EmployeeController {
     }
 
     @PostMapping
-    public EmployeeDto createEmployee(@RequestBody EmployeeDto employeeDto) {
-        return authService.employeeSignup(employeeDto);
+    public void createEmployee(@RequestBody EmployeeDto employeeDto) {
+        authService.employeeSignup(employeeDto);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<EmployeeDto> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDto employeeDetails) {
-        EmployeeDto updatedEmployee = employeeService.updateEmployee(id, employeeDetails);
-        return ResponseEntity.ok(updatedEmployee);
+    public ResponseEntity<String> updateEmployee(@PathVariable Long id, @RequestBody EmployeeDto employeeDetails) {
+        employeeService.updateEmployee(id, employeeDetails);
+        return ResponseEntity.ok("Updated employee");
     }
 
     @GetMapping("")

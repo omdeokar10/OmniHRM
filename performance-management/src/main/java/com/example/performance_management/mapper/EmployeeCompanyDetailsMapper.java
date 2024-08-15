@@ -3,194 +3,89 @@ package com.example.performance_management.mapper;
 
 import com.example.performance_management.dto.EmployeeCompanyDetailsDto;
 import com.example.performance_management.dto.EmployeeDto;
-import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.EmployeeCompanyDetails;
-
-import java.util.List;
+import com.example.performance_management.utils.DetailsSetUtils;
 
 public class EmployeeCompanyDetailsMapper {
 
-    public EmployeeDto convertToEmployeeDto(EmployeeCompanyDetailsDto companyDetailsDto){
-        EmployeeDto dto = new EmployeeDto();
-        dto.setUserName(companyDetailsDto.getUserName());
-        dto.setPassword(companyDetailsDto.getUserName());
-        dto.setId(companyDetailsDto.getEmployeeId());
-        dto.setRoles(companyDetailsDto.getRoles());
-        dto.setCompanyName(companyDetailsDto.getCompanyName());
-        dto.setEmail(companyDetailsDto.getEmail());
-        return dto;
+    private final DetailsSetUtils detailsSetUtils = new DetailsSetUtils();
+    private final EmployeeMapper employeeMapper = new EmployeeMapper();
+
+    public EmployeeDto convertToEmployeeDto(EmployeeCompanyDetailsDto dto) {
+        EmployeeDto entity = new EmployeeDto();
+        detailsSetUtils.setIfNotNull(dto::getUserName, entity::setUserName);
+        detailsSetUtils.setIfNotNull(dto::getPassword, entity::setPassword);
+        detailsSetUtils.setIfNotNull(dto::getEmployeeId, entity::setId);
+        detailsSetUtils.setIfNotNull(dto::getRoles, entity::setRoles);
+        detailsSetUtils.setIfNotNull(dto::getCompanyName, entity::setCompanyName);
+        detailsSetUtils.setIfNotNull(dto::getEmail, entity::setEmail);
+        return entity;
     }
 
-    public EmployeeCompanyDetails convertToEntity(EmployeeCompanyDetailsDto dto) {
-        EmployeeCompanyDetails entity = new EmployeeCompanyDetails();
+    public EmployeeCompanyDetails convertToEmployeeCompanyDetails(EmployeeCompanyDetailsDto dto, EmployeeCompanyDetails entity) {
 
-        entity.setPassword(dto.getPassword());
-        entity.setRoles(dto.getRoles());
-        entity.setUserName(dto.getUserName());
+        detailsSetUtils.setIfNotNull(dto::getPassword, entity::setPassword);
+        detailsSetUtils.setIfNotNull(dto::getRoles, entity::setRoles);
+        detailsSetUtils.setIfNotNull(dto::getUserName, entity::setUserName);
 
-        entity.setEmployeeId(dto.getEmployeeId());
-        entity.setTeam(dto.getTeam());
-        entity.setManagerEmail(dto.getManagerEmail());
-        entity.setBusinessTitle(dto.getBusinessTitle());
-        entity.setJobProfile(dto.getJobProfile());
-        entity.setLocation(dto.getLocation());
-        entity.setHireDate(dto.getHireDate());
-        entity.setTelephone(dto.getTelephone());
-        entity.setEmail(dto.getEmail());
-        entity.setFullName(dto.getFullName());
-        entity.setWorkAddress(dto.getWorkAddress());
-        entity.setCompanyName(dto.getCompanyName());
+        detailsSetUtils.setIfNotNull(dto::getEmployeeId, entity::setEmployeeId);
+        detailsSetUtils.setIfNotNull(dto::getTeam, entity::setTeam);
+        detailsSetUtils.setIfNotNull(dto::getManagerEmail, entity::setManagerEmail);
+        detailsSetUtils.setIfNotNull(dto::getBusinessTitle, entity::setBusinessTitle);
+        detailsSetUtils.setIfNotNull(dto::getJobProfile, entity::setJobProfile);
+        detailsSetUtils.setIfNotNull(dto::getLocation, entity::setLocation);
+        detailsSetUtils.setIfNotNull(dto::getHireDate, entity::setHireDate);
+        detailsSetUtils.setIfNotNull(dto::getTelephone, entity::setTelephone);
+        detailsSetUtils.setIfNotNull(dto::getEmail, entity::setEmail);
+        detailsSetUtils.setIfNotNull(dto::getFullName, entity::setFullName);
+        detailsSetUtils.setIfNotNull(dto::getWorkAddress, entity::setWorkAddress);
+        detailsSetUtils.setIfNotNull(dto::getCompanyName, entity::setCompanyName);
 
-        entity.setGender(dto.getGender());
-        entity.setDateOfBirth(dto.getDateOfBirth());
-        entity.setAge(dto.getAge());
-        entity.setCountryOfBirth(dto.getCountryOfBirth());
-        entity.setCityOfBirth(dto.getCityOfBirth());
-        entity.setMaritalStatus(dto.getMaritalStatus());
-        entity.setNationality(dto.getNationality());
-        entity.setDependantName(dto.getDependantName());
-        entity.setRelationToDependant(dto.getRelationToDependant());
+        detailsSetUtils.setIfNotNull(dto::getGender, entity::setGender);
+        detailsSetUtils.setIfNotNull(dto::getDateOfBirth, entity::setDateOfBirth);
+        detailsSetUtils.setIfNotNull(dto::getAge, entity::setAge);
+        detailsSetUtils.setIfNotNull(dto::getCountryOfBirth, entity::setCountryOfBirth);
+        detailsSetUtils.setIfNotNull(dto::getCityOfBirth, entity::setCityOfBirth);
+        detailsSetUtils.setIfNotNull(dto::getMaritalStatus, entity::setMaritalStatus);
+        detailsSetUtils.setIfNotNull(dto::getNationality, entity::setNationality);
+        detailsSetUtils.setIfNotNull(dto::getDependantName, entity::setDependantName);
+        detailsSetUtils.setIfNotNull(dto::getRelationToDependant, entity::setRelationToDependant);
 
-        entity.setBaseSalary(getAnInt(dto.getBaseSalary()));
-        entity.setBonusAllotted(getAnInt(dto.getBonusAllotted()));
-        entity.setStocksOffered(getAnInt(dto.getStocksOffered()));
+        detailsSetUtils.setIfNotNull(dto::getBaseSalary, salary -> entity.setBaseSalary(check(salary)));
+        detailsSetUtils.setIfNotNull(dto::getBonusAllotted, bonus -> entity.setBonusAllotted(check(bonus)));
+        detailsSetUtils.setIfNotNull(dto::getStocksOffered, stocks -> entity.setStocksOffered(check(stocks)));
+
 
         return entity;
 
     }
 
-    public void updateEntity(EmployeeCompanyDetails employeeCompanyDetails, EmployeeCompanyDetailsDto companyDetailsDto) {
-
-        if (companyDetailsDto.getTeam() != null && !companyDetailsDto.getTeam().isEmpty()) {
-            employeeCompanyDetails.setTeam(companyDetailsDto.getTeam());
+    public EmployeeCompanyDetails updateEntity(EmployeeCompanyDetailsDto dto) {
+        EmployeeCompanyDetails entity = new EmployeeCompanyDetails();
+        entity = convertToEmployeeCompanyDetails(dto, entity);
+        int totalComp = entity.getBaseSalary() + entity.getBonusAllotted() + entity.getStocksOffered();
+        if (entity.getTotalComp() != totalComp) {
+            entity.setTotalComp(totalComp);
         }
-        if (companyDetailsDto.getManagerEmail()!=null && !companyDetailsDto.getManagerEmail().isEmpty()) {
-            employeeCompanyDetails.setManagerEmail(companyDetailsDto.getManagerEmail());
-        }
-        if (companyDetailsDto.getBusinessTitle() != null && !companyDetailsDto.getBusinessTitle().isEmpty()) {
-            employeeCompanyDetails.setBusinessTitle(companyDetailsDto.getBusinessTitle());
-        }
-        if (companyDetailsDto.getJobProfile() != null && !companyDetailsDto.getJobProfile().isEmpty()) {
-            employeeCompanyDetails.setJobProfile(companyDetailsDto.getJobProfile());
-        }
-
-        if (companyDetailsDto.getLocation() != null && !companyDetailsDto.getLocation().isEmpty()) {
-            employeeCompanyDetails.setLocation(companyDetailsDto.getLocation());
-        }
-
-        if(companyDetailsDto.getFullName()!=null && !companyDetailsDto.getFullName().isEmpty()){
-            employeeCompanyDetails.setFullName(companyDetailsDto.getFullName());
-        }
-
-        if(companyDetailsDto.getCompanyName()!=null && !companyDetailsDto.getCompanyName().isEmpty()){
-            employeeCompanyDetails.setCompanyName(companyDetailsDto.getCompanyName());
-        }
-
-        if(companyDetailsDto.getRoles()!=null && !companyDetailsDto.getCompanyName().isEmpty()){
-            employeeCompanyDetails.setRoles(companyDetailsDto.getRoles());
-        }
-
-        if (companyDetailsDto.getHireDate() != null) {
-            employeeCompanyDetails.setHireDate(companyDetailsDto.getHireDate());
-        }
-
-        if (companyDetailsDto.getTelephone() != null && !companyDetailsDto.getTelephone().isEmpty()) {
-            employeeCompanyDetails.setTelephone(companyDetailsDto.getTelephone());
-        }
-
-        if (companyDetailsDto.getEmail() != null && !companyDetailsDto.getEmail().isEmpty()) {
-            employeeCompanyDetails.setEmail(companyDetailsDto.getEmail());
-        }
-
-        if (companyDetailsDto.getUserName() != null && !companyDetailsDto.getUserName().isEmpty()) {
-            employeeCompanyDetails.setUserName(companyDetailsDto.getUserName());
-        }
-
-        if (companyDetailsDto.getWorkAddress() != null && !companyDetailsDto.getWorkAddress().isEmpty()) {
-            employeeCompanyDetails.setWorkAddress(companyDetailsDto.getWorkAddress());
-        }
-
-        if (companyDetailsDto.getGender() != null && !companyDetailsDto.getGender().isEmpty()) {
-            employeeCompanyDetails.setGender(companyDetailsDto.getGender());
-        }
-
-        if (companyDetailsDto.getDateOfBirth() != null) {
-            employeeCompanyDetails.setDateOfBirth(companyDetailsDto.getDateOfBirth());
-        }
-
-        if (companyDetailsDto.getAge() != null) {
-            employeeCompanyDetails.setAge(companyDetailsDto.getAge());
-        }
-
-        if (companyDetailsDto.getCountryOfBirth() != null && !companyDetailsDto.getCountryOfBirth().isEmpty()) {
-            employeeCompanyDetails.setCountryOfBirth(companyDetailsDto.getCountryOfBirth());
-        }
-
-        if (companyDetailsDto.getCityOfBirth() != null && !companyDetailsDto.getCityOfBirth().isEmpty()) {
-            employeeCompanyDetails.setCityOfBirth(companyDetailsDto.getCityOfBirth());
-        }
-
-        if (companyDetailsDto.getMaritalStatus() != null && !companyDetailsDto.getMaritalStatus().isEmpty()) {
-            employeeCompanyDetails.setMaritalStatus(companyDetailsDto.getMaritalStatus());
-        }
-
-        if (companyDetailsDto.getNationality() != null && !companyDetailsDto.getNationality().isEmpty()) {
-            employeeCompanyDetails.setNationality(companyDetailsDto.getNationality());
-        }
-
-        if (companyDetailsDto.getDependantName() != null && !companyDetailsDto.getDependantName().isEmpty()) {
-            employeeCompanyDetails.setDependantName(companyDetailsDto.getDependantName());
-        }
-
-        if (companyDetailsDto.getRelationToDependant() != null && !companyDetailsDto.getRelationToDependant().isEmpty()) {
-            employeeCompanyDetails.setRelationToDependant(companyDetailsDto.getRelationToDependant());
-        }
-
-        int totalComp = 0;
-        if (validityCheck(companyDetailsDto.getBaseSalary()) && checkIfContainsOnlyDigits(companyDetailsDto.getBaseSalary())) {
-            int baseSalary = getAnInt(companyDetailsDto.getBaseSalary());
-            employeeCompanyDetails.setBaseSalary(baseSalary);
-            totalComp += baseSalary;
-        }
-
-        if (validityCheck(companyDetailsDto.getBonusAllotted()) && checkIfContainsOnlyDigits(companyDetailsDto.getBonusAllotted())) {
-            int bonus = getAnInt(companyDetailsDto.getBonusAllotted());
-            employeeCompanyDetails.setBonusAllotted(bonus);
-            totalComp += bonus;
-        }
-
-        if (validityCheck(companyDetailsDto.getStocksOffered()) && checkIfContainsOnlyDigits(companyDetailsDto.getStocksOffered())) {
-            int stocks = getAnInt(companyDetailsDto.getStocksOffered());
-            employeeCompanyDetails.setStocksOffered(stocks);
-            totalComp += stocks;
-        }
-
-        if (validityCheck(companyDetailsDto.getTotalComp()) && checkIfContainsOnlyDigits(companyDetailsDto.getTotalComp())) {
-            int totalCompDto = getAnInt(companyDetailsDto.getTotalComp());
-            employeeCompanyDetails.setTotalComp(totalCompDto);
-        }
-
-        if(employeeCompanyDetails.getTotalComp()!=totalComp){
-            employeeCompanyDetails.setTotalComp(totalComp);
-        }
-
+        
+        return entity;
     }
 
-    public int getAnInt(String entity) {
-        if(entity==null||entity.isEmpty()){
+    public int check(String entity) {
+        if (!validityCheck(entity)) {
             return 0;
         }
         return Integer.parseInt(entity);
     }
 
     public boolean validityCheck(String baseSalary) {
-        return baseSalary != null && !baseSalary.isEmpty();
+        return baseSalary != null && !baseSalary.isEmpty() && checkIfContainsOnlyDigits(baseSalary);
     }
 
     private boolean checkIfContainsOnlyDigits(String baseSalary) {
         char[] chars = baseSalary.toCharArray();
-        for(char c: chars){
-            if(!Character.isDigit(c)){
+        for (char c : chars) {
+            if (!Character.isDigit(c)) {
                 return false;
             }
         }

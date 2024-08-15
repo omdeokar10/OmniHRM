@@ -7,6 +7,7 @@ import com.example.performance_management.dto.performance.FormSubmissionRequestD
 import com.example.performance_management.dto.performance.PendingFormDto;
 import com.example.performance_management.service.EmployeeFormService;
 import com.example.performance_management.service.FormService;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -56,8 +57,10 @@ public class FormController {
 
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('COMPANYADMIN','ADMIN')")
     public void deleteForm(@PathVariable Long id) {
-        formService.deleteFormById(id);
+        String loggedInUser = helperUtil.getLoggedInUser();
+        formService.deleteFormById(loggedInUser, id);
     }
 
 }

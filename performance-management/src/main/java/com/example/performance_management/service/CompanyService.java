@@ -11,14 +11,20 @@ import com.example.performance_management.mapper.CompanyMapper;
 import com.example.performance_management.mongoidgen.CompanySequenceGeneratorService;
 import com.example.performance_management.repo.CompanyRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 @Service
 public class CompanyService {
@@ -96,28 +102,31 @@ public class CompanyService {
         companyRepo.deleteByCompanyName(companyName);
     }
 
+    public Future<String> sendMail(String companyEmail) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Future<String> future = executor.submit(() -> {
+            int index = companyEmail.indexOf('@');
+            String password = companyEmail.substring(0, index);
+            sendMail(companyEmail, password);
+            return password;
+        });
+        return future;
+    }
+
     @Async
-    public String sendMail(String companyEmail) {
-
-        int index = companyEmail.indexOf('@');
-        String password = companyEmail.substring(0, index);
-
-        sendMail(companyEmail, password);
-
-        return password;
-    }
-
-    private void sendMail(String companyEmail, String password) {
-        SimpleMailMessage simpleMessage = new SimpleMailMessage();
-        simpleMessage.setFrom("kaustubhdeokarsde@gmail.com");
-        simpleMessage.setTo(companyEmail);
-        simpleMessage.setSubject("Use this password to login into the platform.");
-        simpleMessage.setText("Password:" + password);
-        javaMailSender.send(simpleMessage);
-    }
-
-    public EmployeeLoginResponseDto companyAdminLogin(String username, String password) {
-        return authService.employeeLogin(username, password);
+    public void sendMail(String companyEmail, String password) {
+        MimeMessagePreparator mail = mimeMessage -> {
+            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage);
+            messageHelper.setFrom("kaustubhdeokarsde@gmail.com");
+            messageHelper.setTo(companyEmail);
+            messageHelper.setSubject("Use this password to login into the platform.");
+            messageHelper.setText("Password:" + password);
+        };
+        try {
+            javaMailSender.send(mail);
+        } catch (MailException e) {
+            throw new CustomException("Exception occurred when sending mail to " + companyEmail);
+        }
     }
 
     private Company getCompany(Optional<Company> optionalCompany) {

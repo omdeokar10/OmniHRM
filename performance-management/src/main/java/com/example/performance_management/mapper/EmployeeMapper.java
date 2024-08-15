@@ -2,57 +2,44 @@ package com.example.performance_management.mapper;
 
 import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.entity.Employee;
-import com.example.performance_management.entity.role.Role;
+import com.example.performance_management.utils.DetailsSetUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.util.Collections;
-import java.util.List;
 
 public class EmployeeMapper {
 
+    private final DetailsSetUtils detailsSetUtils = new DetailsSetUtils();
     public EmployeeMapper() {
     }
 
-    public EmployeeDto convertToDto(Employee employee, PasswordEncoder passwordEncoder) {
+    public EmployeeDto convertToDto(Employee employee) {
         EmployeeDto dto = new EmployeeDto();
-        dto.setId(employee.getId());
-        dto.setUserName(employee.getUserName());
-        dto.setRoles(employee.getRoles());
-        dto.setEmail(employee.getEmail());
-        dto.setCompanyName(employee.getCompanyName());
-        dto.setPassword(employee.getPassword());
+        detailsSetUtils.setIfNotNull(employee::getId, dto::setId);
+        detailsSetUtils.setIfNotNull(employee::getUserName, dto::setUserName);
+        detailsSetUtils.setIfNotNull(employee::getRoles, dto::setRoles);
+        detailsSetUtils.setIfNotNull(employee::getEmail, dto::setEmail);
+        detailsSetUtils.setIfNotNull(employee::getCompanyName, dto::setCompanyName);
+        detailsSetUtils.setIfNotNull(employee::getPassword, dto::setPassword);
         return dto;
     }
 
     public Employee convertToEntity(EmployeeDto dto, PasswordEncoder passwordEncoder) {
         Employee entity = new Employee();
-        entity.setId(dto.getId());
-        entity.setUserName(dto.getUserName());
-        entity.setEmail(dto.getEmail());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-        entity.setCompanyName(dto.getCompanyName());
-        entity.setRoles(dto.getRoles());
-        setRoles(dto, entity);
+        detailsSetUtils.setIfNotNull(dto::getId, entity::setId);
+        detailsSetUtils.setIfNotNull(dto::getUserName, entity::setUserName);
+        detailsSetUtils.setIfNotNull(dto::getEmail, entity::setEmail);
+        detailsSetUtils.setIfNotNull(dto::getPassword, password -> entity.setPassword(passwordEncoder.encode(password)));
+        detailsSetUtils.setIfNotNull(dto::getCompanyName, entity::setCompanyName);
+        detailsSetUtils.setIfNotNull(dto::getRoles, entity::setRoles);
         return entity;
-    }
-
-    private void setRoles(EmployeeDto employeeDto, Employee employee) {
-        List<Role> roles;
-        if (employee.getRoles() == null || employee.getRoles().isEmpty()) {
-            roles = Collections.emptyList();
-        } else {
-            roles = employeeDto.getRoles();
-        }
-        employee.setRoles(roles);
     }
 
 
     public Employee updateEmployee(Employee entity, EmployeeDto dto, PasswordEncoder passwordEncoder) {
-        entity.setCompanyName(dto.getCompanyName());
-        entity.setRoles(dto.getRoles());
-        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-        entity.setUserName(dto.getUserName());
-        entity.setEmail(dto.getEmail());
+        detailsSetUtils.setIfNotNull(dto::getCompanyName, entity::setCompanyName);
+        detailsSetUtils.setIfNotNull(dto::getRoles, entity::setRoles);
+        detailsSetUtils.setIfNotNull(dto::getPassword, password -> entity.setPassword(passwordEncoder.encode(password)));
+        detailsSetUtils.setIfNotNull(dto::getUserName, entity::setUserName);
+        detailsSetUtils.setIfNotNull(dto::getEmail, entity::setEmail);
         return entity;
     }
 }

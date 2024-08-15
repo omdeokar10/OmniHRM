@@ -1,14 +1,9 @@
 package com.example.performance_management.controller;
 
 import com.example.performance_management.dto.RolePermissionDto;
-import com.example.performance_management.dto.UserRoleDto;
 import com.example.performance_management.service.RoleService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
 
 @RestController
 @RequestMapping("/api/role")
@@ -32,6 +27,5 @@ public class RoleController {
         roleService.deleteRole(id);
         return ResponseEntity.ok("Role deleted.");
     }
-
 
 }

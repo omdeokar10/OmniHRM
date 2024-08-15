@@ -1,7 +1,6 @@
 package com.example.performance_management.service;
 
 import com.example.performance_management.dto.performance.FieldsDto;
-import com.example.performance_management.dto.performance.FormDto;
 import com.example.performance_management.dto.performance.PendingFormDto;
 import com.example.performance_management.entity.performance.Form;
 import com.example.performance_management.exception.CustomException;
@@ -20,10 +19,11 @@ public class FormService {
     private final FormRepo formRepo;
     private final FormMapper mapper = new FormMapper();
     private final FormSequenceGeneratorService formSequenceGeneratorService;
-
-    public FormService(FormRepo formRepo, FormSequenceGeneratorService formSequenceGeneratorService) {
+    private final EmployeeService employeeService;
+    public FormService(FormRepo formRepo, FormSequenceGeneratorService formSequenceGeneratorService, EmployeeService employeeService) {
         this.formRepo = formRepo;
         this.formSequenceGeneratorService = formSequenceGeneratorService;
+        this.employeeService = employeeService;
     }
 
     public void createForm(String companyName, String formName, List<FieldsDto> requestDto) {
@@ -43,12 +43,8 @@ public class FormService {
         return formRepo.findByFormNameAndCompanyName(formName, companyName).isPresent();
     }
 
-    public void deleteFormById(Long id) {
+    public void deleteFormById(String loggedInUser, Long id) {
         formRepo.deleteById(id);
-    }
-
-    public void updateFormFromUser(Long id){
-
     }
 
 //    public List<PendingFormDto> getUserPendingForm(String username) {

@@ -26,19 +26,19 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<EmployeeDto> signup(@RequestBody EmployeeDto employeeDto) {
-        EmployeeDto signup;
+    public ResponseEntity<String> signup(@RequestBody EmployeeDto employeeDto) {
         try {
-            signup = authService.employeeSignup(employeeDto);
+            authService.employeeSignup(employeeDto);
         } catch (DataIntegrityViolationException e) {
             throw new CustomException("Duplicate username/email.");
         }
-        return new ResponseEntity<>(signup, HttpStatus.OK);
+        return new ResponseEntity<>("User created.", HttpStatus.OK);
     }
 
     @PostMapping("/login")
     public ResponseEntity<EmployeeLoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
-        return new ResponseEntity<>(authService.employeeLogin(loginRequestDto.getUserName(), loginRequestDto.getPassword()), HttpStatus.OK);
+        EmployeeLoginResponseDto response = authService.employeeLogin(loginRequestDto.getUserName(), loginRequestDto.getPassword(), loginRequestDto.isAdminLogin());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/forgot-password/{email}")

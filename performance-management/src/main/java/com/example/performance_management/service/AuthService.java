@@ -6,6 +6,7 @@ import com.example.performance_management.dto.RefreshTokenRequest;
 import com.example.performance_management.dto.performance.EmployeeLoginResponseDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.role.Role;
+import com.example.performance_management.entity.role.RoleEnum;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.repo.EmployeeRepo;
 import com.example.performance_management.security.JwtTokenProvider;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -58,15 +60,16 @@ public class AuthService {
     @Autowired
     UserDetailsServiceImpl userDetailsService;
 
-    public EmployeeDto employeeSignup(EmployeeDto employeeDto) throws DataIntegrityViolationException {
-        return employeeService.createViewableEmployee(employeeDto, passwordEncoder);
+    public void employeeSignup(EmployeeDto employeeDto) throws DataIntegrityViolationException {
+        employeeService.signup(employeeDto);
     }
 
 
-    public EmployeeLoginResponseDto employeeLogin(String username, String password) {
+    public EmployeeLoginResponseDto employeeLogin(String username, String password, boolean adminLogin) {
 
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(() -> new CustomException("Invalid username"));
-        if (employee.isEnabled()) {
+
+        if (employee.isEnabled() && isValid(employee, adminLogin)) {
             List<? extends GrantedAuthority> roles = getGrantedAuthorities(employee);
             Authentication authenticate = authenticationManager.authenticate(UsernamePasswordAuthenticationToken.authenticated(username, password, roles));
             SecurityContextHolder.getContext().setAuthentication(authenticate);
@@ -78,10 +81,32 @@ public class AuthService {
         throw new CustomException("User is disabled");
     }
 
+    private boolean isValid(Employee employee, boolean isAdmin) {
+        if (isAdmin) {
+            List<Role> roles = employee.getRoles();
+            for (Role role : roles) {
+                if (role.getRoleName().equals(RoleEnum.COMPANYADMIN.getRoleName())) {
+                    return true;
+                }
+            }
+            throw new CustomException("Invalid login, company employee has a non-admin login.");
+        } else {
+            List<Role> roles = employee.getRoles();
+            for (Role role : roles) {
+                if (role.getRoleName().equals(RoleEnum.COMPANYADMIN.getRoleName())) {
+                    throw new CustomException("Invalid login, admin user should use a different admin login.");
+                }
+            }
+            return true;
+        }
+
+    }
+
     private List<GrantedAuthority> getGrantedAuthorities(Employee employee) {
-        List<GrantedAuthority> roles = new ArrayList<>();
-//        roles.addAll(employee.getRoles().stream().map(Role::getPermissions).flatMap(Collection::stream).toList());
-        return roles;
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        List<Role> roles = employee.getRoles();
+        roles.forEach(role -> authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getRoleName())));
+        return authorities;
     }
 
     public UserDetails getCurrentUserDetails(String username) {
@@ -123,7 +148,7 @@ public class AuthService {
         Employee emp = employeeService.getEmployeeByEmail(email);
         emp.setPassword(passwordEncoder.encode("password"));
         employeeRepo.save(emp);
-        //        sendMail(email, "password");
+        sendMail(email, "password");
     }
 
     private void sendMail(String companyEmail, String password) {

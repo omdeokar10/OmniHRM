@@ -8,7 +8,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TaskFetchUserDateRange {
-    String username;
     String startDate;
     String endDate;
 }

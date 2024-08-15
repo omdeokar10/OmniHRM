@@ -25,7 +25,7 @@ public class EmployeeService {
     private final EmployeeMapper employeeMapper = new EmployeeMapper();
     private final EmployeeSequenceGeneratorService employeeSequenceGeneratorService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-    private final Function<Employee, EmployeeDto> mapEmployee = (employee) -> employeeMapper.convertToDto(employee, passwordEncoder);
+    private final Function<Employee, EmployeeDto> mapEmployee = (employee) -> employeeMapper.convertToDto(employee);
 
     public EmployeeService(EmployeeRepo employeeRepo,
                            RoleService roleService, EmployeeSequenceGeneratorService employeeSequenceGeneratorService) {
@@ -34,13 +34,23 @@ public class EmployeeService {
         this.employeeSequenceGeneratorService = employeeSequenceGeneratorService;
     }
 
-    public List<Employee> getAllEmployees() {
-        return employeeRepo.findAll().stream().collect(Collectors.toList());
+    public void signup(EmployeeDto employeeDto) {
+        createEmployee(employeeDto);
     }
 
-    public List<EmployeeDto> getAllViewableEmployees() {
+    public void createEmployee(EmployeeDto employeeDto) {
+        performChecks(employeeDto);
+        Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
+        employeeRepo.save(employee);
+    }
+
+    public List<Employee> getAllEmployees() {
+        return employeeRepo.findAll().stream().toList();
+    }
+
+    public List<EmployeeDto> getAllEmployeeDto() {
         List<Employee> employees = getAllEmployees();
-        return employees.stream().map(employee -> employeeMapper.convertToDto(employee, passwordEncoder))
+        return employees.stream().map(employee -> employeeMapper.convertToDto(employee))
                 .collect(Collectors.toList());
     }
 
@@ -49,10 +59,6 @@ public class EmployeeService {
         return employeeRepo.findById(id).orElseThrow(supplier);
     }
 
-    public EmployeeDto getEmployeeDtoByEmail(String email) {
-        Employee employee = employeeRepo.findByEmailStartsWith(email).orElseThrow(() -> new CustomException("Employee does not exist."));
-        return employeeMapper.convertToDto(employee, passwordEncoder);
-    }
 
     public Employee getEmployeeByEmail(String email) {
         return employeeRepo.findByEmailStartsWith(email).orElseThrow(() -> new CustomException("Employee does not exist."));
@@ -66,30 +72,12 @@ public class EmployeeService {
     public EmployeeDto getEmployeeDtoByUsername(String username) {
         Supplier<CustomException> supplier = () -> new CustomException("Employee does not exist.");
         Employee employee = employeeRepo.findByUserNameStartsWith(username).orElseThrow(supplier);
-        return employeeMapper.convertToDto(employee, passwordEncoder);
+        return employeeMapper.convertToDto(employee);
     }
 
-    public EmployeeDto getViewableEmployeeById(Long id) {
+    public EmployeeDto getEmployeeDtoById(Long id) {
         Employee employee = getEmployeeById(id);
         return mapEmployee.apply(employee);
-    }
-
-    public EmployeeDto createViewableEmployee(EmployeeDto employeeDto, PasswordEncoder passwordEncoder) {
-        Employee savedEmployee = createEmployee(employeeDto, passwordEncoder);
-        return employeeMapper.convertToDto(savedEmployee, passwordEncoder);
-    }
-
-    public Employee createEmployee(EmployeeDto employeeDto, PasswordEncoder passwordEncoder) {
-        performChecks(employeeDto);
-        Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
-        setIds(employee);
-        return employeeRepo.save(employee);
-    }
-
-    public void createEmployee(EmployeeDto employeeDto) {
-        performChecks(employeeDto);
-        Employee employee = employeeMapper.convertToEntity(employeeDto, passwordEncoder);
-        employeeRepo.save(employee);
     }
 
     private void performChecks(EmployeeDto employeeDto) {
@@ -106,26 +94,10 @@ public class EmployeeService {
         return employeeRepo.findByEmailStartsWith(email).isPresent();
     }
 
-    private void setIds(Employee employee) {
-        employee.setId(employeeSequenceGeneratorService.getEmployeeSequenceNumber
-                (Employee.ID_KEY, Employee.ID_VAL, Employee.GENERATED_ID));
-    }
-
-    public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDetails) {
+    public void updateEmployee(Long id, EmployeeDto dto) {
         Employee employee = getEmployee(employeeRepo.findById(id));
-        Employee updatedEmployee = employeeMapper.updateEmployee(employee, employeeDetails, passwordEncoder);
+        Employee updatedEmployee = employeeMapper.updateEmployee(employee, dto, passwordEncoder);
         employeeRepo.save(updatedEmployee);
-        return employeeMapper.convertToDto(updatedEmployee, passwordEncoder);
-    }
-
-    public void updateEmployee(Long id, Employee employee) {
-        EmployeeDto dto = mapEmployee.apply(employee);
-        updateEmployee(id, dto);
-    }
-
-    private void setDetails(EmployeeDto employeeDto, Employee employee) {
-        employee.setUserName(employeeDto.getUserName());
-        employee.setRoles(employeeDto.getRoles());
     }
 
     public void deleteEmployee(Long id) {
@@ -153,13 +125,13 @@ public class EmployeeService {
     public void addRoleForEmployee(String role, String user) {
         Employee employee = getEmployeeByUsername(user);
         roleService.addRoleForEmployee(role, employee);
-        updateEmployee(employee.getId(), employee);
+        employeeRepo.save(employee);
     }
 
     public void deleteRoleForEmployee(String role, String user) {
         Employee employee = getEmployeeByUsername(user);
         roleService.deleteRoleForEmployee(role, employee);
-        updateEmployee(employee.getId(), employee);
+        employeeRepo.save(employee);
     }
 
     public void resetPassword(String username, String password) {
@@ -167,4 +139,8 @@ public class EmployeeService {
         employee.setPassword(passwordEncoder.encode(password));
     }
 
+    public EmployeeDto getEmployeeDtoByEmail(String email) {
+        Employee employee = employeeRepo.findByEmailStartsWith(email).orElseThrow(() -> new CustomException("Employee does not exist."));
+        return employeeMapper.convertToDto(employee);
+    }
 }

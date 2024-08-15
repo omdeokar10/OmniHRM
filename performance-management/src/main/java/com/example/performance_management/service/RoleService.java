@@ -72,4 +72,14 @@ public class RoleService {
     public void deleteRole(Long id) {
         roleRepo.deleteById(id);
     }
+
+    public boolean isAllowed(List<Role> userRoles, List<Role> allowedRoles){
+
+        for(Role role: allowedRoles){
+            if(userRoles.contains(role)){
+                return true;
+            }
+        }
+        return false;
+    }
 }

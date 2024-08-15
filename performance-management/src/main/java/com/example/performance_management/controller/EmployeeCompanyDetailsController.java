@@ -59,8 +59,8 @@ public class EmployeeCompanyDetailsController {
 
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ROLE_COMPANYADMIN','ROLE_ADMIN')")
-    public ResponseEntity<String> updateCompanyDetailsForEmployee(@PathVariable Long id,
-                                                                  @RequestBody EmployeeCompanyDetailsDto employeeDetails)
+    public ResponseEntity<String> updateDetailsForEmployee(@PathVariable Long id,
+                                                           @RequestBody EmployeeCompanyDetailsDto employeeDetails)
     {
         employeeCompanyDetailsService.updateDetailsForEmployee(id, employeeDetails);
         return ResponseEntity.ok("Updated");
