@@ -3,29 +3,55 @@ import './summarypage.css';
 import { fetchAttendance, logPunchInTime, logPunchOutTime } from '../../service/timesheet/TimesheetService';
 import { useState, useEffect } from 'react';
 import { calculateHours } from '../../service/timesheet/TimesheetService';
+import { fetchHoursWorked } from '../../service/timesheet/TimesheetService';
+import { toastError, toastSuccess } from '../../service/ToastService';
 
 function TimesheetSummaryComponent() {
 
   const [attendanceRecord, setAttendanceRecord] = useState(0);
+  const [hoursRecorded, setHoursRecorded] = useState(0);
+  const [minsRecorded, setMinsRecorded] = useState(0);
   const [hoursWorked, setHoursWorked] = useState(0);
 
   const months = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
   const [month, setMonth] = useState(months[new Date().getMonth() + 1]);
   const [year, setYear] = useState(new Date().getFullYear());
+
   function punchTimeIn() {
     logPunchInTime();
+    toastSuccess('punched in for today');
   }
+
   function fetchAttendanceRecord() {
     var date = new Date();
     var year = date.getFullYear();
     var month = date.getMonth();
     var startDate = getStartOfMonth(year, month).toISOString().slice(0, 10);
     var endDate = getEndOfMonth(year, month).toISOString().slice(0, 10);
+    fetchHoursWorked(startDate, endDate)
+      .then((res) => {
+        if (res && res.data) {
+          setHoursWorked(res.data);
+        }
+      }).catch((error) => {
+        console.error("Error:", error);
+        toastError('error fetching hours');
+      });
+
     fetchAttendance(startDate, endDate)
       .then((res) => {
-        var { count, hours } = calculateHours(res);
-        setAttendanceRecord(count);
-        setHoursWorked(hours);
+        console.log(res.data);
+        if (res && res.data.daysPresent) {
+          setAttendanceRecord(res.data.daysPresent);
+        }
+        if (res && res.data.hoursRecorded) {
+          setHoursRecorded(res.data.hoursRecorded);
+        }
+        if(res && res.data.minutesRecorded) {
+          setMinsRecorded(res.data.minutesRecorded);
+        }
+      }).catch((error) => {
+        toastError('error fetching data');
       });
 
   }
@@ -33,8 +59,6 @@ function TimesheetSummaryComponent() {
   useEffect(() => {
     fetchAttendanceRecord();
   }, []);
-
-
 
   const getStartOfMonth = (year, month) => {
     return new Date(year, month, 2);
@@ -47,6 +71,7 @@ function TimesheetSummaryComponent() {
 
   function punchTimeOut() {
     logPunchOutTime();
+    toastSuccess('punched out for today');
   }
 
   return (
@@ -77,7 +102,10 @@ function TimesheetSummaryComponent() {
         </div>
 
         <div className="summary-item">
-          <span className="summary-link">*Hours worked this month: {hoursWorked} </span>
+          <span className="summary-link">*Puched-in time recorded this month: {hoursRecorded} h: {minsRecorded} m </span>
+        </div>
+        <div className="summary-item">
+          <span className="summary-link">*Tasks completed amounting to: {hoursWorked} hours </span>
         </div>
 
       </div>

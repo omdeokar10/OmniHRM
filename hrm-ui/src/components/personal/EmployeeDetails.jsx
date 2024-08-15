@@ -100,7 +100,6 @@ const HierarchyDetails = ({ hierarchy }) => {
                             <p><strong>Username:</strong> {employee.username}</p>
                             <p><strong>Email:</strong> {employee.email}</p>
                             <p><strong>Manager:</strong> {employee.managerUsername}</p>
-                            <p><strong>Username Again:</strong> {employee.username}</p>
                         </div>
                     ))
             )}

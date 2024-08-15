@@ -124,7 +124,7 @@ const TimesheetComponent = () => {
     <div className="container">
       <div className="header">
         <button className="nav-button" onClick={pastweek}>{'<'}</button>
-        <span className='m-2'>Week of {startDay} {months[currentMonth]} {currentYear}</span>
+        <span className='m-2'>Week of {startDay} {months[currentMonth+1]} {currentYear}</span>
         <button className="nav-button" onClick={nextweek}>{'>'}</button>
       </div>
       <button type="button" className="btn btn-secondary m-4" onClick={handleShowModal}>

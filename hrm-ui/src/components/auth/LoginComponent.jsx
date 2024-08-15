@@ -2,17 +2,15 @@ import React from 'react'
 import { useState } from 'react';
 import { loginAPICall, saveLoggedInUser, storeToken } from '../../service/auth/AuthService';
 import { useNavigate, useParams } from 'react-router-dom';
-import { companyLogin } from '../../service/company/CompanyService';
 import { storeInfo } from '../../service/auth/AuthService';
+import 'react-toastify/ReactToastify.css'
+import { toastSuccess, toastError } from '../../service/ToastService';
 
 function LoginComponent() {
 
     const [userName, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const { companyName } = useParams()
-
-    const [title, setTitle] = useState('')
-
     const navigator = useNavigate();
 
     function pageTitle() {
@@ -37,8 +35,7 @@ function LoginComponent() {
 
         if (companyName) {
 
-            const loginDto = { userName, password };
-            await loginAPICall(loginDto).then((response) => {
+            await loginAPICall(userName, password, true).then((response) => {
                 console.log(response.data);
                 const token = 'Bearer ' + response.data.accessToken;
                 const refreshToken = response.data.refreshToken;
@@ -52,16 +49,13 @@ function LoginComponent() {
                 window.location.reload(false);
             }).catch(error => {
                 console.error(error);
+                toastError(error.response.data.message);
             })
 
         }
         else {
-
-            const loginDto = { userName, password };
             storeToken(null);
-            setTitle('');
-
-            await loginAPICall(loginDto).then((response) => {
+            await loginAPICall(userName, password, false).then((response) => {
                 console.log(response.data);
 
                 const token = 'Bearer ' + response.data.accessToken;
@@ -76,6 +70,7 @@ function LoginComponent() {
                 window.location.reload(false);
             }).catch(error => {
                 console.error(error);
+                toastError(error.response.data.message);
             })
         }
 
@@ -104,6 +99,7 @@ function LoginComponent() {
                                             placeholder='Enter username'
                                             value={userName}
                                             onChange={(e) => setUsername(e.target.value)}
+                                            autoComplete="on"
                                         >
                                         </input>
                                     </div>
@@ -119,7 +115,7 @@ function LoginComponent() {
                                             placeholder='Enter password'
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                        >
+                                            autoComplete="on">
                                         </input>
                                     </div>
                                 </div>
@@ -140,8 +136,6 @@ function LoginComponent() {
                     </div>
                 </div>
             </div>
-
-
         </div>
     )
 }

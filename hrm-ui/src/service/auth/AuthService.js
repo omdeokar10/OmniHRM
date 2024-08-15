@@ -55,7 +55,8 @@ export const isAdminUser = () => {
 
 export const registerAPICall = (registerObj) => api.post(authUrl + '/register', registerObj);
 
-export const loginAPICall = (loginObj) => {
+export const loginAPICall = (userName, password, adminLogin) => {
+    const loginObj = {userName, password, adminLogin};
     return api.post(authUrl + '/login', loginObj);
 }
 

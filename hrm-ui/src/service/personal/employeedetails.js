@@ -30,6 +30,7 @@ export const addEmployee = (employeeDetails) => {
 }
 
 export const getAllEmployeesByCompany = (company) => {
+    console.log('company is:', company);
     return api.get(empDetailUrl + '/all/' + company);
 }
 

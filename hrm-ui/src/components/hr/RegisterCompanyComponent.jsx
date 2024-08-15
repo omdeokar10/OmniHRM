@@ -2,14 +2,13 @@ import React from 'react'
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createCompanyApi } from '../../service/hr/HrService';
+import { toastError, toastSuccess } from '../../service/ToastService';
 
 function RegisterCompanyComponent() {
 
     const [companyName, setCompanyName] = useState('')
     const [companyDomain, setCompanyDomain] = useState('')
     const [companyEmail, setCompanyEmail] = useState('')
-    const [firstName, setFirstName] = useState('')
-    const [lastName, setLastName] = useState('')
     const [userName, setUserName] = useState('')
 
     const navigator = useNavigate();
@@ -21,14 +20,16 @@ function RegisterCompanyComponent() {
 
         const userCompanyDto = {
             companyName, companyDomain, companyEmail,
-            firstName, lastName, userName
+            userName
         };
 
         createCompanyApi(userCompanyDto).then((response) => {
             console.log('Company created successfully' + response);
+            toastSuccess('Company created successfully');
             navigator(`/${companyName}`);
         }).catch(error => {
-            console.error(error);
+            console.log('error creating company');
+            toastError(error.message);
         })
     }
 
@@ -77,24 +78,6 @@ function RegisterCompanyComponent() {
                         <div className='col-md-9'>
                             <input type='text' name='companyemail' className='form-control' placeholder='This will be used as the company admin email.'
                                 value={companyEmail} onChange={(e) => setCompanyEmail(e.target.value)} required>
-                            </input>
-                        </div>
-                    </div>
-
-                    <div className='row mb-3'>
-                        <label className='col-md-3 control-label'> Admin first name </label>
-                        <div className='col-md-9'>
-                            <input type='text' name='firstname' className='form-control' placeholder='Admin first name.'
-                                value={firstName} onChange={(e) => setFirstName(e.target.value)} required>
-                            </input>
-                        </div>
-                    </div>
-
-                    <div className='row mb-3'>
-                        <label className='col-md-3 control-label'> Admin last name </label>
-                        <div className='col-md-9'>
-                            <input type='text' name='lastname' className='form-control' placeholder='Admin last name.'
-                                value={lastName} onChange={(e) => setLastName(e.target.value)} required>
                             </input>
                         </div>
                     </div>

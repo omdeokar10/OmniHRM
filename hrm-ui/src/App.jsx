@@ -23,17 +23,20 @@ import HRSummaryComponent from './components/hr/HRSummaryComponent'
 import AddEmployeeComponent from './components/hr/AddEmployeeComponent'
 import HRDetailsSummaryComponent from './components/hr/HRDetailsSummaryComponent'
 import ForgotPassComp from './components/auth/ForgotPassComp'
+import { ToastContainer } from 'react-toastify'
+import { toastSuccess } from './service/ToastService'
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
+      <ToastContainer/>
       <BrowserRouter>
         <HeaderComponent />
-        <Toaster />
 
         <Routes>
+
           <Route path='/' element={<LoginComponent />}></Route>
           <Route path='/:companyName' element={<LoginComponent />}></Route>
 
@@ -70,6 +73,7 @@ function App() {
 
         <FooterComponent />
       </BrowserRouter>
+      
     </>
   )
 }

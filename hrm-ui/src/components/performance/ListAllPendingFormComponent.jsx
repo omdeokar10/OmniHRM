@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react'
 import { Container, Form, Button, Row, Col } from 'react-bootstrap';
 import { deleteFormById, getFormDataByCompanyName } from '../../service/goal/FormService';
 import { useNavigate } from 'react-router-dom'
+import { toastSuccess, toastError } from '../../service/ToastService';
 
 function ListAllPendingFormComponent() {
 
     const [formData, setFormData] = useState([])
     const [dataChanged, setDataChanged] = useState(true);
     const navigate = useNavigate()
-    
+
     useEffect(() => {
         retrieveFormsByCompany();
     }, [dataChanged]);
@@ -23,11 +24,15 @@ function ListAllPendingFormComponent() {
     function deleteForm(id) {
         deleteFormById(id).then((response) => {
             retrieveFormsByCompany();
+        })
+        .catch((error) => {
+            console.error("Error deleting form:", error.response.data.message);
+            toastError(error.response.data.message);
         });
         setDataChanged(!dataChanged);
     }
 
-    function updateForm(id){
+    function updateForm(id) {
         navigate(`/performance/showforms/${id}`);
     }
 

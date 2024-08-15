@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import { } from '../../service/company/CompanyService';
 import { getEmployeeById, updateEmployee, addEmployee } from '../../service/personal/employeedetails';
+import { toastError, toastSuccess } from '../../service/ToastService';
+
 
 const AddEmployeeComponent = () => {
 
@@ -47,12 +49,17 @@ const AddEmployeeComponent = () => {
             if (id) {
                 updateEmployee(id, employee).then((res) => {
                     navigate('/hr/summary');
+                    toastSuccess('Employee updated successfully');
+                }).catch((error) => {
+                    console.log(error.message + ":" + error.details);
+                    toastError(error.message);
                 });
             }
             else {
                 employee.companyName = localStorage.getItem("companyName");
                 addEmployee(employee).then((res) => {
                     navigate('/hr/summary');
+                    toastSuccess('Employee added successfully.');
                 });
             }
         }

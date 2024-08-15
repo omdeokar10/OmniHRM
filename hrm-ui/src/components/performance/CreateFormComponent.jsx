@@ -146,6 +146,17 @@ function CreateFormComponent() {
                                     onChange={handleInputChange}
                                 />
                             )}
+                            {field.type === 'number' && (
+                                <input
+                                    type="number"
+                                    className="form-control mb-2 w-25"
+                                    name={field.name}
+                                    // value={formData[field.name]}
+                                    datatype="number"
+
+                                    onChange={handleInputChange}
+                                />
+                            )}
                             {field.type === 'date' && (
                                 <input
                                     type="date"

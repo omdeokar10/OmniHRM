@@ -26,9 +26,14 @@ export const fetchTasksForDate = (date) => {
 
 export const fetchAttendance = (startDate, endDate) => {
     var username = getLoggedInUser();
-    const attendanceDto = { username, startDate, endDate };
+    const attendanceDto = { startDate, endDate };
     var present = 0;
     return api.post(attendanceUrl + "/range", attendanceDto);
+}
+
+export const fetchHoursWorked = (startDate, endDate) => {
+    const attendanceDto = { startDate, endDate };
+    return api.post(timesheetURL + "/user/range/hours", attendanceDto);
 }
 
 export const fetchAttendanceForUser = (startDate, endDate, id) => {

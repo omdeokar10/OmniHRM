@@ -25,6 +25,8 @@ function HRDetailsSummaryComponent() {
                 var { count, hours } = calculateHours(res);
                 setAttendanceRecord(count);
                 setHoursWorked(hours);
+            }) .catch((error) => {
+                console.error("Error:", error);
             });
 
     }
