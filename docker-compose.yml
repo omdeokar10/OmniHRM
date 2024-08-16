@@ -1,19 +1,32 @@
 version: "3"
 services:
-  hrm-db-prod:
+  hrm-db-test-prod-1:
     image: mongo:latest
-    container_name: "hrm-db-prod"
+    container_name: "hrm-db-test-container-1"
     ports:
       - 27017:27017
     environment:
       MONGO_INITDB_ROOT_USERNAME: admin
       MONGO_INITDB_ROOT_PASSWORD: password
     volumes:
-      - /mongo_data/db/:/data/db
-  hrm-backend-prod:
-    image: hrm-backend
-    container_name: "hrm-backend-prod"
+      - /home/kaustubh/Desktop/OmniHRM/starter_data/db:/data/db
+  hrm-backend-test-1:
+    image: hrm-backend-test-1
+    container_name: "hrm-backend-test-container-1"
     ports:
       - 8081:8081
     links:
-      - hrm-db-prod
+      - hrm-db-test-prod-1
+  hrm-frontend-test-1:
+    image: hrm-frontend-test-1
+    container_name: "hrm-frontend-test-container-1"
+    ports:
+      - 5173:5173
+    depends_on:
+      - hrm-backend-test-1
+      - hrm-db-test-prod-1
+    links:
+      - hrm-backend-test-1
+      - hrm-db-test-prod-1
+
+
