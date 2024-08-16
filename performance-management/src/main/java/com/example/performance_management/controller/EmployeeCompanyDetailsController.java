@@ -43,10 +43,10 @@ public class EmployeeCompanyDetailsController {
     }
 
     @PostMapping("/")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_COMPANYADMIN', 'ROLE_ADMIN')")
     public ResponseEntity<String> createEmployee(@RequestBody EmployeeCompanyDetailsDto employeeDto) {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println(auth.getAuthorities());
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println(auth.getAuthorities());
         employeeCompanyDetailsService.createEmployeeForCompany(employeeDto);
         return ResponseEntity.ok("Created");
     }

@@ -5,6 +5,7 @@ import com.example.performance_management.dto.EmployeeDto;
 import com.example.performance_management.dto.EmployeeHierarchyDto;
 import com.example.performance_management.entity.Employee;
 import com.example.performance_management.entity.EmployeeCompanyDetails;
+import com.example.performance_management.entity.role.Role;
 import com.example.performance_management.entity.role.RoleEnum;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.mapper.EmployeeCompanyDetailsMapper;
@@ -55,15 +56,34 @@ public class EmployeeCompanyDetailsService {
         EmployeeCompanyDetails employeeCompanyDetails = new EmployeeCompanyDetails();
         employeeCompanyDetails = mapper.convertToEmployeeCompanyDetails(employeeCompanyDetailsDto, employeeCompanyDetails);
         employeeCompanyDetails.setEmployeeId(id);
-        employeeCompanyDetails.setRoles(List.of(roleService.getRole(RoleEnum.USER)));
+        addRoles(employeeCompanyDetails);
         employeeCompanyDetails.setPassword(employeeCompanyDetails.getUserName());
         setSalary(employeeCompanyDetailsDto, employeeCompanyDetails);
         employeeCompanyRepo.save(employeeCompanyDetails);
 
-        EmployeeDto dto = mapper.convertToEmployeeDto(employeeCompanyDetailsDto);
+        EmployeeDto dto = mapper.convertToEmployeeDto(employeeCompanyDetails);
         dto.setId(id);
-        dto.setRoles(List.of(roleService.getRole(RoleEnum.USER)));
+        addRoles(dto);
         employeeService.createEmployee(dto);
+    }
+
+    private void addRoles(EmployeeDto dto) {
+        if (dto.getRoles() == null) {
+            List<Role> list = new ArrayList<>();
+            dto.setRoles(list);
+        } else {
+            dto.getRoles().add(roleService.getRole(RoleEnum.USER));
+        }
+    }
+
+    private void addRoles(EmployeeCompanyDetails employeeCompanyDetails) {
+        if (employeeCompanyDetails.getRoles() == null) {
+            List<Role> list = new ArrayList<>();
+            list.add(roleService.getRole(RoleEnum.USER));
+            employeeCompanyDetails.setRoles(list);
+        } else {
+            employeeCompanyDetails.getRoles().add(roleService.getRole(RoleEnum.USER));
+        }
     }
 
     public void updateDetailsForEmployee(Long id, EmployeeCompanyDetailsDto dto) {
@@ -71,12 +91,13 @@ public class EmployeeCompanyDetailsService {
         employeeCompanyDetails = mapper.convertToEmployeeCompanyDetails(dto, employeeCompanyDetails);
         employeeCompanyRepo.save(employeeCompanyDetails);
 
-        EmployeeDto employeeDto = mapper.convertToEmployeeDto(dto);
+        EmployeeDto employeeDto = mapper.convertToEmployeeDto(employeeCompanyDetails);
         employeeService.updateEmployee(id, employeeDto);
     }
 
     public void deleteEmployeeDetails(Long id) {
         employeeCompanyRepo.deleteById(id);
+        employeeService.deleteEmployee(id);
     }
 
     private void setSalary(EmployeeCompanyDetailsDto employeeCompanyDetailsDto, EmployeeCompanyDetails employeeCompanyDetails) {

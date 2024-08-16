@@ -19,9 +19,11 @@ import org.springframework.mail.javamail.MimeMessagePreparator;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -102,15 +104,12 @@ public class CompanyService {
         companyRepo.deleteByCompanyName(companyName);
     }
 
+    @Async
     public Future<String> sendMail(String companyEmail) {
-        ExecutorService executor = Executors.newSingleThreadExecutor();
-        Future<String> future = executor.submit(() -> {
-            int index = companyEmail.indexOf('@');
-            String password = companyEmail.substring(0, index);
-            sendMail(companyEmail, password);
-            return password;
-        });
-        return future;
+        int index = companyEmail.indexOf('@');
+        String password = companyEmail.substring(0, index);
+        sendMail(companyEmail, password);
+        return CompletableFuture.completedFuture(password);
     }
 
     @Async
@@ -145,7 +144,8 @@ public class CompanyService {
         employeeCompanyDetailsDto.setEmail(companyEmail);
         employeeCompanyDetailsDto.setUserName(userName);
         employeeCompanyDetailsDto.setPassword(userPassword);
-        employeeCompanyDetailsDto.setRoles(List.of(officeAdmin));
+        ArrayList<Role> roles = new ArrayList<>(); roles.add(officeAdmin);
+        employeeCompanyDetailsDto.setRoles(roles);
         employeeCompanyDetailsService.createEmployeeForCompany(employeeCompanyDetailsDto);
     }
 }

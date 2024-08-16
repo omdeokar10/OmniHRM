@@ -11,7 +11,7 @@ public class EmployeeCompanyDetailsMapper {
     private final DetailsSetUtils detailsSetUtils = new DetailsSetUtils();
     private final EmployeeMapper employeeMapper = new EmployeeMapper();
 
-    public EmployeeDto convertToEmployeeDto(EmployeeCompanyDetailsDto dto) {
+    public EmployeeDto convertToEmployeeDto(EmployeeCompanyDetails dto) {
         EmployeeDto entity = new EmployeeDto();
         detailsSetUtils.setIfNotNull(dto::getUserName, entity::setUserName);
         detailsSetUtils.setIfNotNull(dto::getPassword, entity::setPassword);
