@@ -1,6 +1,6 @@
 package com.example.performance_management.controller.performance;
 
-import com.example.performance_management.controller.HelperUtil;
+import com.example.performance_management.utils.HelperUtil;
 import com.example.performance_management.dto.performance.FormDto;
 import com.example.performance_management.dto.performance.FormGenerationRequestDto;
 import com.example.performance_management.dto.performance.FormSubmissionRequestDto;

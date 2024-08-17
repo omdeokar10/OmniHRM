@@ -64,7 +64,7 @@ function HRSummaryComponent() {
                         {employees
                             .map(employee => (
                                 <tr key={employee.employeeId}>
-                                    <td>{employee.fullName}</td>
+                                    <td>{employee.userName}</td>
                                     <td>
                                         <button className="btn minima-btn mb-2" onClick={() => updateEmployee(employee.employeeId)}>Update</button>
                                         <button className="btn minima-btn mb-2" onClick={() => viewTimeSheet(employee.employeeId, employee.userName)}>View Details</button>

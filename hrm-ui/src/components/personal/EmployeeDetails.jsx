@@ -14,6 +14,7 @@ function EmployeeDetails() {
         });
 
         fetchDetailsForHierarchy().then((res) => {
+            console.log(res.data);
             setHierarchy(res.data);
         });
 

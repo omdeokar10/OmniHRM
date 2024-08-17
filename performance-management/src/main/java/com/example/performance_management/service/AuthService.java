@@ -10,13 +10,12 @@ import com.example.performance_management.entity.role.RoleEnum;
 import com.example.performance_management.exception.CustomException;
 import com.example.performance_management.repo.EmployeeRepo;
 import com.example.performance_management.security.JwtTokenProvider;
+import com.example.performance_management.utils.HelperUtil;
 import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -31,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Future;
 
 @Service
 @Transactional
@@ -44,15 +44,15 @@ public class AuthService {
     private final EmployeeService employeeService;
     private final EmployeeRepo employeeRepo;
     private final RefreshTokenService refreshTokenService;
-    @Autowired
-    private JavaMailSender javaMailSender;
+    private final HelperUtil helperUtil;
 
-    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, EmployeeRepo employeeRepo, RefreshTokenService refreshTokenService) {
+    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager, EmployeeService employeeService, EmployeeRepo employeeRepo, RefreshTokenService refreshTokenService, HelperUtil helperUtil) {
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         this.employeeService = employeeService;
         this.employeeRepo = employeeRepo;
         this.refreshTokenService = refreshTokenService;
+        this.helperUtil = helperUtil;
     }
 
     Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -144,29 +144,20 @@ public class AuthService {
         employeeService.resetPassword(username, password);
     }
 
-    public void forgotPassword(String email) {
+    public Future<String> forgotPassword(String email) {
         Employee emp = employeeService.getEmployeeByEmail(email);
         emp.setPassword(passwordEncoder.encode("password"));
         employeeRepo.save(emp);
-        sendMail(email, "password");
+        return helperUtil.sendMail(email, "password");
     }
 
-    private void sendMail(String companyEmail, String password) {
-        SimpleMailMessage simpleMessage = new SimpleMailMessage();
-        simpleMessage.setFrom("kaustubhdeokarsde@gmail.com");
-        simpleMessage.setTo(companyEmail);
-        simpleMessage.setSubject("Use this password to login into the platform.");
-        simpleMessage.setText("Password:" + password);
-        javaMailSender.send(simpleMessage);
-    }
-
-        /*
-
+    /*
     public void setPasswordForUser(User userByToken, String newpassword) {
         userByToken.setPassword(passwordEncoder.encode(newpassword));
         userByToken.setEnabled(true);
         employeeRepo.save(userByToken);
     }
+
     private void handleIncorrectCredentials(String username, Employee principalUser) {
         attempts += 1;
         if (attempts > 2) {

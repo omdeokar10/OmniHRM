@@ -82,10 +82,9 @@ function CreateFormComponent() {
 
     const defineSampleInput = () => {
         setSampleJsonInput(JSON.stringify([
-            { "name": "fullName", "label": "Full Name", "type": "text" },
+            {"name":"username","label":"UserName","type":"text"},
             { "name": "dateOfBirth", "label": "Date of Birth", "type": "date" },
-            { "name": "department", "label": "Department", "type": "select", "options": [{ "value": "", "label": "" }, { "value": "HR", "label": "HR" }, { "value": "Eng", "label": "Eng" }] },
-            { "name": "audience", "label": "To be filled by", "type": "checkbox", "options": [{ "value": "HR", "label": "HR" }, { "value": "Eng", "label": "Eng" }] }
+            {"name":"foodchoices","label":"Food Choices","type":"select","options":[{"value":"","label":""},{"value":"Veg","label":"Veg"},{"value":"Non-veg","label":"Non-veg"}]}
         ]));
         return;
     }
@@ -111,7 +110,7 @@ function CreateFormComponent() {
                         className="form-control m-1"
                         rows="10"
                         onChange={handleJsonChange}
-                        placeholder="Please check sample configuration below"
+                        placeholder="Please check sample configuration below."
                         required />
                 </div>
                 <button type="submit" className="btn btn-primary">Generate Form</button>
