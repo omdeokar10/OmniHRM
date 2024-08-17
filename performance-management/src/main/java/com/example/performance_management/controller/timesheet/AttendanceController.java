@@ -18,7 +18,8 @@ public class AttendanceController {
 
     private final AttendanceService attendanceService;
     private final HelperUtil helperUtil;
-    private final TimesheetUtils timesheetUtils =new TimesheetUtils();
+    private final TimesheetUtils timesheetUtils = new TimesheetUtils();
+
     public AttendanceController(AttendanceService attendanceService, HelperUtil helperUtil) {
         this.attendanceService = attendanceService;
         this.helperUtil = helperUtil;
@@ -51,11 +52,12 @@ public class AttendanceController {
         long minutesWorked = 0;
         for (AttendanceDto attendanceDto : attendanceList) {
             if (attendanceDto.isPresent()) daysPresent += 1;
-            if(attendanceDto.getPunchOutTime()!=null && attendanceDto.getPunchInTime()!=null){
+            if (attendanceDto.getPunchOutTime() != null && attendanceDto.getPunchInTime() != null) {
                 minutesWorked += timesheetUtils.differenceInMinutes(attendanceDto.getPunchInTime(), attendanceDto.getPunchOutTime());
-            };
+            }
+            ;
         }
-        return new EmployeeWorkSummaryDto(String.valueOf(daysPresent),String.valueOf( minutesWorked/60), String.valueOf(minutesWorked%60));
+        return new EmployeeWorkSummaryDto(String.valueOf(daysPresent), String.valueOf(minutesWorked / 60), String.valueOf(minutesWorked % 60));
     }
 
     @PostMapping("/admin/range")

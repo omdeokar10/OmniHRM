@@ -1,5 +1,10 @@
 Todo:
-- [ ] To segregate forms as per team.
+- [ ] Form creation: assign forms as per team
+  - [ ] Filter get forms as per team. 
+- [ ] Calculate overtime for an employee.
+  - [ ] Can start with a fixed number of hours.
+- [ ] Granted authorities + Roles : https://www.youtube.com/watch?v=96vK5BDpT7g
+- [ ] What tokens are best ? Local / session ?
 
 Parked features:
 

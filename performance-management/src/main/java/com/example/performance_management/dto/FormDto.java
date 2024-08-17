@@ -14,11 +14,11 @@ public class FormDto {
 
     Map<String, String> fields = new HashMap<>();
 
-    public void addField(String key, String value){
+    public void addField(String key, String value) {
         fields.put(key, value);
     }
 
-    public void getField(String key){
+    public void getField(String key) {
         fields.get(key);
     }
 

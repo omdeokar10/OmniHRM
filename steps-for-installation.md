@@ -16,5 +16,8 @@ We have 3 parts here:
 - `sudo docker build -t <name-2>`
 - Verify that `<name-2>` is listed when `docker images ls` is executed.
 
+> [!IMPORTANT]  
+> Please change the docker-compose file as per your container names & volume directory path.
+
 #### Execute the docker compose command after mondifiying it with appropriate image names & container names. 
 - `sudo docker-compose up`

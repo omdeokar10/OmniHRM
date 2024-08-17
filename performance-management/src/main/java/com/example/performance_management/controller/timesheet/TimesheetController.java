@@ -20,6 +20,7 @@ public class TimesheetController {
     private final TimesheetService timesheetService;
     private final HelperUtil helperUtil;
     private final TimesheetUtils timesheetUtils = new TimesheetUtils();
+
     public TimesheetController(TimesheetService timesheetService, HelperUtil helperUtil) {
         this.timesheetService = timesheetService;
         this.helperUtil = helperUtil;
@@ -77,7 +78,7 @@ public class TimesheetController {
             String durationLogged = taskEntryDto.getDurationLogged();
             minutes += timesheetUtils.convertToMinutes(durationLogged);
         }
-        minutes /= 60;
+        minutes /= HelperUtil.MINUTES_PER_HOUR;
         return ResponseEntity.ok(String.valueOf(minutes));
     }
 

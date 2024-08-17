@@ -13,10 +13,10 @@ public class TimesheetUtils {
         int hours = Integer.parseInt(timeParts[0]);
         int minutes = Integer.parseInt(timeParts[1]);
         int seconds = Integer.parseInt(timeParts[2]);
-        return (hours * 60) + minutes + (seconds / 60);
+        return (hours * HelperUtil.MINUTES_PER_HOUR) + minutes + (seconds / HelperUtil.MINUTES_PER_HOUR);
     }
 
-    public long differenceInMinutes(String startTimeStr, String endTimeStr){
+    public long differenceInMinutes(String startTimeStr, String endTimeStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSSSSS");
         LocalDateTime startTime = LocalDateTime.parse(startTimeStr, formatter);
         LocalDateTime endTime = LocalDateTime.parse(endTimeStr, formatter);

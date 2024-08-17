@@ -10,11 +10,10 @@ import java.util.stream.Collectors;
 @Service
 public class PermissionService {
 
-
     public PermissionService() {
     }
 
-    public List<Permission> deserializePermissions(String permissionString){
+    public List<Permission> deserializePermissions(String permissionString) {
         return Arrays.stream(permissionString.split(",")).map(Permission::new).collect(Collectors.toList());
     }
 
@@ -23,7 +22,7 @@ public class PermissionService {
         return "";
     }
 
-    public String getPermissionFromEmployee(String nameForCurrentUser){
+    public String getPermissionFromEmployee(String nameForCurrentUser) {
 //        Employee emp = employeeService.findEmployee(nameForCurrentUser);
 //        List<String> roles = emp.getRoles();
 //        String permissions = String.join(",", roles);

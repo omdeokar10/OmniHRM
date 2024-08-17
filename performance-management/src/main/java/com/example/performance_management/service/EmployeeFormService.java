@@ -50,15 +50,15 @@ public class EmployeeFormService {
         String empName = employee.getUserName();
         String companyName = employee.getCompanyName();
         Optional<List<Form>> formsByCompany = formRepo.findByCompanyName(companyName);
-        if(formsByCompany.isEmpty()){
+        if (formsByCompany.isEmpty()) {
             return Collections.emptyList();
         }
 
         Optional<EmployeeForms> filledOutForms = employeeFormRepo.findByCompanyNameAndEmployeeName(companyName, empName);
-        if(filledOutForms.isEmpty()){
+        if (filledOutForms.isEmpty()) {
             return formsByCompany.get().stream().
                     filter((form) -> true). // future eligibility check - team // checkIfEmployeeSatisfiesCriteriaToFillTheForm
-                    map(form -> new PendingFormDto(form.getId(), form.getFormName())).toList();
+                            map(form -> new PendingFormDto(form.getId(), form.getFormName())).toList();
         }
 
         //noinspection UnnecessaryLocalVariable

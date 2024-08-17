@@ -14,6 +14,7 @@ import java.util.concurrent.Future;
 @Component
 public class HelperUtil {
 
+    public static final int MINUTES_PER_HOUR = 60;
     private final JavaMailSender javaMailSender;
 
     public HelperUtil(JavaMailSender javaMailSender) {

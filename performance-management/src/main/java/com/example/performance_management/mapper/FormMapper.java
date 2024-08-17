@@ -5,7 +5,7 @@ import com.example.performance_management.entity.performance.Form;
 
 public class FormMapper {
 
-    public Form convertToEntity(FormDto formDto){
+    public Form convertToEntity(FormDto formDto) {
         Form form = new Form();
         form.setFormName(formDto.getFormName());
         form.setTemplateFields(formDto.getFields());
@@ -13,7 +13,7 @@ public class FormMapper {
         return form;
     }
 
-    public FormDto convertToDto(Form form){
+    public FormDto convertToDto(Form form) {
         FormDto formDto = new FormDto();
         formDto.setId(form.getId());
         formDto.setFields(form.getTemplateFields());

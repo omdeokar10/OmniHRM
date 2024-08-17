@@ -16,10 +16,9 @@ public class TaskMapper {
         task.setUsername(taskEntryDto.getUsername());
         task.setDurationLogged(taskEntryDto.getDurationLogged());
 
-        if(!taskEntryDto.getCreatedDate().isBlank()){
+        if (!taskEntryDto.getCreatedDate().isBlank()) {
             task.setCreatedDate(taskEntryDto.getCreatedDate());
-        }
-        else{
+        } else {
             LocalDateTime now = LocalDateTime.now();
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
             String formattedDateTime = now.format(formatter);
@@ -27,8 +26,7 @@ public class TaskMapper {
             if (bCreating) {
                 task.setCreatedDate(formattedDateTime);
                 task.setLastUpdatedAt(formattedDateTime);
-            }
-            else{
+            } else {
                 task.setLastUpdatedAt(formattedDateTime);
             }
 
