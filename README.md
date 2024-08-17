@@ -1,6 +1,7 @@
 ## OmniHRM
 
 Provides an end-to-end Human Resource Management tool, providing various features depending upon the access level of the logged in user. 
+Developed by kaustubhdeokar, Lkishor123 & pathave
 
 ### [Youtube Video link](https://www.youtube.com/playlist?list=PLKsneWgsZjdH83nLxyCQcYL4fJ2JXraQ1)
 
