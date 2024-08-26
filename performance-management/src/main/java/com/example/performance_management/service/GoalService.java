@@ -46,7 +46,7 @@ public class GoalService {
                 .map(goalMapper::convertToDto).collect(Collectors.toList());
     }
 
-    public List<GoalDto> getAllGoals(String username,String companyName) {
+    public List<GoalDto> getAllGoals(String username, String companyName) {
         return goalRepo.findByEmployeeNameAndCompanyName(username, companyName).stream()
                 .filter(goal -> goal.getEmployeeName().equals(username))
                 .map(goalMapper::convertToDto).collect(Collectors.toList());
@@ -63,16 +63,17 @@ public class GoalService {
     }
 
     private Goal getGoal(Optional<Goal> goal) {
-        if(goal.isEmpty()){
+        if (goal.isEmpty()) {
             throw new CustomException("Goal not found.");
         }
         return goal.get();
     }
 
-    private void getGoalsPerUser(String employee){
+    private void getGoalsPerUser(String employee) {
         Optional<List<Goal>> byEmployeeName = goalRepo.findByEmployeeName(employee);
         System.out.println(byEmployeeName.get());
     }
+
     public void updateGoal(Long id, GoalDto goalDto) {
         Goal goal = goalMapper.convertToGoal(goalDto);
         goal.setId(id);

@@ -28,7 +28,7 @@ public class FormSequenceGeneratorService {
      * @param collectionId id key of a collection for storing sequence
      * @param generatedIdValue value which will be used.
      * @param collectionIdVal the value of id collectionId - how we identify what to update.
-     * @return
+     * @return Id.
      */
     public long getSequenceNumber(String collectionId, String collectionIdVal, String generatedIdValue) {
 

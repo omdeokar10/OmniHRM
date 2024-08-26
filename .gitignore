@@ -5,3 +5,23 @@ AttendanceMS/go.sum
 DBMS_TestServer/go.sum
 node_modules
 HandlerMS
+**.xml
+**/*.xml //xml files in all directories
+starter_data/db/collection-4-4333094025839471370.wt
+starter_data/db/collection-2-4333094025839471370.wt
+starter_data/db/collection-4-4333094025839471370.wt
+starter_data/db/index-3-4333094025839471370.wt
+starter_data/db/index-5-4333094025839471370.wt
+starter_data/db/index-6-4333094025839471370.wt
+starter_data/db/collection-2-4333094025839471370.wt
+starter_data/db/collection-4-4333094025839471370.wt
+starter_data/db/index-3-4333094025839471370.wt
+starter_data/db/index-5-4333094025839471370.wt
+starter_data/db/index-6-4333094025839471370.wt
+starter_data/db/sizeStorer.wt
+starter_data/db/WiredTiger.turtle
+starter_data/db/WiredTiger.wt
+starter_data/db/diagnostic.data/metrics.2024-08-18T15-38-08Z-00000
+starter_data/db/journal/WiredTigerLog.0000000001
+starter_data/db/journal/WiredTigerPreplog.0000000001
+starter_data/db/journal/WiredTigerPreplog.0000000002
