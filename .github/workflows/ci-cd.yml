@@ -1,0 +1,88 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main  # Adjust this to your default branch if necessary
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Build Backend (Spring Boot)
+      working-directory: ./performance-management
+      run: ./mvnw clean package -DskipTests
+
+    - name: Build Backend Docker image
+      working-directory: ./performance-management
+      run: docker build -t kaustubhdeokar/hrm-backend:latest .
+
+    - name: Build Frontend Docker image
+      working-directory: ./hrm-ui
+      run: docker build -t kaustubhdeokar/hrm-frontend:latest .
+
+    - name: Login to DockerHub
+      run: echo OmniHRM27 | docker login -u kaustubhdeokar --password-stdin
+
+    - name: Push Backend Docker image to DockerHub
+      run: docker push kaustubhdeokar/hrm-backend:latest
+
+    - name: Push Frontend Docker image to DockerHub
+      run: docker push kaustubhdeokar/hrm-frontend:latest
+
+    - name: Set up Docker Compose
+      run: |
+        echo "version: '3'
+        services:
+          hrm-db-test-prod-1:
+            image: mongo:latest
+            container_name: hrm-db
+            ports:
+              - 27017:27017
+            environment:
+              MONGO_INITDB_ROOT_USERNAME: admin
+              MONGO_INITDB_ROOT_PASSWORD: password
+            volumes:
+              - /home/runner/work/OmniHRM/starter_data/db:/data/db
+          hrm-backend-test-1:
+            image: kaustubhdeokar/hrm-backend:latest
+            container_name: hrm-backend
+            ports:
+              - 8081:8081
+            links:
+              - hrm-db-test-prod-1
+            environment:
+              - MONGO_URL=mongodb://admin:password@hrm-db:27017/demo1?authSource=admin
+          hrm-frontend-test-1:
+            image: kaustubhdeokar/hrm-frontend:latest
+            container_name: hrm-frontend
+            ports:
+              - 5173:5173
+            depends_on:
+              - hrm-backend-test-1
+              - hrm-db-test-prod-1
+            links:
+              - hrm-backend-test-1
+              - hrm-db-test-prod-1" > docker-compose.yml
+
+    - name: Start Docker Compose
+      run: docker compose up -d
+
+    - name: Verify Backend Container is Running
+      run: docker ps | grep hrm-backend
+
+    - name: Verify Frontend Container is Running
+      run: docker ps | grep hrm-frontend
+
+    - name: Clean up
+      run: docker compose down
