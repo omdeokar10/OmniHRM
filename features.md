@@ -5,6 +5,8 @@ Todo:
   - [ ] Can start with a fixed number of hours.
 - [ ] Granted authorities + Roles : https://www.youtube.com/watch?v=96vK5BDpT7g
 - [ ] What tokens are best ? Local / session ?
+- [ ] username per company. 
+- [ ] Duplicates employees entries being created
 
 Parked features:
 

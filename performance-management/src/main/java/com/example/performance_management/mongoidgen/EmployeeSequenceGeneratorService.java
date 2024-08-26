@@ -14,6 +14,7 @@ import static org.springframework.data.mongodb.core.FindAndModifyOptions.options
 @Service
 public class EmployeeSequenceGeneratorService {
 
+    public static final int EMP_ID = 20;
     @Autowired
     private MongoOperations mongoOperations;
 
@@ -58,7 +59,7 @@ public class EmployeeSequenceGeneratorService {
                         update, options().returnNew(true).upsert(true),
                         EmployeeIdSequence.class);
 
-        return Objects.isNull(counter) ? 20 : counter.getGoalId();
+        return Objects.isNull(counter) ? EMP_ID : counter.getGoalId();
     }
 
     public Long getTaskSequenceNumber(String collectionId, String collectionIdVal, String generatedIdValue) {

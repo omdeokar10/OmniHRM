@@ -1,8 +1,9 @@
 version: "3"
 services:
+# Users with AMD processor have a different mongo base image : https://hub.docker.com/r/arm64v8/mongo/
   hrm-db-test-prod-1:
     image: mongo:latest
-    container_name: "hrm-db-test-container-1"
+    container_name: "<docker-container-name>"
     ports:
       - 27017:27017
     environment:
@@ -11,8 +12,8 @@ services:
     volumes:
       - /home/kaustubh/Desktop/OmniHRM/starter_data/db:/data/db
   hrm-backend-test-1:
-    image: hrm-backend-test
-    container_name: "hrm-backend-test-container-1"
+    image: <backend-image-name>
+    container_name: "<backend-container-name>"
     ports:
       - 8081:8081
     links:
@@ -20,8 +21,8 @@ services:
     environment:
       - MONGO_URL=mongodb://admin:password@localhost:27017/demo1?authSource=admin
   hrm-frontend-test-1:
-    image: hrm-frontend-test
-    container_name: "hrm-frontend-test-container-1"
+    image: <frontend-image-name>
+    container_name: "<frontend-container-name>"
     ports:
       - 5173:5173
     depends_on:

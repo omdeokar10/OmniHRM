@@ -4,4 +4,4 @@ EXPOSE 8081
 
 ADD ./target/hrm-backend-1.jar backend.jar
 ENTRYPOINT ["java","-jar","backend.jar"]
-CMD ["echo","backend up"]
+CMD ["echo","-------------------------------Backend up-------------------------------"]

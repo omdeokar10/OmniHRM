@@ -55,9 +55,10 @@ public class AttendanceController {
             if (attendanceDto.getPunchOutTime() != null && attendanceDto.getPunchInTime() != null) {
                 minutesWorked += timesheetUtils.differenceInMinutes(attendanceDto.getPunchInTime(), attendanceDto.getPunchOutTime());
             }
-            ;
+
         }
-        return new EmployeeWorkSummaryDto(String.valueOf(daysPresent), String.valueOf(minutesWorked / 60), String.valueOf(minutesWorked % 60));
+        return new EmployeeWorkSummaryDto(String.valueOf(daysPresent), String.valueOf(minutesWorked / HelperUtil.MINUTES_PER_HOUR),
+                String.valueOf(minutesWorked % HelperUtil.MINUTES_PER_HOUR));
     }
 
     @PostMapping("/admin/range")
